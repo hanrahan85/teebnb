@@ -1,6 +1,7 @@
 
 export interface TravelData {
   travelerName: string;
+  email: string;
   handicap: string;
   budget: string;
   travelDates: string;

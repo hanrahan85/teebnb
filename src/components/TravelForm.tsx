@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -42,6 +41,22 @@ const TravelForm = ({ formData, isGenerating, onInputChange, onGenerate }: Trave
             />
           </div>
           <div>
+            <Label htmlFor="email" className="text-slate-800 font-semibold text-lg mb-4 block">
+              Email Address *
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => onInputChange("email", e.target.value)}
+              placeholder="Enter your email"
+              className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
             <Label htmlFor="handicap" className="text-slate-800 font-semibold text-lg mb-4 block">
               Golf Handicap
             </Label>
@@ -53,9 +68,6 @@ const TravelForm = ({ formData, isGenerating, onInputChange, onGenerate }: Trave
               className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm"
             />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <Label htmlFor="budget" className="text-slate-800 font-semibold text-lg mb-4 block">
               Total Budget *
@@ -72,6 +84,9 @@ const TravelForm = ({ formData, isGenerating, onInputChange, onGenerate }: Trave
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <Label htmlFor="duration" className="text-slate-800 font-semibold text-lg mb-4 block">
               Trip Duration
@@ -88,9 +103,6 @@ const TravelForm = ({ formData, isGenerating, onInputChange, onGenerate }: Trave
               </SelectContent>
             </Select>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <Label htmlFor="preferredRegion" className="text-slate-800 font-semibold text-lg mb-4 block">
               Preferred Region *
@@ -108,6 +120,9 @@ const TravelForm = ({ formData, isGenerating, onInputChange, onGenerate }: Trave
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <Label htmlFor="groupSize" className="text-slate-800 font-semibold text-lg mb-4 block">
               Group Size
@@ -124,9 +139,6 @@ const TravelForm = ({ formData, isGenerating, onInputChange, onGenerate }: Trave
               </SelectContent>
             </Select>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <Label htmlFor="courseType" className="text-slate-800 font-semibold text-lg mb-4 block">
               Course Preference
@@ -144,6 +156,9 @@ const TravelForm = ({ formData, isGenerating, onInputChange, onGenerate }: Trave
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <Label htmlFor="accommodation" className="text-slate-800 font-semibold text-lg mb-4 block">
               Accommodation Style
@@ -160,19 +175,18 @@ const TravelForm = ({ formData, isGenerating, onInputChange, onGenerate }: Trave
               </SelectContent>
             </Select>
           </div>
-        </div>
-
-        <div>
-          <Label htmlFor="travelDates" className="text-slate-800 font-semibold text-lg mb-4 block">
-            Preferred Travel Dates
-          </Label>
-          <Input
-            id="travelDates"
-            value={formData.travelDates}
-            onChange={(e) => onInputChange("travelDates", e.target.value)}
-            placeholder="e.g., June 2024 or flexible dates"
-            className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm"
-          />
+          <div>
+            <Label htmlFor="travelDates" className="text-slate-800 font-semibold text-lg mb-4 block">
+              Preferred Travel Dates
+            </Label>
+            <Input
+              id="travelDates"
+              value={formData.travelDates}
+              onChange={(e) => onInputChange("travelDates", e.target.value)}
+              placeholder="e.g., June 2024 or flexible dates"
+              className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm"
+            />
+          </div>
         </div>
 
         <div>

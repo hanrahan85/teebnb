@@ -13,6 +13,7 @@ import { TravelData, TravelRecommendation } from "@/types/travel";
 const Index = () => {
   const [formData, setFormData] = useState<TravelData>({
     travelerName: "",
+    email: "",
     handicap: "",
     budget: "",
     travelDates: "",
@@ -33,8 +34,8 @@ const Index = () => {
   };
 
   const generateRecommendation = async () => {
-    if (!formData.travelerName || !formData.budget || !formData.preferredRegion) {
-      toast.error("Please fill in at least your name, budget, and preferred region to get recommendations.");
+    if (!formData.travelerName || !formData.email || !formData.budget || !formData.preferredRegion) {
+      toast.error("Please fill in your name, email, budget, and preferred region to get recommendations.");
       return;
     }
 
@@ -129,6 +130,11 @@ const Index = () => {
       const parsedRecommendation = JSON.parse(aiResponse);
       
       setRecommendation(parsedRecommendation);
+      
+      // TODO: Save to Supabase database here
+      console.log('Form data to save:', formData);
+      console.log('AI recommendation to save:', parsedRecommendation);
+      
       toast.success("Your AI-powered golf travel recommendations are ready!");
       
     } catch (error) {
