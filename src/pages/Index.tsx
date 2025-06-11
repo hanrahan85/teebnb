@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Key, LogOut, User } from "lucide-react";
+import { Key, LogOut, User, LogIn } from "lucide-react";
 import { TravelData, TravelRecommendation } from "@/types/travel";
 import { saveTravelSubmission } from "@/services/travelService";
 
@@ -182,15 +181,20 @@ const Index = () => {
       
       setRecommendation(parsedRecommendation);
       
-      // Save to Supabase database
-      try {
-        await saveTravelSubmission(formData, parsedRecommendation);
-        console.log('Successfully saved travel data to database');
+      // Save to Supabase database only if user is authenticated
+      if (user) {
+        try {
+          await saveTravelSubmission(formData, parsedRecommendation);
+          console.log('Successfully saved travel data to database');
+          toast.success("Your detailed golf travel itinerary with bookable details is ready and saved!");
+        } catch (saveError) {
+          console.error('Error saving to database:', saveError);
+          toast.success("Your detailed golf travel itinerary is ready!");
+          toast.error("Note: Data saving failed, but recommendations are still available.");
+        }
+      } else {
         toast.success("Your detailed golf travel itinerary with bookable details is ready!");
-      } catch (saveError) {
-        console.error('Error saving to database:', saveError);
-        toast.success("Your detailed golf travel itinerary is ready!");
-        toast.error("Note: Data saving failed, but recommendations are still available.");
+        toast.info("Sign in to save your recommendations for later.");
       }
       
     } catch (error) {
@@ -203,29 +207,53 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      {/* User Header */}
-      <div className="bg-white/90 backdrop-blur-lg border-b border-stone-200/50 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <User className="h-8 w-8 text-emerald-600" />
-              <div>
-                <p className="text-sm text-slate-600">Welcome back,</p>
-                <p className="font-semibold text-slate-900">{user?.user_metadata?.full_name || user?.email}</p>
+      {/* Optional User Header - only show when logged in */}
+      {user && (
+        <div className="bg-white/90 backdrop-blur-lg border-b border-stone-200/50 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <User className="h-8 w-8 text-emerald-600" />
+                <div>
+                  <p className="text-sm text-slate-600">Welcome back,</p>
+                  <p className="font-semibold text-slate-900">{user.user_metadata?.full_name || user.email}</p>
+                </div>
               </div>
+              <Button
+                onClick={handleSignOut}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </Button>
             </div>
-            <Button
-              onClick={handleSignOut}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              Sign Out
-            </Button>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Sign In Banner for non-authenticated users */}
+      {!user && (
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <LogIn className="h-5 w-5" />
+                <span className="text-sm font-medium">Sign in to save your golf travel recommendations</span>
+              </div>
+              <Button
+                onClick={() => window.location.href = '/auth'}
+                variant="outline"
+                size="sm"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+              >
+                Sign In
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <HeroSection />
       

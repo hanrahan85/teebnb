@@ -20,11 +20,7 @@ const App: React.FC = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/auth" element={<Auth />} />
-              <Route path="/" element={
-                <AuthGuard>
-                  <Index />
-                </AuthGuard>
-              } />
+              <Route path="/" element={<Index />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
