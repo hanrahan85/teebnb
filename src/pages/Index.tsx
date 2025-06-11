@@ -154,17 +154,20 @@ const Index = () => {
       });
 
       console.log('Edge function response status:', response.status);
+      console.log('Edge function response headers:', response.headers);
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Edge function error response:', errorText);
+        console.error('Response status:', response.status);
+        console.error('Response statusText:', response.statusText);
         
         let errorMessage = 'Failed to generate recommendations';
         try {
           const errorData = JSON.parse(errorText);
           errorMessage = errorData.error || errorMessage;
         } catch (e) {
-          // Use default error message
+          errorMessage = `Server error (${response.status}): ${response.statusText || 'Unknown error'}`;
         }
         
         throw new Error(errorMessage);
@@ -173,8 +176,9 @@ const Index = () => {
       const data = await response.json();
       console.log('Edge function response data:', data);
       
-      if (!data.recommendation) {
-        throw new Error('No recommendation data received');
+      if (!data || !data.recommendation) {
+        console.error('Invalid response structure:', data);
+        throw new Error('Invalid response from server - no recommendation data');
       }
       
       setRecommendation(data.recommendation);
@@ -197,7 +201,25 @@ const Index = () => {
       
     } catch (error) {
       console.error('Error generating recommendation:', error);
-      toast.error(`Failed to generate recommendations: ${error.message}`);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      
+      // Provide more helpful error messages
+      let userMessage = "Failed to generate recommendations";
+      if (error.message.includes('fetch')) {
+        userMessage = "Network error - please check your connection and try again";
+      } else if (error.message.includes('JSON')) {
+        userMessage = "Response parsing error - please try again";
+      } else if (error.message.includes('Invalid response')) {
+        userMessage = "Server returned invalid data - please try again";
+      } else if (error.message) {
+        userMessage = `Error: ${error.message}`;
+      }
+      
+      toast.error(userMessage);
     } finally {
       setIsGenerating(false);
     }
