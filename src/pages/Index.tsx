@@ -174,62 +174,56 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stone-50 to-emerald-50">
-      {/* Hero Section with Enhanced Luxury Golf Resort Aesthetic */}
+      {/* Hero Section with Luxury Golf Resort Aesthetic */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-stone-800 to-emerald-900">
-        {/* Sophisticated background pattern with golf-inspired textures */}
-        <div className="absolute inset-0 opacity-15">
+        {/* Sophisticated background pattern */}
+        <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `
-              radial-gradient(circle at 25% 25%, rgba(34, 197, 94, 0.1) 2px, transparent 2px),
-              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.08) 1px, transparent 1px),
-              linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
-              linear-gradient(-45deg, rgba(34, 197, 94, 0.02) 25%, transparent 25%)
+              radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 1px, transparent 1px),
+              radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 1px, transparent 1px),
+              linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+              linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%)
             `,
-            backgroundSize: '80px 80px, 60px 60px, 40px 40px, 40px 40px'
+            backgroundSize: '60px 60px, 80px 80px, 40px 40px, 40px 40px'
           }}></div>
-          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
-            <div className="flex justify-center mb-12">
-              <div className="relative">
-                <div className="p-10 bg-white/12 backdrop-blur-xl rounded-full shadow-2xl border border-white/25">
-                  <div className="relative">
-                    <TreePine className="h-24 w-24 text-emerald-300" />
-                    <div className="absolute -top-3 -right-3 p-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-lg">
-                      <Award className="h-7 w-7 text-white" />
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-full blur-xl"></div>
-              </div>
-            </div>
-            
-            <h1 className="text-7xl md:text-9xl font-bold mb-10 animate-fade-in">
-              <span className="bg-gradient-to-r from-white via-emerald-100 to-teal-200 bg-clip-text text-transparent tracking-tight">
+            <h1 className="text-6xl md:text-8xl font-bold mb-8 animate-fade-in">
+              <span className="bg-gradient-to-r from-white via-stone-200 to-emerald-200 bg-clip-text text-transparent">
                 TeeBnB
               </span>
             </h1>
-            <p className="text-2xl md:text-4xl text-stone-200 mb-8 max-w-6xl mx-auto animate-fade-in font-light leading-relaxed tracking-wide">
-              Curated Luxury Golf Experiences
+            <p className="text-xl md:text-3xl text-stone-200 mb-6 max-w-5xl mx-auto animate-fade-in font-light leading-relaxed tracking-wide">
+              Discover the world's most prestigious golf destinations
             </p>
-            <p className="text-xl text-stone-300 mb-16 max-w-4xl mx-auto leading-relaxed font-light">
-              Discover the world's most prestigious golf destinations and championship courses with bespoke travel experiences
+            <p className="text-lg text-stone-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Curated luxury golf experiences at championship courses and premium resorts worldwide
             </p>
-            <div className="flex flex-wrap justify-center gap-6">
-              <Badge variant="secondary" className="px-10 py-5 bg-white/15 text-white border-white/30 backdrop-blur-xl hover:bg-white/25 transition-all text-lg font-medium rounded-full">
-                <Award className="h-6 w-6 mr-4" />
+            <div className="flex flex-wrap justify-center gap-4 text-sm mb-8">
+              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
+                <Award className="h-5 w-5 mr-3" />
                 Championship Courses
               </Badge>
-              <Badge variant="secondary" className="px-10 py-5 bg-white/15 text-white border-white/30 backdrop-blur-xl hover:bg-white/25 transition-all text-lg font-medium rounded-full">
-                <MapPin className="h-6 w-6 mr-4" />
+              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
+                <MapPin className="h-5 w-5 mr-3" />
                 Premium Destinations
               </Badge>
-              <Badge variant="secondary" className="px-10 py-5 bg-white/15 text-white border-white/30 backdrop-blur-xl hover:bg-white/25 transition-all text-lg font-medium rounded-full">
-                <Star className="h-6 w-6 mr-4" />
+              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
+                <Star className="h-5 w-5 mr-3" />
                 Luxury Experiences
               </Badge>
+            </div>
+            <div className="flex justify-center">
+              <Button 
+                onClick={() => window.location.href = '/reviews'}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg"
+              >
+                Read Golf Course Reviews
+              </Button>
             </div>
           </div>
         </div>
@@ -611,3 +605,5 @@ const Index = () => {
 };
 
 export default Index;
+
+</edits_to_apply>
