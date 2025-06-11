@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -175,59 +174,60 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stone-50 to-emerald-50">
-      {/* Hero Section with Luxury Golf Resort Aesthetic */}
+      {/* Hero Section with Enhanced Luxury Golf Resort Aesthetic */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-stone-800 to-emerald-900">
-        {/* Sophisticated background pattern */}
-        <div className="absolute inset-0 opacity-10">
+        {/* Sophisticated background pattern with golf-inspired textures */}
+        <div className="absolute inset-0 opacity-15">
           <div className="absolute inset-0" style={{
             backgroundImage: `
-              radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 1px, transparent 1px),
-              radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 1px, transparent 1px),
-              linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
-              linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%)
+              radial-gradient(circle at 25% 25%, rgba(34, 197, 94, 0.1) 2px, transparent 2px),
+              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.08) 1px, transparent 1px),
+              linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+              linear-gradient(-45deg, rgba(34, 197, 94, 0.02) 25%, transparent 25%)
             `,
-            backgroundSize: '60px 60px, 80px 80px, 40px 40px, 40px 40px'
+            backgroundSize: '80px 80px, 60px 60px, 40px 40px, 40px 40px'
           }}></div>
-          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
           <div className="text-center">
-            <div className="flex justify-center mb-10">
+            <div className="flex justify-center mb-12">
               <div className="relative">
-                <div className="p-8 bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl border border-white/20">
+                <div className="p-10 bg-white/12 backdrop-blur-xl rounded-full shadow-2xl border border-white/25">
                   <div className="relative">
-                    <TreePine className="h-20 w-20 text-emerald-200" />
-                    <div className="absolute -top-2 -right-2 p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full">
-                      <Award className="h-6 w-6 text-white" />
+                    <TreePine className="h-24 w-24 text-emerald-300" />
+                    <div className="absolute -top-3 -right-3 p-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-lg">
+                      <Award className="h-7 w-7 text-white" />
                     </div>
                   </div>
                 </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-full blur-xl"></div>
               </div>
             </div>
             
-            <h1 className="text-6xl md:text-8xl font-bold mb-8 animate-fade-in">
-              <span className="bg-gradient-to-r from-white via-stone-200 to-emerald-200 bg-clip-text text-transparent">
-                TeebnB
+            <h1 className="text-7xl md:text-9xl font-bold mb-10 animate-fade-in">
+              <span className="bg-gradient-to-r from-white via-emerald-100 to-teal-200 bg-clip-text text-transparent tracking-tight">
+                TeeBnB
               </span>
             </h1>
-            <p className="text-xl md:text-3xl text-stone-200 mb-6 max-w-5xl mx-auto animate-fade-in font-light leading-relaxed tracking-wide">
-              Discover the world's most prestigious golf destinations
+            <p className="text-2xl md:text-4xl text-stone-200 mb-8 max-w-6xl mx-auto animate-fade-in font-light leading-relaxed tracking-wide">
+              Curated Luxury Golf Experiences
             </p>
-            <p className="text-lg text-stone-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Curated luxury golf experiences at championship courses and premium resorts worldwide
+            <p className="text-xl text-stone-300 mb-16 max-w-4xl mx-auto leading-relaxed font-light">
+              Discover the world's most prestigious golf destinations and championship courses with bespoke travel experiences
             </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
-                <Award className="h-5 w-5 mr-3" />
+            <div className="flex flex-wrap justify-center gap-6">
+              <Badge variant="secondary" className="px-10 py-5 bg-white/15 text-white border-white/30 backdrop-blur-xl hover:bg-white/25 transition-all text-lg font-medium rounded-full">
+                <Award className="h-6 w-6 mr-4" />
                 Championship Courses
               </Badge>
-              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
-                <MapPin className="h-5 w-5 mr-3" />
+              <Badge variant="secondary" className="px-10 py-5 bg-white/15 text-white border-white/30 backdrop-blur-xl hover:bg-white/25 transition-all text-lg font-medium rounded-full">
+                <MapPin className="h-6 w-6 mr-4" />
                 Premium Destinations
               </Badge>
-              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
-                <Star className="h-5 w-5 mr-3" />
+              <Badge variant="secondary" className="px-10 py-5 bg-white/15 text-white border-white/30 backdrop-blur-xl hover:bg-white/25 transition-all text-lg font-medium rounded-full">
+                <Star className="h-6 w-6 mr-4" />
                 Luxury Experiences
               </Badge>
             </div>
@@ -235,23 +235,23 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-2 gap-16">
-          {/* Form Section */}
-          <Card className="p-10 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
-            <div className="mb-10">
-              <h2 className="text-4xl font-bold text-slate-900 mb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="grid lg:grid-cols-2 gap-20">
+          {/* Enhanced Form Section */}
+          <Card className="p-12 bg-white/90 backdrop-blur-xl border border-stone-200/60 shadow-2xl rounded-3xl">
+            <div className="mb-12">
+              <h2 className="text-5xl font-bold text-slate-900 mb-8 tracking-tight">
                 Plan Your Golf Journey
               </h2>
-              <p className="text-slate-700 leading-relaxed text-lg">
+              <p className="text-slate-700 leading-relaxed text-xl font-light">
                 Share your preferences and we'll craft a bespoke golf travel experience featuring world-class courses, luxury accommodations, and unforgettable destinations.
               </p>
             </div>
 
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <Label htmlFor="travelerName" className="text-slate-800 font-semibold text-base mb-3 block">
+                  <Label htmlFor="travelerName" className="text-slate-800 font-semibold text-lg mb-4 block">
                     Traveler Name *
                   </Label>
                   <Input
@@ -259,11 +259,11 @@ const Index = () => {
                     value={formData.travelerName}
                     onChange={(e) => handleInputChange("travelerName", e.target.value)}
                     placeholder="Enter your name"
-                    className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base"
+                    className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="handicap" className="text-slate-800 font-semibold text-base mb-3 block">
+                  <Label htmlFor="handicap" className="text-slate-800 font-semibold text-lg mb-4 block">
                     Golf Handicap
                   </Label>
                   <Input
@@ -271,21 +271,21 @@ const Index = () => {
                     value={formData.handicap}
                     onChange={(e) => handleInputChange("handicap", e.target.value)}
                     placeholder="e.g., 15"
-                    className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base"
+                    className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <Label htmlFor="budget" className="text-slate-800 font-semibold text-base mb-3 block">
+                  <Label htmlFor="budget" className="text-slate-800 font-semibold text-lg mb-4 block">
                     Total Budget *
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("budget", value)}>
-                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
+                    <SelectTrigger className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm">
                       <SelectValue placeholder="Select budget range" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
+                    <SelectContent className="bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl">
                       <SelectItem value="under-5000">Under $5,000</SelectItem>
                       <SelectItem value="5000-10000">$5,000 - $10,000</SelectItem>
                       <SelectItem value="10000-20000">$10,000 - $20,000</SelectItem>
@@ -294,14 +294,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="duration" className="text-slate-800 font-semibold text-base mb-3 block">
+                  <Label htmlFor="duration" className="text-slate-800 font-semibold text-lg mb-4 block">
                     Trip Duration
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("duration", value)}>
-                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
+                    <SelectTrigger className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm">
                       <SelectValue placeholder="How long?" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
+                    <SelectContent className="bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl">
                       <SelectItem value="3-4-days">3-4 days</SelectItem>
                       <SelectItem value="5-7-days">5-7 days</SelectItem>
                       <SelectItem value="1-2-weeks">1-2 weeks</SelectItem>
@@ -311,16 +311,16 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <Label htmlFor="preferredRegion" className="text-slate-800 font-semibold text-base mb-3 block">
+                  <Label htmlFor="preferredRegion" className="text-slate-800 font-semibold text-lg mb-4 block">
                     Preferred Region *
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("preferredRegion", value)}>
-                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
+                    <SelectTrigger className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm">
                       <SelectValue placeholder="Where to?" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
+                    <SelectContent className="bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl">
                       <SelectItem value="europe">Europe</SelectItem>
                       <SelectItem value="north-america">North America</SelectItem>
                       <SelectItem value="asia-pacific">Asia Pacific</SelectItem>
@@ -330,14 +330,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="groupSize" className="text-slate-800 font-semibold text-base mb-3 block">
+                  <Label htmlFor="groupSize" className="text-slate-800 font-semibold text-lg mb-4 block">
                     Group Size
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("groupSize", value)}>
-                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
+                    <SelectTrigger className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm">
                       <SelectValue placeholder="How many people?" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
+                    <SelectContent className="bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl">
                       <SelectItem value="solo">Solo traveler</SelectItem>
                       <SelectItem value="couple">2 people</SelectItem>
                       <SelectItem value="small-group">3-4 people</SelectItem>
@@ -347,16 +347,16 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <Label htmlFor="courseType" className="text-slate-800 font-semibold text-base mb-3 block">
+                  <Label htmlFor="courseType" className="text-slate-800 font-semibold text-lg mb-4 block">
                     Course Preference
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("courseType", value)}>
-                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
+                    <SelectTrigger className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm">
                       <SelectValue placeholder="Course style" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
+                    <SelectContent className="bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl">
                       <SelectItem value="links">Links courses</SelectItem>
                       <SelectItem value="resort">Resort courses</SelectItem>
                       <SelectItem value="championship">Championship courses</SelectItem>
@@ -366,14 +366,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="accommodation" className="text-slate-800 font-semibold text-base mb-3 block">
+                  <Label htmlFor="accommodation" className="text-slate-800 font-semibold text-lg mb-4 block">
                     Accommodation Style
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("accommodation", value)}>
-                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
+                    <SelectTrigger className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm">
                       <SelectValue placeholder="Where to stay?" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
+                    <SelectContent className="bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl">
                       <SelectItem value="luxury-resort">Luxury golf resort</SelectItem>
                       <SelectItem value="boutique-hotel">Boutique hotel</SelectItem>
                       <SelectItem value="vacation-rental">Vacation rental</SelectItem>
@@ -384,7 +384,7 @@ const Index = () => {
               </div>
 
               <div>
-                <Label htmlFor="travelDates" className="text-slate-800 font-semibold text-base mb-3 block">
+                <Label htmlFor="travelDates" className="text-slate-800 font-semibold text-lg mb-4 block">
                   Preferred Travel Dates
                 </Label>
                 <Input
@@ -392,12 +392,12 @@ const Index = () => {
                   value={formData.travelDates}
                   onChange={(e) => handleInputChange("travelDates", e.target.value)}
                   placeholder="e.g., June 2024 or flexible dates"
-                  className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base"
+                  className="h-14 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg shadow-sm"
                 />
               </div>
 
               <div>
-                <Label htmlFor="specialRequests" className="text-slate-800 font-semibold text-base mb-3 block">
+                <Label htmlFor="specialRequests" className="text-slate-800 font-semibold text-lg mb-4 block">
                   Special Requests
                 </Label>
                 <Textarea
@@ -405,23 +405,23 @@ const Index = () => {
                   value={formData.specialRequests}
                   onChange={(e) => handleInputChange("specialRequests", e.target.value)}
                   placeholder="Any special requirements, interests, or must-see courses?"
-                  className="min-h-[120px] border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base resize-none"
+                  className="min-h-[140px] border-stone-300 focus:border-emerald-500 bg-white/95 rounded-2xl text-lg resize-none shadow-sm"
                 />
               </div>
 
               <Button
                 onClick={generateRecommendation}
                 disabled={isGenerating}
-                className="w-full bg-gradient-to-r from-slate-800 via-emerald-700 to-teal-700 hover:from-slate-900 hover:via-emerald-800 hover:to-teal-800 text-white border-0 h-16 text-lg font-semibold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
+                className="w-full bg-gradient-to-r from-slate-800 via-emerald-700 to-teal-700 hover:from-slate-900 hover:via-emerald-800 hover:to-teal-800 text-white border-0 h-18 text-xl font-semibold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-[1.02]"
               >
                 {isGenerating ? (
-                  <div className="flex items-center gap-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  <div className="flex items-center gap-5">
+                    <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white"></div>
                     Crafting Your Luxury Golf Experience...
                   </div>
                 ) : (
-                  <div className="flex items-center gap-4">
-                    <TreePine className="h-6 w-6" />
+                  <div className="flex items-center gap-5">
+                    <TreePine className="h-7 w-7" />
                     Create My Golf Journey
                   </div>
                 )}
@@ -430,20 +430,20 @@ const Index = () => {
           </Card>
 
           {/* Results Section */}
-          <div className="space-y-8">
+          <div className="space-y-10">
             {recommendation ? (
-              <div className="space-y-8 animate-fade-in">
+              <div className="space-y-10 animate-fade-in">
                 {/* Header */}
-                <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
-                  <div className="flex items-start gap-6 mb-6">
-                    <div className="p-4 bg-gradient-to-br from-slate-700 via-emerald-600 to-teal-600 rounded-2xl">
-                      <MapPin className="h-8 w-8 text-white" />
+                <Card className="p-10 bg-white/90 backdrop-blur-xl border border-stone-200/60 shadow-2xl rounded-3xl">
+                  <div className="flex items-start gap-8 mb-8">
+                    <div className="p-5 bg-gradient-to-br from-slate-700 via-emerald-600 to-teal-600 rounded-2xl shadow-lg">
+                      <MapPin className="h-10 w-10 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-3xl font-bold text-slate-900 mb-3">
+                      <h3 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">
                         {recommendation.title}
                       </h3>
-                      <p className="text-slate-700 leading-relaxed text-lg">{recommendation.summary}</p>
+                      <p className="text-slate-700 leading-relaxed text-xl font-light">{recommendation.summary}</p>
                     </div>
                   </div>
                 </Card>
@@ -575,29 +575,29 @@ const Index = () => {
                 </Card>
               </div>
             ) : (
-              <Card className="p-12 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl text-center">
-                <div className="max-w-lg mx-auto">
-                  <div className="p-8 bg-gradient-to-br from-slate-100 via-emerald-100 to-teal-100 rounded-3xl w-fit mx-auto mb-8">
-                    <TreePine className="h-16 w-16 text-emerald-700" />
+              <Card className="p-16 bg-white/90 backdrop-blur-xl border border-stone-200/60 shadow-2xl rounded-3xl text-center">
+                <div className="max-w-2xl mx-auto">
+                  <div className="p-12 bg-gradient-to-br from-slate-100 via-emerald-100 to-teal-100 rounded-full w-fit mx-auto mb-10 shadow-lg">
+                    <TreePine className="h-20 w-20 text-emerald-700" />
                   </div>
-                  <h3 className="text-3xl font-bold text-slate-900 mb-6">
+                  <h3 className="text-4xl font-bold text-slate-900 mb-8 tracking-tight">
                     Your Golf Adventure Awaits
                   </h3>
-                  <p className="text-slate-700 mb-8 leading-relaxed text-lg">
+                  <p className="text-slate-700 mb-12 leading-relaxed text-xl font-light">
                     Share your preferences to receive curated recommendations for the world's most prestigious golf destinations and luxury resort experiences.
                   </p>
-                  <div className="space-y-4 text-slate-600">
-                    <div className="flex items-center justify-center gap-3">
-                      <Award className="h-5 w-5 text-emerald-600" />
-                      <span className="text-base">Championship courses</span>
+                  <div className="space-y-6 text-slate-600">
+                    <div className="flex items-center justify-center gap-4">
+                      <Award className="h-6 w-6 text-emerald-600" />
+                      <span className="text-lg font-medium">Championship courses</span>
                     </div>
-                    <div className="flex items-center justify-center gap-3">
-                      <MapPin className="h-5 w-5 text-emerald-600" />
-                      <span className="text-base">Premium destinations</span>
+                    <div className="flex items-center justify-center gap-4">
+                      <MapPin className="h-6 w-6 text-emerald-600" />
+                      <span className="text-lg font-medium">Premium destinations</span>
                     </div>
-                    <div className="flex items-center justify-center gap-3">
-                      <Star className="h-5 w-5 text-emerald-600" />
-                      <span className="text-base">Luxury experiences</span>
+                    <div className="flex items-center justify-center gap-4">
+                      <Star className="h-6 w-6 text-emerald-600" />
+                      <span className="text-lg font-medium">Luxury experiences</span>
                     </div>
                   </div>
                 </div>
