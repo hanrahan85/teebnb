@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -610,5 +611,3 @@ const Index = () => {
 };
 
 export default Index;
-
-</edits_to_apply>
