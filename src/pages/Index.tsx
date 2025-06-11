@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Key, LogOut, User, LogIn } from "lucide-react";
+import { Key, LogOut, User, LogIn, TestTube } from "lucide-react";
 import { TravelData, TravelRecommendation } from "@/types/travel";
 import { saveTravelSubmission } from "@/services/travelService";
 
@@ -32,6 +31,7 @@ const Index = () => {
 
   const [recommendation, setRecommendation] = useState<TravelRecommendation | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
 
   // Update form data when user changes
   useEffect(() => {
@@ -46,6 +46,68 @@ const Index = () => {
 
   const handleInputChange = (field: keyof TravelData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const testEdgeFunction = async () => {
+    setIsTesting(true);
+    console.log('Testing edge function...');
+    
+    try {
+      const testPrompt = `Create a simple test golf travel recommendation for John Doe with a budget of $5,000 for Europe. Format as JSON with title, summary, and one destination.`;
+      
+      const testFormData = {
+        travelerName: "Test User",
+        email: "test@example.com",
+        budget: "5000-10000",
+        preferredRegion: "europe",
+        groupSize: "solo",
+        courseType: "resort",
+        accommodation: "luxury-resort",
+        duration: "5-7-days",
+        handicap: "15",
+        travelDates: "June 2024",
+        specialRequests: "Test request"
+      };
+
+      console.log('Making test call to edge function...');
+
+      const response = await fetch('https://lwuncvddikvqtcmsabpw.supabase.co/functions/v1/generate-travel-recommendation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: testPrompt,
+          formData: testFormData
+        }),
+      });
+
+      console.log('Test response status:', response.status);
+      console.log('Test response headers:', [...response.headers.entries()]);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Test error response:', errorText);
+        throw new Error(`Test failed: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Test response data:', data);
+      
+      if (data && data.recommendation) {
+        toast.success("✅ Edge function test successful! The API is working correctly.");
+        console.log('Test passed - recommendation received:', data.recommendation);
+      } else {
+        toast.error("❌ Test failed - No recommendation data in response");
+        console.error('Test failed - Invalid response structure:', data);
+      }
+      
+    } catch (error) {
+      console.error('Test error:', error);
+      toast.error(`❌ Test failed: ${error.message}`);
+    } finally {
+      setIsTesting(false);
+    }
   };
 
   const handleSignOut = async () => {
@@ -239,15 +301,27 @@ const Index = () => {
                   <p className="font-semibold text-slate-900">{user.user_metadata?.full_name || user.email}</p>
                 </div>
               </div>
-              <Button
-                onClick={handleSignOut}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign Out
-              </Button>
+              <div className="flex items-center gap-3">
+                <Button
+                  onClick={testEdgeFunction}
+                  disabled={isTesting}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <TestTube className="h-4 w-4" />
+                  {isTesting ? "Testing..." : "Test API"}
+                </Button>
+                <Button
+                  onClick={handleSignOut}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -262,14 +336,26 @@ const Index = () => {
                 <LogIn className="h-5 w-5" />
                 <span className="text-sm font-medium">Sign in to save your golf travel recommendations</span>
               </div>
-              <Button
-                onClick={() => window.location.href = '/auth'}
-                variant="outline"
-                size="sm"
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-              >
-                Sign In
-              </Button>
+              <div className="flex items-center gap-3">
+                <Button
+                  onClick={testEdgeFunction}
+                  disabled={isTesting}
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                >
+                  <TestTube className="h-4 w-4 mr-2" />
+                  {isTesting ? "Testing..." : "Test API"}
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/auth'}
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                >
+                  Sign In
+                </Button>
+              </div>
             </div>
           </div>
         </div>
