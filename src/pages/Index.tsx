@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,7 +32,6 @@ const Index = () => {
 
   const [recommendation, setRecommendation] = useState<TravelRecommendation | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [openaiApiKey, setOpenaiApiKey] = useState("");
 
   // Update form data when user changes
   useEffect(() => {
@@ -56,11 +56,6 @@ const Index = () => {
   const generateRecommendation = async () => {
     if (!formData.travelerName || !formData.email || !formData.budget || !formData.preferredRegion) {
       toast.error("Please fill in your name, email, budget, and preferred region to get recommendations.");
-      return;
-    }
-
-    if (!openaiApiKey.trim()) {
-      toast.error("Please enter your OpenAI API key to generate AI-powered recommendations.");
       return;
     }
 
@@ -145,46 +140,31 @@ const Index = () => {
         }
       }`;
 
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      // Call through Supabase edge function instead of direct API call
+      const response = await fetch('https://lwuncvddikvqtcmsabpw.supabase.co/functions/v1/generate-travel-recommendation', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4.1-2025-04-14',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an expert golf travel advisor with access to real-time booking systems. Create detailed, specific recommendations with exact prices, times, dates, and booking details. Make everything feel authentic and bookable. Use realistic pricing for the specified budget range and region. Include specific hotel names, flight numbers, course tee times, and restaurant reservations.'
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.3,
-          max_tokens: 4000,
+          prompt: prompt,
+          formData: formData
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to generate recommendations');
+        throw new Error(errorData.error || 'Failed to generate recommendations');
       }
 
       const data = await response.json();
-      const aiResponse = data.choices[0].message.content;
       
-      // Parse the JSON response
-      const parsedRecommendation = JSON.parse(aiResponse);
-      
-      setRecommendation(parsedRecommendation);
+      setRecommendation(data.recommendation);
       
       // Save to Supabase database only if user is authenticated
       if (user) {
         try {
-          await saveTravelSubmission(formData, parsedRecommendation);
+          await saveTravelSubmission(formData, data.recommendation);
           console.log('Successfully saved travel data to database');
           toast.success("Your detailed golf travel itinerary with bookable details is ready and saved!");
         } catch (saveError) {
@@ -199,7 +179,7 @@ const Index = () => {
       
     } catch (error) {
       console.error('Error generating recommendation:', error);
-      toast.error("Failed to generate recommendations. Please check your API key and try again.");
+      toast.error("Failed to generate recommendations. Please try again later.");
     } finally {
       setIsGenerating(false);
     }
@@ -259,41 +239,6 @@ const Index = () => {
       
       <div className="section-luxury">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          {/* OpenAI API Key Input */}
-          <Card className="p-8 bg-white/90 backdrop-blur-xl border border-stone-200/60 shadow-2xl rounded-3xl mb-16">
-            <div className="max-w-2xl mx-auto">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
-                  <Key className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-slate-900">AI-Powered Booking Assistant</h3>
-                  <p className="text-slate-600">Get specific dates, flights, hotels, and tee times</p>
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="openai-key" className="text-slate-800 font-semibold text-base mb-3 block">
-                  OpenAI API Key
-                </Label>
-                <Input
-                  id="openai-key"
-                  type="password"
-                  value={openaiApiKey}
-                  onChange={(e) => setOpenaiApiKey(e.target.value)}
-                  placeholder="sk-..."
-                  className="h-12 border-stone-300 focus:border-blue-500 bg-white/95 rounded-xl"
-                />
-                <p className="text-sm text-slate-500 mt-2">
-                  Your API key enables detailed recommendations with bookable flights, hotels, and tee times. Get one at{" "}
-                  <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    OpenAI Platform
-                  </a>
-                </p>
-              </div>
-            </div>
-          </Card>
-
           <div className="grid lg:grid-cols-2 gap-16">
             <TravelForm
               formData={formData}
