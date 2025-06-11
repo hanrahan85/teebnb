@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Key } from "lucide-react";
 import { TravelData, TravelRecommendation } from "@/types/travel";
+import { saveTravelSubmission } from "@/services/travelService";
 
 const Index = () => {
   const [formData, setFormData] = useState<TravelData>({
@@ -131,11 +132,16 @@ const Index = () => {
       
       setRecommendation(parsedRecommendation);
       
-      // TODO: Save to Supabase database here
-      console.log('Form data to save:', formData);
-      console.log('AI recommendation to save:', parsedRecommendation);
-      
-      toast.success("Your AI-powered golf travel recommendations are ready!");
+      // Save to Supabase database
+      try {
+        await saveTravelSubmission(formData, parsedRecommendation);
+        console.log('Successfully saved travel data to database');
+        toast.success("Your AI-powered golf travel recommendations are ready and saved!");
+      } catch (saveError) {
+        console.error('Error saving to database:', saveError);
+        toast.success("Your AI-powered golf travel recommendations are ready!");
+        toast.error("Note: Data saving failed, but recommendations are still available.");
+      }
       
     } catch (error) {
       console.error('Error generating recommendation:', error);
