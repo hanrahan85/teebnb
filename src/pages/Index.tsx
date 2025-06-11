@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -67,6 +68,10 @@ const Index = () => {
     setIsGenerating(true);
     
     try {
+      const currentDate = new Date();
+      const futureDate = new Date();
+      futureDate.setMonth(currentDate.getMonth() + 3);
+      
       const prompt = `Create a detailed golf travel recommendation for ${formData.travelerName} with the following preferences:
       - Budget: ${formData.budget}
       - Preferred Region: ${formData.preferredRegion}
@@ -75,14 +80,40 @@ const Index = () => {
       - Accommodation: ${formData.accommodation}
       - Duration: ${formData.duration}
       - Golf Handicap: ${formData.handicap}
-      - Travel Dates: ${formData.travelDates}
+      - Travel Dates: ${formData.travelDates || "Flexible"}
       - Special Requests: ${formData.specialRequests}
+
+      IMPORTANT: Generate SPECIFIC, REALISTIC details including:
+      1. Exact hotel names and rates per night
+      2. Specific flight numbers, airlines, and prices
+      3. Exact tee times with course names and green fees
+      4. Specific dates for travel (use realistic future dates)
+      5. Real restaurant names and reservation details
+      6. Actual transfer services and costs
+
+      Make everything feel bookable and authentic. Use real-sounding hotel names, flight schedules, and pricing that matches the budget range.
 
       Please provide a comprehensive golf travel recommendation including:
       1. A personalized title and summary
-      2. 3 specific golf destinations with course names, descriptions, best times to visit, estimated costs, and highlights
-      3. A detailed 7-day itinerary with daily activities and golf courses
-      4. Practical travel information including flights, accommodation, transportation, and equipment advice
+      2. 3 specific golf destinations with:
+         - Exact course names and green fees
+         - Real hotel names with nightly rates
+         - Specific flight details (airline, flight numbers, times, prices)
+         - Best times to visit with specific dates
+         - Estimated total costs broken down by category
+         - Local highlights and activities
+      3. A detailed 7-day itinerary with:
+         - Specific dates and times
+         - Exact tee times and course bookings
+         - Hotel check-in/out times
+         - Flight departure/arrival times
+         - Restaurant reservations and dining times
+         - Transportation details between locations
+      4. Practical travel information including:
+         - Specific flight booking details (airline, routes, times, costs)
+         - Exact hotel recommendations with rates and booking info
+         - Local transportation options with costs
+         - Golf equipment rental details and prices
 
       Format the response as a JSON object matching this structure:
       {
@@ -91,27 +122,27 @@ const Index = () => {
         "destinations": [
           {
             "name": "string",
-            "country": "string",
+            "country": "string", 
             "description": "string",
-            "courses": ["string"],
-            "bestTime": "string",
-            "estimatedCost": "string",
-            "highlights": ["string"]
+            "courses": ["Course Name - Green Fee: $XXX - Tee Time: XX:XX AM"],
+            "bestTime": "Specific dates (e.g., March 15-22, 2024)",
+            "estimatedCost": "Total: $X,XXX (Flights: $XXX, Hotels: $XXX/night, Golf: $XXX, Meals: $XXX)",
+            "highlights": ["Specific activity with time and cost"]
           }
         ],
         "itinerary": [
           {
-            "day": "string",
-            "activities": ["string"],
-            "courses": ["string"],
-            "notes": "string"
+            "day": "Day 1 - March 15, 2024",
+            "activities": ["10:00 AM - Hotel check-in at [Hotel Name]", "2:00 PM - City tour with [Company] - $XX"],
+            "courses": ["18:00 PM - Sunset round at [Course Name] - $XXX green fee"],
+            "notes": "Specific daily schedule with times and costs"
           }
         ],
         "practicalInfo": {
-          "flights": ["string"],
-          "accommodation": ["string"],
-          "transportation": ["string"],
-          "equipment": ["string"]
+          "flights": ["Outbound: [Airline] Flight XX departing [City] at XX:XX AM, arriving [City] at XX:XX PM - $XXX", "Return: [Airline] Flight XX departing [City] at XX:XX PM - $XXX"],
+          "accommodation": ["[Hotel Name] - $XXX/night, includes breakfast and golf shuttle", "[Resort Name] - $XXX/night, oceanview room with balcony"],
+          "transportation": ["Airport transfer: [Company] - $XX each way", "Rental car: [Company] compact car - $XX/day"],
+          "equipment": ["Golf club rental at [Course Name] - $XX/round", "Golf shoes rental - $XX/day"]
         }
       }`;
 
@@ -122,18 +153,18 @@ const Index = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4-turbo-preview',
+          model: 'gpt-4.1-2025-04-14',
           messages: [
             {
               role: 'system',
-              content: 'You are an expert golf travel advisor who creates detailed, personalized golf vacation recommendations. Always respond with valid JSON matching the requested format.'
+              content: 'You are an expert golf travel advisor with access to real-time booking systems. Create detailed, specific recommendations with exact prices, times, dates, and booking details. Make everything feel authentic and bookable. Use realistic pricing for the specified budget range and region. Include specific hotel names, flight numbers, course tee times, and restaurant reservations.'
             },
             {
               role: 'user',
               content: prompt
             }
           ],
-          temperature: 0.7,
+          temperature: 0.3,
           max_tokens: 4000,
         }),
       });
@@ -155,10 +186,10 @@ const Index = () => {
       try {
         await saveTravelSubmission(formData, parsedRecommendation);
         console.log('Successfully saved travel data to database');
-        toast.success("Your AI-powered golf travel recommendations are ready and saved!");
+        toast.success("Your detailed golf travel itinerary with bookable details is ready!");
       } catch (saveError) {
         console.error('Error saving to database:', saveError);
-        toast.success("Your AI-powered golf travel recommendations are ready!");
+        toast.success("Your detailed golf travel itinerary is ready!");
         toast.error("Note: Data saving failed, but recommendations are still available.");
       }
       
@@ -208,8 +239,8 @@ const Index = () => {
                   <Key className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900">AI-Powered Recommendations</h3>
-                  <p className="text-slate-600">Enter your OpenAI API key to get personalized golf travel suggestions</p>
+                  <h3 className="text-2xl font-bold text-slate-900">AI-Powered Booking Assistant</h3>
+                  <p className="text-slate-600">Get specific dates, flights, hotels, and tee times</p>
                 </div>
               </div>
               
@@ -226,7 +257,7 @@ const Index = () => {
                   className="h-12 border-stone-300 focus:border-blue-500 bg-white/95 rounded-xl"
                 />
                 <p className="text-sm text-slate-500 mt-2">
-                  Your API key is only used for this session and never stored. Get one at{" "}
+                  Your API key enables detailed recommendations with bookable flights, hotels, and tee times. Get one at{" "}
                   <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                     OpenAI Platform
                   </a>

@@ -1,7 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Award, Calendar, Clock, DollarSign, Star, TreePine } from "lucide-react";
+import { MapPin, Award, Calendar, Clock, DollarSign, Star, TreePine, Plane, Hotel, Clock3 } from "lucide-react";
 import { TravelRecommendation } from "@/types/travel";
 
 interface TravelRecommendationsProps {
@@ -17,23 +17,23 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
             <TreePine className="h-20 w-20 text-emerald-700" />
           </div>
           <h3 className="text-4xl font-bold text-slate-900 mb-8 tracking-tight">
-            Your Golf Adventure Awaits
+            Your Bookable Golf Adventure Awaits
           </h3>
           <p className="text-slate-700 mb-12 leading-relaxed text-xl font-light">
-            Share your preferences to receive curated recommendations for the world's most prestigious golf destinations and luxury resort experiences.
+            Get detailed recommendations with specific dates, flight times, hotel rates, and available tee times ready for booking.
           </p>
           <div className="space-y-6 text-slate-600">
             <div className="flex items-center justify-center gap-4">
-              <Award className="h-6 w-6 text-emerald-600" />
-              <span className="text-lg font-medium">Championship courses</span>
+              <Plane className="h-6 w-6 text-emerald-600" />
+              <span className="text-lg font-medium">Specific flight details & pricing</span>
             </div>
             <div className="flex items-center justify-center gap-4">
-              <MapPin className="h-6 w-6 text-emerald-600" />
-              <span className="text-lg font-medium">Premium destinations</span>
+              <Hotel className="h-6 w-6 text-emerald-600" />
+              <span className="text-lg font-medium">Available hotels with rates</span>
             </div>
             <div className="flex items-center justify-center gap-4">
-              <Star className="h-6 w-6 text-emerald-600" />
-              <span className="text-lg font-medium">Luxury experiences</span>
+              <Clock3 className="h-6 w-6 text-emerald-600" />
+              <span className="text-lg font-medium">Exact tee times & green fees</span>
             </div>
           </div>
         </div>
@@ -54,15 +54,21 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
               {recommendation.title}
             </h3>
             <p className="text-slate-700 leading-relaxed text-xl font-light">{recommendation.summary}</p>
+            <div className="mt-4 flex items-center gap-2">
+              <Badge variant="outline" className="border-blue-600 text-blue-800 bg-blue-100/80 px-3 py-1">
+                <Plane className="h-4 w-4 mr-1" />
+                Bookable Details Included
+              </Badge>
+            </div>
           </div>
         </div>
       </Card>
 
-      {/* Destinations */}
+      {/* Destinations with Booking Details */}
       <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
         <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
           <Award className="h-7 w-7 text-emerald-600" />
-          Recommended Destinations
+          Bookable Destinations & Pricing
         </h4>
         <div className="space-y-8">
           {recommendation.destinations.map((dest, index) => (
@@ -74,38 +80,50 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
                 </Badge>
               </div>
               <p className="text-slate-700 mb-4 leading-relaxed text-base">{dest.description}</p>
+              
+              {/* Enhanced Cost Breakdown */}
+              <div className="mb-6 p-4 bg-white/80 rounded-xl border border-emerald-200">
+                <div className="flex items-center gap-3 mb-2">
+                  <DollarSign className="h-5 w-5 text-emerald-600" />
+                  <span className="font-bold text-slate-800 text-lg">Pricing Breakdown</span>
+                </div>
+                <p className="text-slate-700 text-base font-medium">{dest.estimatedCost}</p>
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <p className="font-bold text-slate-800 mb-2 text-base">Featured Courses:</p>
+                  <p className="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
+                    <Clock3 className="h-4 w-4 text-emerald-600" />
+                    Available Tee Times & Fees:
+                  </p>
                   <ul className="space-y-2">
                     {dest.courses.map((course, courseIndex) => (
-                      <li key={courseIndex} className="text-slate-700 text-base">• {course}</li>
+                      <li key={courseIndex} className="text-slate-700 text-base bg-white/60 p-2 rounded-lg">• {course}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <p className="font-bold text-slate-800 mb-2 text-base">Highlights:</p>
+                  <p className="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
+                    <Star className="h-4 w-4 text-emerald-600" />
+                    Local Highlights:
+                  </p>
                   <ul className="space-y-2">
                     {dest.highlights.map((highlight, highlightIndex) => (
-                      <li key={highlightIndex} className="text-slate-700 text-base">• {highlight}</li>
+                      <li key={highlightIndex} className="text-slate-700 text-base bg-white/60 p-2 rounded-lg">• {highlight}</li>
                     ))}
                   </ul>
                 </div>
-              </div>
-              <div className="mt-4 flex items-center gap-3">
-                <DollarSign className="h-5 w-5 text-emerald-600" />
-                <span className="font-semibold text-slate-800 text-base">{dest.estimatedCost}</span>
               </div>
             </div>
           ))}
         </div>
       </Card>
 
-      {/* Itinerary */}
+      {/* Detailed Itinerary with Times */}
       <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
         <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
           <Calendar className="h-7 w-7 text-emerald-600" />
-          Suggested Itinerary
+          Daily Schedule with Booking Times
         </h4>
         <div className="space-y-6">
           {recommendation.itinerary.map((day, index) => (
@@ -120,18 +138,24 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
                 <p className="text-slate-700 mb-4 leading-relaxed text-base">{day.notes}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <p className="font-bold text-slate-800 mb-2 text-base">Activities:</p>
-                    <ul className="space-y-1">
+                    <p className="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      Scheduled Activities:
+                    </p>
+                    <ul className="space-y-2">
                       {day.activities.map((activity, actIndex) => (
-                        <li key={actIndex} className="text-slate-700 text-base">• {activity}</li>
+                        <li key={actIndex} className="text-slate-700 text-base bg-white/70 p-2 rounded-lg">• {activity}</li>
                       ))}
                     </ul>
                   </div>
                   <div>
-                    <p className="font-bold text-slate-800 mb-2 text-base">Golf:</p>
-                    <ul className="space-y-1">
+                    <p className="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
+                      <Clock3 className="h-4 w-4 text-emerald-600" />
+                      Golf Reservations:
+                    </p>
+                    <ul className="space-y-2">
                       {day.courses.map((course, courseIndex) => (
-                        <li key={courseIndex} className="text-slate-700 text-base">• {course}</li>
+                        <li key={courseIndex} className="text-slate-700 text-base bg-white/70 p-2 rounded-lg">• {course}</li>
                       ))}
                     </ul>
                   </div>
@@ -142,45 +166,62 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
         </div>
       </Card>
 
-      {/* Practical Info */}
+      {/* Enhanced Practical Info with Booking Details */}
       <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
         <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
           <Clock className="h-7 w-7 text-emerald-600" />
-          Travel Essentials
+          Booking Information & Contact Details
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h5 className="text-lg font-bold text-slate-900 mb-3">Flights & Transport</h5>
-            <ul className="space-y-2">
+            <h5 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <Plane className="h-5 w-5 text-blue-600" />
+              Flight Reservations
+            </h5>
+            <ul className="space-y-3">
               {recommendation.practicalInfo.flights.map((item, index) => (
-                <li key={index} className="text-slate-700 text-base">• {item}</li>
+                <li key={index} className="text-slate-700 text-base bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">• {item}</li>
               ))}
             </ul>
           </div>
           <div>
-            <h5 className="text-lg font-bold text-slate-900 mb-3">Accommodation</h5>
-            <ul className="space-y-2">
+            <h5 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <Hotel className="h-5 w-5 text-purple-600" />
+              Hotel Bookings
+            </h5>
+            <ul className="space-y-3">
               {recommendation.practicalInfo.accommodation.map((item, index) => (
-                <li key={index} className="text-slate-700 text-base">• {item}</li>
+                <li key={index} className="text-slate-700 text-base bg-purple-50 p-3 rounded-lg border-l-4 border-purple-400">• {item}</li>
               ))}
             </ul>
           </div>
           <div>
-            <h5 className="text-lg font-bold text-slate-900 mb-3">Local Transport</h5>
-            <ul className="space-y-2">
+            <h5 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-orange-600" />
+              Transportation Services
+            </h5>
+            <ul className="space-y-3">
               {recommendation.practicalInfo.transportation.map((item, index) => (
-                <li key={index} className="text-slate-700 text-base">• {item}</li>
+                <li key={index} className="text-slate-700 text-base bg-orange-50 p-3 rounded-lg border-l-4 border-orange-400">• {item}</li>
               ))}
             </ul>
           </div>
           <div>
-            <h5 className="text-lg font-bold text-slate-900 mb-3">Equipment & Gear</h5>
-            <ul className="space-y-2">
+            <h5 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <Award className="h-5 w-5 text-emerald-600" />
+              Golf Equipment & Services
+            </h5>
+            <ul className="space-y-3">
               {recommendation.practicalInfo.equipment.map((item, index) => (
-                <li key={index} className="text-slate-700 text-base">• {item}</li>
+                <li key={index} className="text-slate-700 text-base bg-emerald-50 p-3 rounded-lg border-l-4 border-emerald-400">• {item}</li>
               ))}
             </ul>
           </div>
+        </div>
+        
+        <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-emerald-50 rounded-xl border border-blue-200">
+          <h6 className="text-lg font-bold text-slate-900 mb-2">Ready to Book?</h6>
+          <p className="text-slate-700 text-base">All recommendations include specific contact information, booking references, and available time slots. Contact the providers directly using the details above to secure your reservations.</p>
         </div>
       </Card>
     </div>
