@@ -140,7 +140,8 @@ const Index = () => {
         }
       }`;
 
-      // Call through Supabase edge function instead of direct API call
+      console.log('Calling edge function with prompt:', prompt);
+
       const response = await fetch('https://lwuncvddikvqtcmsabpw.supabase.co/functions/v1/generate-travel-recommendation', {
         method: 'POST',
         headers: {
@@ -152,12 +153,29 @@ const Index = () => {
         }),
       });
 
+      console.log('Edge function response status:', response.status);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate recommendations');
+        const errorText = await response.text();
+        console.error('Edge function error response:', errorText);
+        
+        let errorMessage = 'Failed to generate recommendations';
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // Use default error message
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
+      console.log('Edge function response data:', data);
+      
+      if (!data.recommendation) {
+        throw new Error('No recommendation data received');
+      }
       
       setRecommendation(data.recommendation);
       
@@ -179,7 +197,7 @@ const Index = () => {
       
     } catch (error) {
       console.error('Error generating recommendation:', error);
-      toast.error("Failed to generate recommendations. Please try again later.");
+      toast.error(`Failed to generate recommendations: ${error.message}`);
     } finally {
       setIsGenerating(false);
     }
