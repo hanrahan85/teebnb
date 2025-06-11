@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Plane, Calendar, Users, Star, Clock, DollarSign, Map, Waves } from "lucide-react";
+import { MapPin, Plane, Calendar, Users, Star, Clock, DollarSign, Map, Waves, Award, TreePine } from "lucide-react";
 import { toast } from "sonner";
 
 interface TravelData {
@@ -86,6 +86,15 @@ const Index = () => {
       summary: `A curated golf travel experience designed for ${formData.travelerName} featuring world-class courses, premium accommodations, and unforgettable golf destinations tailored to your preferences and budget.`,
       destinations: [
         {
+          name: "The Grove",
+          country: "England",
+          description: "Championship golf resort with three world-class courses in the beautiful Hertfordshire countryside",
+          courses: ["The Grove Championship Course", "West London Golf Centre", "Academy Course", "Practice facilities"],
+          bestTime: "April - October",
+          estimatedCost: "£200-400/round",
+          highlights: ["Championship PGA course", "Luxury spa resort", "Award-winning dining", "Corporate golf facilities"]
+        },
+        {
           name: "St. Andrews",
           country: "Scotland",
           description: "The Home of Golf featuring legendary links courses and rich golf history",
@@ -102,15 +111,6 @@ const Index = () => {
           bestTime: "April - October",
           estimatedCost: "$500-800/round",
           highlights: ["Dramatic coastline", "Seal Point Clubhouse", "Lodge at Pebble Beach", "17-Mile Drive"]
-        },
-        {
-          name: "Augusta National",
-          country: "USA",
-          description: "Home of The Masters Tournament (invitation only)",
-          courses: ["Augusta National Golf Club"],
-          bestTime: "March - May",
-          estimatedCost: "Invitation only",
-          highlights: ["Amen Corner", "Azaleas and Magnolias", "Masters history", "Butler Cabin"]
         }
       ],
       itinerary: [
@@ -173,51 +173,60 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
-      {/* Hero Section with Links Golf Aesthetic */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-emerald-800 via-green-700 to-teal-600 text-white">
-        {/* Subtle wave pattern for links golf feel */}
-        <div className="absolute inset-0 opacity-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stone-50 to-emerald-50">
+      {/* Hero Section with Luxury Golf Resort Aesthetic */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-stone-800 to-emerald-900">
+        {/* Sophisticated background pattern */}
+        <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `
-              radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px),
-              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.08) 1px, transparent 1px)
+              radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 1px, transparent 1px),
+              radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 1px, transparent 1px),
+              linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+              linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%)
             `,
-            backgroundSize: '40px 40px, 60px 60px'
+            backgroundSize: '60px 60px, 80px 80px, 40px 40px, 40px 40px'
           }}></div>
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-emerald-900/30 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-10">
               <div className="relative">
-                <div className="p-6 bg-white/20 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/30">
-                  <Waves className="h-16 w-16 text-emerald-100" />
-                </div>
-                <div className="absolute -bottom-2 -right-2 p-2 bg-emerald-500 rounded-full">
-                  <Map className="h-6 w-6 text-white" />
+                <div className="p-8 bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl border border-white/20">
+                  <div className="relative">
+                    <TreePine className="h-20 w-20 text-emerald-200" />
+                    <div className="absolute -top-2 -right-2 p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full">
+                      <Award className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in bg-gradient-to-r from-white via-emerald-100 to-teal-100 bg-clip-text text-transparent">
-              TeebnB
+            <h1 className="text-6xl md:text-8xl font-bold mb-8 animate-fade-in">
+              <span className="bg-gradient-to-r from-white via-stone-200 to-emerald-200 bg-clip-text text-transparent">
+                TeebnB
+              </span>
             </h1>
-            <p className="text-xl md:text-2xl text-emerald-100 mb-8 max-w-4xl mx-auto animate-fade-in font-light leading-relaxed">
-              Discover the world's most beautiful golf destinations with personalized travel recommendations
+            <p className="text-xl md:text-3xl text-stone-200 mb-6 max-w-5xl mx-auto animate-fade-in font-light leading-relaxed tracking-wide">
+              Discover the world's most prestigious golf destinations
             </p>
-            <div className="flex flex-wrap justify-center gap-3 text-sm">
-              <Badge variant="secondary" className="px-6 py-3 bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all">
-                <Plane className="h-4 w-4 mr-2" />
-                Links & Coastal Courses
+            <p className="text-lg text-stone-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Curated luxury golf experiences at championship courses and premium resorts worldwide
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 text-sm">
+              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
+                <Award className="h-5 w-5 mr-3" />
+                Championship Courses
               </Badge>
-              <Badge variant="secondary" className="px-6 py-3 bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all">
-                <MapPin className="h-4 w-4 mr-2" />
-                Seaside Destinations
+              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
+                <MapPin className="h-5 w-5 mr-3" />
+                Premium Destinations
               </Badge>
-              <Badge variant="secondary" className="px-6 py-3 bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all">
-                <Star className="h-4 w-4 mr-2" />
+              <Badge variant="secondary" className="px-8 py-4 bg-white/15 text-white border-white/25 backdrop-blur-md hover:bg-white/25 transition-all text-base">
+                <Star className="h-5 w-5 mr-3" />
                 Luxury Experiences
               </Badge>
             </div>
@@ -225,23 +234,23 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid lg:grid-cols-2 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="grid lg:grid-cols-2 gap-16">
           {/* Form Section */}
-          <Card className="p-8 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-emerald-900 mb-4">
-                Plan Your Golf Adventure
+          <Card className="p-10 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
+            <div className="mb-10">
+              <h2 className="text-4xl font-bold text-slate-900 mb-6">
+                Plan Your Golf Journey
               </h2>
-              <p className="text-emerald-700 leading-relaxed">
-                Tell us about your dream golf trip and we'll create a personalized travel plan featuring the world's most stunning courses and coastal destinations.
+              <p className="text-slate-700 leading-relaxed text-lg">
+                Share your preferences and we'll craft a bespoke golf travel experience featuring world-class courses, luxury accommodations, and unforgettable destinations.
               </p>
             </div>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="travelerName" className="text-emerald-800 font-medium">
+                  <Label htmlFor="travelerName" className="text-slate-800 font-semibold text-base mb-3 block">
                     Traveler Name *
                   </Label>
                   <Input
@@ -249,11 +258,11 @@ const Index = () => {
                     value={formData.travelerName}
                     onChange={(e) => handleInputChange("travelerName", e.target.value)}
                     placeholder="Enter your name"
-                    className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80"
+                    className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="handicap" className="text-emerald-800 font-medium">
+                  <Label htmlFor="handicap" className="text-slate-800 font-semibold text-base mb-3 block">
                     Golf Handicap
                   </Label>
                   <Input
@@ -261,21 +270,21 @@ const Index = () => {
                     value={formData.handicap}
                     onChange={(e) => handleInputChange("handicap", e.target.value)}
                     placeholder="e.g., 15"
-                    className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80"
+                    className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="budget" className="text-emerald-800 font-medium">
+                  <Label htmlFor="budget" className="text-slate-800 font-semibold text-base mb-3 block">
                     Total Budget *
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("budget", value)}>
-                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
+                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
                       <SelectValue placeholder="Select budget range" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-sm">
+                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
                       <SelectItem value="under-5000">Under $5,000</SelectItem>
                       <SelectItem value="5000-10000">$5,000 - $10,000</SelectItem>
                       <SelectItem value="10000-20000">$10,000 - $20,000</SelectItem>
@@ -284,14 +293,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="duration" className="text-emerald-800 font-medium">
+                  <Label htmlFor="duration" className="text-slate-800 font-semibold text-base mb-3 block">
                     Trip Duration
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("duration", value)}>
-                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
+                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
                       <SelectValue placeholder="How long?" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-sm">
+                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
                       <SelectItem value="3-4-days">3-4 days</SelectItem>
                       <SelectItem value="5-7-days">5-7 days</SelectItem>
                       <SelectItem value="1-2-weeks">1-2 weeks</SelectItem>
@@ -301,16 +310,16 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="preferredRegion" className="text-emerald-800 font-medium">
+                  <Label htmlFor="preferredRegion" className="text-slate-800 font-semibold text-base mb-3 block">
                     Preferred Region *
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("preferredRegion", value)}>
-                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
+                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
                       <SelectValue placeholder="Where to?" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-sm">
+                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
                       <SelectItem value="europe">Europe</SelectItem>
                       <SelectItem value="north-america">North America</SelectItem>
                       <SelectItem value="asia-pacific">Asia Pacific</SelectItem>
@@ -320,14 +329,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="groupSize" className="text-emerald-800 font-medium">
+                  <Label htmlFor="groupSize" className="text-slate-800 font-semibold text-base mb-3 block">
                     Group Size
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("groupSize", value)}>
-                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
+                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
                       <SelectValue placeholder="How many people?" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-sm">
+                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
                       <SelectItem value="solo">Solo traveler</SelectItem>
                       <SelectItem value="couple">2 people</SelectItem>
                       <SelectItem value="small-group">3-4 people</SelectItem>
@@ -337,16 +346,16 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="courseType" className="text-emerald-800 font-medium">
+                  <Label htmlFor="courseType" className="text-slate-800 font-semibold text-base mb-3 block">
                     Course Preference
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("courseType", value)}>
-                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
+                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
                       <SelectValue placeholder="Course style" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-sm">
+                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
                       <SelectItem value="links">Links courses</SelectItem>
                       <SelectItem value="resort">Resort courses</SelectItem>
                       <SelectItem value="championship">Championship courses</SelectItem>
@@ -356,14 +365,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="accommodation" className="text-emerald-800 font-medium">
+                  <Label htmlFor="accommodation" className="text-slate-800 font-semibold text-base mb-3 block">
                     Accommodation Style
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("accommodation", value)}>
-                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
+                    <SelectTrigger className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base">
                       <SelectValue placeholder="Where to stay?" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white/95 backdrop-blur-sm">
+                    <SelectContent className="bg-white/95 backdrop-blur-lg rounded-xl">
                       <SelectItem value="luxury-resort">Luxury golf resort</SelectItem>
                       <SelectItem value="boutique-hotel">Boutique hotel</SelectItem>
                       <SelectItem value="vacation-rental">Vacation rental</SelectItem>
@@ -374,7 +383,7 @@ const Index = () => {
               </div>
 
               <div>
-                <Label htmlFor="travelDates" className="text-emerald-800 font-medium">
+                <Label htmlFor="travelDates" className="text-slate-800 font-semibold text-base mb-3 block">
                   Preferred Travel Dates
                 </Label>
                 <Input
@@ -382,12 +391,12 @@ const Index = () => {
                   value={formData.travelDates}
                   onChange={(e) => handleInputChange("travelDates", e.target.value)}
                   placeholder="e.g., June 2024 or flexible dates"
-                  className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80"
+                  className="h-12 border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base"
                 />
               </div>
 
               <div>
-                <Label htmlFor="specialRequests" className="text-emerald-800 font-medium">
+                <Label htmlFor="specialRequests" className="text-slate-800 font-semibold text-base mb-3 block">
                   Special Requests
                 </Label>
                 <Textarea
@@ -395,24 +404,24 @@ const Index = () => {
                   value={formData.specialRequests}
                   onChange={(e) => handleInputChange("specialRequests", e.target.value)}
                   placeholder="Any special requirements, interests, or must-see courses?"
-                  className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80"
+                  className="min-h-[120px] border-stone-300 focus:border-emerald-500 bg-white/90 rounded-xl text-base resize-none"
                 />
               </div>
 
               <Button
                 onClick={generateRecommendation}
                 disabled={isGenerating}
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 h-14 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                className="w-full bg-gradient-to-r from-slate-800 via-emerald-700 to-teal-700 hover:from-slate-900 hover:via-emerald-800 hover:to-teal-800 text-white border-0 h-16 text-lg font-semibold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
               >
                 {isGenerating ? (
-                  <div className="flex items-center gap-3">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Creating Your Golf Adventure...
+                  <div className="flex items-center gap-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    Crafting Your Luxury Golf Experience...
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <Plane className="h-5 w-5" />
-                    Plan My Golf Trip
+                  <div className="flex items-center gap-4">
+                    <TreePine className="h-6 w-6" />
+                    Create My Golf Journey
                   </div>
                 )}
               </Button>
@@ -420,61 +429,61 @@ const Index = () => {
           </Card>
 
           {/* Results Section */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {recommendation ? (
-              <div className="space-y-6 animate-fade-in">
+              <div className="space-y-8 animate-fade-in">
                 {/* Header */}
-                <Card className="p-6 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl">
-                      <MapPin className="h-6 w-6 text-white" />
+                <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
+                  <div className="flex items-start gap-6 mb-6">
+                    <div className="p-4 bg-gradient-to-br from-slate-700 via-emerald-600 to-teal-600 rounded-2xl">
+                      <MapPin className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-emerald-900">
+                      <h3 className="text-3xl font-bold text-slate-900 mb-3">
                         {recommendation.title}
                       </h3>
-                      <p className="text-emerald-700 mt-2 leading-relaxed">{recommendation.summary}</p>
+                      <p className="text-slate-700 leading-relaxed text-lg">{recommendation.summary}</p>
                     </div>
                   </div>
                 </Card>
 
                 {/* Destinations */}
-                <Card className="p-6 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
-                  <h4 className="text-xl font-semibold text-emerald-900 mb-4 flex items-center gap-2">
-                    <Map className="h-5 w-5 text-emerald-600" />
+                <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
+                  <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                    <Award className="h-7 w-7 text-emerald-600" />
                     Recommended Destinations
                   </h4>
-                  <div className="space-y-6">
+                  <div className="space-y-8">
                     {recommendation.destinations.map((dest, index) => (
-                      <div key={index} className="border-l-4 border-emerald-400 pl-4 bg-emerald-50/50 rounded-r-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h5 className="font-semibold text-emerald-900">{dest.name}, {dest.country}</h5>
-                          <Badge variant="outline" className="border-emerald-500 text-emerald-700 bg-emerald-50">
+                      <div key={index} className="border-l-4 border-emerald-500 pl-6 bg-gradient-to-r from-emerald-50/50 to-teal-50/50 rounded-r-2xl p-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-xl font-bold text-slate-900">{dest.name}, {dest.country}</h5>
+                          <Badge variant="outline" className="border-emerald-600 text-emerald-800 bg-emerald-100/80 px-4 py-2 text-sm">
                             {dest.bestTime}
                           </Badge>
                         </div>
-                        <p className="text-sm text-emerald-700 mb-3 leading-relaxed">{dest.description}</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <p className="text-slate-700 mb-4 leading-relaxed text-base">{dest.description}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <p className="font-medium text-emerald-800 mb-1">Featured Courses:</p>
-                            <ul className="space-y-1">
+                            <p className="font-bold text-slate-800 mb-2 text-base">Featured Courses:</p>
+                            <ul className="space-y-2">
                               {dest.courses.map((course, courseIndex) => (
-                                <li key={courseIndex} className="text-emerald-700">• {course}</li>
+                                <li key={courseIndex} className="text-slate-700 text-base">• {course}</li>
                               ))}
                             </ul>
                           </div>
                           <div>
-                            <p className="font-medium text-emerald-800 mb-1">Highlights:</p>
-                            <ul className="space-y-1">
+                            <p className="font-bold text-slate-800 mb-2 text-base">Highlights:</p>
+                            <ul className="space-y-2">
                               {dest.highlights.map((highlight, highlightIndex) => (
-                                <li key={highlightIndex} className="text-emerald-700">• {highlight}</li>
+                                <li key={highlightIndex} className="text-slate-700 text-base">• {highlight}</li>
                               ))}
                             </ul>
                           </div>
                         </div>
-                        <div className="mt-3 flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-teal-600" />
-                          <span className="text-sm font-medium text-emerald-800">{dest.estimatedCost}</span>
+                        <div className="mt-4 flex items-center gap-3">
+                          <DollarSign className="h-5 w-5 text-emerald-600" />
+                          <span className="font-semibold text-slate-800 text-base">{dest.estimatedCost}</span>
                         </div>
                       </div>
                     ))}
@@ -482,36 +491,36 @@ const Index = () => {
                 </Card>
 
                 {/* Itinerary */}
-                <Card className="p-6 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
-                  <h4 className="text-xl font-semibold text-emerald-900 mb-4 flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-emerald-600" />
+                <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
+                  <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                    <Calendar className="h-7 w-7 text-emerald-600" />
                     Suggested Itinerary
                   </h4>
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {recommendation.itinerary.map((day, index) => (
-                      <div key={index} className="flex items-start gap-4 p-4 bg-emerald-50 rounded-lg">
+                      <div key={index} className="flex items-start gap-6 p-6 bg-gradient-to-r from-slate-50 to-emerald-50 rounded-2xl">
                         <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-full flex items-center justify-center font-semibold">
+                          <div className="w-14 h-14 bg-gradient-to-br from-slate-700 via-emerald-600 to-teal-600 text-white rounded-2xl flex items-center justify-center font-bold text-lg">
                             {index + 1}
                           </div>
                         </div>
                         <div className="flex-grow">
-                          <h5 className="font-semibold text-emerald-900 mb-2">{day.day}</h5>
-                          <p className="text-sm text-emerald-700 mb-2 leading-relaxed">{day.notes}</p>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <h5 className="text-xl font-bold text-slate-900 mb-3">{day.day}</h5>
+                          <p className="text-slate-700 mb-4 leading-relaxed text-base">{day.notes}</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                              <p className="font-medium text-emerald-800 mb-1">Activities:</p>
+                              <p className="font-bold text-slate-800 mb-2 text-base">Activities:</p>
                               <ul className="space-y-1">
                                 {day.activities.map((activity, actIndex) => (
-                                  <li key={actIndex} className="text-emerald-700">• {activity}</li>
+                                  <li key={actIndex} className="text-slate-700 text-base">• {activity}</li>
                                 ))}
                               </ul>
                             </div>
                             <div>
-                              <p className="font-medium text-emerald-800 mb-1">Golf:</p>
+                              <p className="font-bold text-slate-800 mb-2 text-base">Golf:</p>
                               <ul className="space-y-1">
                                 {day.courses.map((course, courseIndex) => (
-                                  <li key={courseIndex} className="text-emerald-700">• {course}</li>
+                                  <li key={courseIndex} className="text-slate-700 text-base">• {course}</li>
                                 ))}
                               </ul>
                             </div>
@@ -523,41 +532,41 @@ const Index = () => {
                 </Card>
 
                 {/* Practical Info */}
-                <Card className="p-6 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
-                  <h4 className="text-xl font-semibold text-emerald-900 mb-4 flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-emerald-600" />
+                <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
+                  <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                    <Clock className="h-7 w-7 text-emerald-600" />
                     Travel Essentials
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                      <h5 className="font-semibold text-emerald-900 mb-2">Flights & Transport</h5>
-                      <ul className="space-y-1">
+                      <h5 className="text-lg font-bold text-slate-900 mb-3">Flights & Transport</h5>
+                      <ul className="space-y-2">
                         {recommendation.practicalInfo.flights.map((item, index) => (
-                          <li key={index} className="text-sm text-emerald-700">• {item}</li>
+                          <li key={index} className="text-slate-700 text-base">• {item}</li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <h5 className="font-semibold text-emerald-900 mb-2">Accommodation</h5>
-                      <ul className="space-y-1">
+                      <h5 className="text-lg font-bold text-slate-900 mb-3">Accommodation</h5>
+                      <ul className="space-y-2">
                         {recommendation.practicalInfo.accommodation.map((item, index) => (
-                          <li key={index} className="text-sm text-emerald-700">• {item}</li>
+                          <li key={index} className="text-slate-700 text-base">• {item}</li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <h5 className="font-semibold text-emerald-900 mb-2">Local Transport</h5>
-                      <ul className="space-y-1">
+                      <h5 className="text-lg font-bold text-slate-900 mb-3">Local Transport</h5>
+                      <ul className="space-y-2">
                         {recommendation.practicalInfo.transportation.map((item, index) => (
-                          <li key={index} className="text-sm text-emerald-700">• {item}</li>
+                          <li key={index} className="text-slate-700 text-base">• {item}</li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <h5 className="font-semibold text-emerald-900 mb-2">Equipment & Gear</h5>
-                      <ul className="space-y-1">
+                      <h5 className="text-lg font-bold text-slate-900 mb-3">Equipment & Gear</h5>
+                      <ul className="space-y-2">
                         {recommendation.practicalInfo.equipment.map((item, index) => (
-                          <li key={index} className="text-sm text-emerald-700">• {item}</li>
+                          <li key={index} className="text-slate-700 text-base">• {item}</li>
                         ))}
                       </ul>
                     </div>
@@ -565,29 +574,29 @@ const Index = () => {
                 </Card>
               </div>
             ) : (
-              <Card className="p-12 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl text-center">
-                <div className="max-w-md mx-auto">
-                  <div className="p-6 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl w-fit mx-auto mb-6">
-                    <Waves className="h-12 w-12 text-emerald-600" />
+              <Card className="p-12 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl text-center">
+                <div className="max-w-lg mx-auto">
+                  <div className="p-8 bg-gradient-to-br from-slate-100 via-emerald-100 to-teal-100 rounded-3xl w-fit mx-auto mb-8">
+                    <TreePine className="h-16 w-16 text-emerald-700" />
                   </div>
-                  <h3 className="text-2xl font-bold text-emerald-900 mb-4">
-                    Ready for Your Golf Adventure?
+                  <h3 className="text-3xl font-bold text-slate-900 mb-6">
+                    Your Golf Adventure Awaits
                   </h3>
-                  <p className="text-emerald-700 mb-6 leading-relaxed">
-                    Fill out your travel preferences to receive personalized golf destination recommendations from the world's most beautiful courses.
+                  <p className="text-slate-700 mb-8 leading-relaxed text-lg">
+                    Share your preferences to receive curated recommendations for the world's most prestigious golf destinations and luxury resort experiences.
                   </p>
-                  <div className="space-y-3 text-sm text-emerald-600">
-                    <div className="flex items-center justify-center gap-2">
-                      <Plane className="h-4 w-4" />
-                      <span>Coastal destinations</span>
+                  <div className="space-y-4 text-slate-600">
+                    <div className="flex items-center justify-center gap-3">
+                      <Award className="h-5 w-5 text-emerald-600" />
+                      <span className="text-base">Championship courses</span>
                     </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      <span>Links courses</span>
+                    <div className="flex items-center justify-center gap-3">
+                      <MapPin className="h-5 w-5 text-emerald-600" />
+                      <span className="text-base">Premium destinations</span>
                     </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <Star className="h-4 w-4" />
-                      <span>Luxury experiences</span>
+                    <div className="flex items-center justify-center gap-3">
+                      <Star className="h-5 w-5 text-emerald-600" />
+                      <span className="text-base">Luxury experiences</span>
                     </div>
                   </div>
                 </div>
@@ -601,3 +610,5 @@ const Index = () => {
 };
 
 export default Index;
+
+</edits_to_apply>
