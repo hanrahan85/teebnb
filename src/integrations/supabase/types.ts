@@ -9,7 +9,122 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      travel_recommendations: {
+        Row: {
+          created_at: string | null
+          destinations: Json
+          id: string
+          itinerary: Json
+          practical_info: Json
+          submission_id: string | null
+          summary: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          destinations: Json
+          id?: string
+          itinerary: Json
+          practical_info: Json
+          submission_id?: string | null
+          summary: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          destinations?: Json
+          id?: string
+          itinerary?: Json
+          practical_info?: Json
+          submission_id?: string | null
+          summary?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_recommendations_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "travel_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      travel_submissions: {
+        Row: {
+          accommodation: string | null
+          budget: string
+          course_type: string | null
+          created_at: string | null
+          duration: string | null
+          email: string
+          group_size: string | null
+          handicap: string | null
+          id: string
+          preferred_region: string
+          special_requests: string | null
+          travel_dates: string | null
+          traveler_name: string
+          user_id: string
+        }
+        Insert: {
+          accommodation?: string | null
+          budget: string
+          course_type?: string | null
+          created_at?: string | null
+          duration?: string | null
+          email: string
+          group_size?: string | null
+          handicap?: string | null
+          id?: string
+          preferred_region: string
+          special_requests?: string | null
+          travel_dates?: string | null
+          traveler_name: string
+          user_id: string
+        }
+        Update: {
+          accommodation?: string | null
+          budget?: string
+          course_type?: string | null
+          created_at?: string | null
+          duration?: string | null
+          email?: string
+          group_size?: string | null
+          handicap?: string | null
+          id?: string
+          preferred_region?: string
+          special_requests?: string | null
+          travel_dates?: string | null
+          traveler_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

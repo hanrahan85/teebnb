@@ -1,20 +1,23 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import HeroSection from "@/components/HeroSection";
 import TravelForm from "@/components/TravelForm";
 import TravelRecommendations from "@/components/TravelRecommendations";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Key } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Key, LogOut, User } from "lucide-react";
 import { TravelData, TravelRecommendation } from "@/types/travel";
 import { saveTravelSubmission } from "@/services/travelService";
 
 const Index = () => {
+  const { user, signOut } = useAuth();
+  
   const [formData, setFormData] = useState<TravelData>({
-    travelerName: "",
-    email: "",
+    travelerName: user?.user_metadata?.full_name || "",
+    email: user?.email || "",
     handicap: "",
     budget: "",
     travelDates: "",
@@ -30,8 +33,24 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [openaiApiKey, setOpenaiApiKey] = useState("");
 
+  // Update form data when user changes
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        travelerName: user.user_metadata?.full_name || "",
+        email: user.email || ""
+      }));
+    }
+  }, [user]);
+
   const handleInputChange = (field: keyof TravelData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out successfully");
   };
 
   const generateRecommendation = async () => {
@@ -103,7 +122,7 @@ const Index = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4.1-2025-04-14',
+          model: 'gpt-4-turbo-preview',
           messages: [
             {
               role: 'system',
@@ -153,6 +172,30 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      {/* User Header */}
+      <div className="bg-white/90 backdrop-blur-lg border-b border-stone-200/50 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <User className="h-8 w-8 text-emerald-600" />
+              <div>
+                <p className="text-sm text-slate-600">Welcome back,</p>
+                <p className="font-semibold text-slate-900">{user?.user_metadata?.full_name || user?.email}</p>
+              </div>
+            </div>
+            <Button
+              onClick={handleSignOut}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </div>
+
       <HeroSection />
       
       <div className="section-luxury">

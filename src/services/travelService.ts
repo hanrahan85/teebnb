@@ -4,10 +4,18 @@ import { TravelData, TravelRecommendation } from '@/types/travel'
 
 export const saveTravelSubmission = async (formData: TravelData, recommendation: TravelRecommendation) => {
   try {
-    // First, save the travel submission
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User must be authenticated to save travel data');
+    }
+
+    // First, save the travel submission with user_id
     const { data: submission, error: submissionError } = await supabase
       .from('travel_submissions')
       .insert({
+        user_id: user.id,
         traveler_name: formData.travelerName,
         email: formData.email,
         handicap: formData.handicap,
@@ -57,12 +65,20 @@ export const saveTravelSubmission = async (formData: TravelData, recommendation:
 
 export const getTravelSubmissions = async () => {
   try {
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User must be authenticated to fetch travel data');
+    }
+
     const { data, error } = await supabase
       .from('travel_submissions')
       .select(`
         *,
         travel_recommendations (*)
       `)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     if (error) {
