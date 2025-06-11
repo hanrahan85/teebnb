@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Plane, Calendar, Users, Star, Clock, DollarSign, Map } from "lucide-react";
+import { MapPin, Plane, Calendar, Users, Star, Clock, DollarSign, Map, Waves } from "lucide-react";
 import { toast } from "sonner";
 
 interface TravelData {
@@ -174,33 +173,50 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-golf-navy-50 via-white to-golf-green-50">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-hero-gradient text-white">
-        <div className="absolute inset-0 golf-pattern opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
+      {/* Hero Section with Links Golf Aesthetic */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-emerald-800 via-green-700 to-teal-600 text-white">
+        {/* Subtle wave pattern for links golf feel */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px),
+              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.08) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px, 60px 60px'
+          }}></div>
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-emerald-900/30 to-transparent"></div>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
-            <div className="flex justify-center mb-6">
-              <div className="p-4 bg-golf-green-500 rounded-full golf-shadow">
-                <Map className="h-12 w-12 text-white" />
+            <div className="flex justify-center mb-8">
+              <div className="relative">
+                <div className="p-6 bg-white/20 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/30">
+                  <Waves className="h-16 w-16 text-emerald-100" />
+                </div>
+                <div className="absolute -bottom-2 -right-2 p-2 bg-emerald-500 rounded-full">
+                  <Map className="h-6 w-6 text-white" />
+                </div>
               </div>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
-              AI Golf Travel Planner
+            
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in bg-gradient-to-r from-white via-emerald-100 to-teal-100 bg-clip-text text-transparent">
+              TeebnB
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto animate-fade-in">
-              Discover amazing golf destinations worldwide with personalized travel recommendations
+            <p className="text-xl md:text-2xl text-emerald-100 mb-8 max-w-4xl mx-auto animate-fade-in font-light leading-relaxed">
+              Discover the world's most beautiful golf destinations with personalized travel recommendations
             </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <Badge variant="secondary" className="px-4 py-2">
+            <div className="flex flex-wrap justify-center gap-3 text-sm">
+              <Badge variant="secondary" className="px-6 py-3 bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all">
                 <Plane className="h-4 w-4 mr-2" />
-                Global Destinations
+                Links & Coastal Courses
               </Badge>
-              <Badge variant="secondary" className="px-4 py-2">
+              <Badge variant="secondary" className="px-6 py-3 bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all">
                 <MapPin className="h-4 w-4 mr-2" />
-                Curated Courses
+                Seaside Destinations
               </Badge>
-              <Badge variant="secondary" className="px-4 py-2">
+              <Badge variant="secondary" className="px-6 py-3 bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all">
                 <Star className="h-4 w-4 mr-2" />
                 Luxury Experiences
               </Badge>
@@ -212,20 +228,20 @@ const Index = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Form Section */}
-          <Card className="p-8 glass-card golf-shadow">
+          <Card className="p-8 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-golf-navy-900 mb-4">
+              <h2 className="text-3xl font-bold text-emerald-900 mb-4">
                 Plan Your Golf Adventure
               </h2>
-              <p className="text-golf-navy-600">
-                Tell us about your dream golf trip and we'll create a personalized travel plan featuring the world's best courses and destinations.
+              <p className="text-emerald-700 leading-relaxed">
+                Tell us about your dream golf trip and we'll create a personalized travel plan featuring the world's most stunning courses and coastal destinations.
               </p>
             </div>
 
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="travelerName" className="text-golf-navy-700 font-medium">
+                  <Label htmlFor="travelerName" className="text-emerald-800 font-medium">
                     Traveler Name *
                   </Label>
                   <Input
@@ -233,11 +249,11 @@ const Index = () => {
                     value={formData.travelerName}
                     onChange={(e) => handleInputChange("travelerName", e.target.value)}
                     placeholder="Enter your name"
-                    className="mt-2"
+                    className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="handicap" className="text-golf-navy-700 font-medium">
+                  <Label htmlFor="handicap" className="text-emerald-800 font-medium">
                     Golf Handicap
                   </Label>
                   <Input
@@ -245,21 +261,21 @@ const Index = () => {
                     value={formData.handicap}
                     onChange={(e) => handleInputChange("handicap", e.target.value)}
                     placeholder="e.g., 15"
-                    className="mt-2"
+                    className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="budget" className="text-golf-navy-700 font-medium">
+                  <Label htmlFor="budget" className="text-emerald-800 font-medium">
                     Total Budget *
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("budget", value)}>
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
                       <SelectValue placeholder="Select budget range" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white/95 backdrop-blur-sm">
                       <SelectItem value="under-5000">Under $5,000</SelectItem>
                       <SelectItem value="5000-10000">$5,000 - $10,000</SelectItem>
                       <SelectItem value="10000-20000">$10,000 - $20,000</SelectItem>
@@ -268,14 +284,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="duration" className="text-golf-navy-700 font-medium">
+                  <Label htmlFor="duration" className="text-emerald-800 font-medium">
                     Trip Duration
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("duration", value)}>
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
                       <SelectValue placeholder="How long?" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white/95 backdrop-blur-sm">
                       <SelectItem value="3-4-days">3-4 days</SelectItem>
                       <SelectItem value="5-7-days">5-7 days</SelectItem>
                       <SelectItem value="1-2-weeks">1-2 weeks</SelectItem>
@@ -287,14 +303,14 @@ const Index = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="preferredRegion" className="text-golf-navy-700 font-medium">
+                  <Label htmlFor="preferredRegion" className="text-emerald-800 font-medium">
                     Preferred Region *
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("preferredRegion", value)}>
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
                       <SelectValue placeholder="Where to?" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white/95 backdrop-blur-sm">
                       <SelectItem value="europe">Europe</SelectItem>
                       <SelectItem value="north-america">North America</SelectItem>
                       <SelectItem value="asia-pacific">Asia Pacific</SelectItem>
@@ -304,14 +320,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="groupSize" className="text-golf-navy-700 font-medium">
+                  <Label htmlFor="groupSize" className="text-emerald-800 font-medium">
                     Group Size
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("groupSize", value)}>
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
                       <SelectValue placeholder="How many people?" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white/95 backdrop-blur-sm">
                       <SelectItem value="solo">Solo traveler</SelectItem>
                       <SelectItem value="couple">2 people</SelectItem>
                       <SelectItem value="small-group">3-4 people</SelectItem>
@@ -323,14 +339,14 @@ const Index = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="courseType" className="text-golf-navy-700 font-medium">
+                  <Label htmlFor="courseType" className="text-emerald-800 font-medium">
                     Course Preference
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("courseType", value)}>
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
                       <SelectValue placeholder="Course style" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white/95 backdrop-blur-sm">
                       <SelectItem value="links">Links courses</SelectItem>
                       <SelectItem value="resort">Resort courses</SelectItem>
                       <SelectItem value="championship">Championship courses</SelectItem>
@@ -340,14 +356,14 @@ const Index = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="accommodation" className="text-golf-navy-700 font-medium">
+                  <Label htmlFor="accommodation" className="text-emerald-800 font-medium">
                     Accommodation Style
                   </Label>
                   <Select onValueChange={(value) => handleInputChange("accommodation", value)}>
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80">
                       <SelectValue placeholder="Where to stay?" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white/95 backdrop-blur-sm">
                       <SelectItem value="luxury-resort">Luxury golf resort</SelectItem>
                       <SelectItem value="boutique-hotel">Boutique hotel</SelectItem>
                       <SelectItem value="vacation-rental">Vacation rental</SelectItem>
@@ -358,7 +374,7 @@ const Index = () => {
               </div>
 
               <div>
-                <Label htmlFor="travelDates" className="text-golf-navy-700 font-medium">
+                <Label htmlFor="travelDates" className="text-emerald-800 font-medium">
                   Preferred Travel Dates
                 </Label>
                 <Input
@@ -366,12 +382,12 @@ const Index = () => {
                   value={formData.travelDates}
                   onChange={(e) => handleInputChange("travelDates", e.target.value)}
                   placeholder="e.g., June 2024 or flexible dates"
-                  className="mt-2"
+                  className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80"
                 />
               </div>
 
               <div>
-                <Label htmlFor="specialRequests" className="text-golf-navy-700 font-medium">
+                <Label htmlFor="specialRequests" className="text-emerald-800 font-medium">
                   Special Requests
                 </Label>
                 <Textarea
@@ -379,14 +395,14 @@ const Index = () => {
                   value={formData.specialRequests}
                   onChange={(e) => handleInputChange("specialRequests", e.target.value)}
                   placeholder="Any special requirements, interests, or must-see courses?"
-                  className="mt-2"
+                  className="mt-2 border-emerald-200 focus:border-emerald-400 bg-white/80"
                 />
               </div>
 
               <Button
                 onClick={generateRecommendation}
                 disabled={isGenerating}
-                className="w-full bg-golf-gradient hover:scale-105 transition-all duration-300 golf-shadow h-14 text-lg font-semibold"
+                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 h-14 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
               >
                 {isGenerating ? (
                   <div className="flex items-center gap-3">
@@ -408,57 +424,57 @@ const Index = () => {
             {recommendation ? (
               <div className="space-y-6 animate-fade-in">
                 {/* Header */}
-                <Card className="p-6 glass-card golf-shadow">
+                <Card className="p-6 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 bg-golf-green-500 rounded-full">
+                    <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl">
                       <MapPin className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-golf-navy-900">
+                      <h3 className="text-2xl font-bold text-emerald-900">
                         {recommendation.title}
                       </h3>
-                      <p className="text-golf-navy-600 mt-2">{recommendation.summary}</p>
+                      <p className="text-emerald-700 mt-2 leading-relaxed">{recommendation.summary}</p>
                     </div>
                   </div>
                 </Card>
 
                 {/* Destinations */}
-                <Card className="p-6 glass-card">
-                  <h4 className="text-xl font-semibold text-golf-navy-900 mb-4 flex items-center gap-2">
-                    <Map className="h-5 w-5 text-golf-green-600" />
+                <Card className="p-6 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
+                  <h4 className="text-xl font-semibold text-emerald-900 mb-4 flex items-center gap-2">
+                    <Map className="h-5 w-5 text-emerald-600" />
                     Recommended Destinations
                   </h4>
                   <div className="space-y-6">
                     {recommendation.destinations.map((dest, index) => (
-                      <div key={index} className="border-l-4 border-golf-green-500 pl-4">
+                      <div key={index} className="border-l-4 border-emerald-400 pl-4 bg-emerald-50/50 rounded-r-lg p-4">
                         <div className="flex items-center justify-between mb-2">
-                          <h5 className="font-semibold text-golf-navy-800">{dest.name}, {dest.country}</h5>
-                          <Badge variant="outline" className="border-golf-green-600 text-golf-green-700">
+                          <h5 className="font-semibold text-emerald-900">{dest.name}, {dest.country}</h5>
+                          <Badge variant="outline" className="border-emerald-500 text-emerald-700 bg-emerald-50">
                             {dest.bestTime}
                           </Badge>
                         </div>
-                        <p className="text-sm text-golf-navy-600 mb-3">{dest.description}</p>
+                        <p className="text-sm text-emerald-700 mb-3 leading-relaxed">{dest.description}</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div>
-                            <p className="font-medium text-golf-navy-700 mb-1">Featured Courses:</p>
+                            <p className="font-medium text-emerald-800 mb-1">Featured Courses:</p>
                             <ul className="space-y-1">
                               {dest.courses.map((course, courseIndex) => (
-                                <li key={courseIndex} className="text-golf-navy-600">• {course}</li>
+                                <li key={courseIndex} className="text-emerald-700">• {course}</li>
                               ))}
                             </ul>
                           </div>
                           <div>
-                            <p className="font-medium text-golf-navy-700 mb-1">Highlights:</p>
+                            <p className="font-medium text-emerald-800 mb-1">Highlights:</p>
                             <ul className="space-y-1">
                               {dest.highlights.map((highlight, highlightIndex) => (
-                                <li key={highlightIndex} className="text-golf-navy-600">• {highlight}</li>
+                                <li key={highlightIndex} className="text-emerald-700">• {highlight}</li>
                               ))}
                             </ul>
                           </div>
                         </div>
                         <div className="mt-3 flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-golf-gold-500" />
-                          <span className="text-sm font-medium text-golf-navy-700">{dest.estimatedCost}</span>
+                          <DollarSign className="h-4 w-4 text-teal-600" />
+                          <span className="text-sm font-medium text-emerald-800">{dest.estimatedCost}</span>
                         </div>
                       </div>
                     ))}
@@ -466,36 +482,36 @@ const Index = () => {
                 </Card>
 
                 {/* Itinerary */}
-                <Card className="p-6 glass-card">
-                  <h4 className="text-xl font-semibold text-golf-navy-900 mb-4 flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-golf-green-600" />
+                <Card className="p-6 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
+                  <h4 className="text-xl font-semibold text-emerald-900 mb-4 flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-emerald-600" />
                     Suggested Itinerary
                   </h4>
                   <div className="space-y-4">
                     {recommendation.itinerary.map((day, index) => (
-                      <div key={index} className="flex items-start gap-4 p-4 bg-golf-green-50 rounded-lg">
+                      <div key={index} className="flex items-start gap-4 p-4 bg-emerald-50 rounded-lg">
                         <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-golf-green-500 text-white rounded-full flex items-center justify-center font-semibold">
+                          <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-full flex items-center justify-center font-semibold">
                             {index + 1}
                           </div>
                         </div>
                         <div className="flex-grow">
-                          <h5 className="font-semibold text-golf-navy-800 mb-2">{day.day}</h5>
-                          <p className="text-sm text-golf-navy-600 mb-2">{day.notes}</p>
+                          <h5 className="font-semibold text-emerald-900 mb-2">{day.day}</h5>
+                          <p className="text-sm text-emerald-700 mb-2 leading-relaxed">{day.notes}</p>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div>
-                              <p className="font-medium text-golf-navy-700 mb-1">Activities:</p>
+                              <p className="font-medium text-emerald-800 mb-1">Activities:</p>
                               <ul className="space-y-1">
                                 {day.activities.map((activity, actIndex) => (
-                                  <li key={actIndex} className="text-golf-navy-600">• {activity}</li>
+                                  <li key={actIndex} className="text-emerald-700">• {activity}</li>
                                 ))}
                               </ul>
                             </div>
                             <div>
-                              <p className="font-medium text-golf-navy-700 mb-1">Golf:</p>
+                              <p className="font-medium text-emerald-800 mb-1">Golf:</p>
                               <ul className="space-y-1">
                                 {day.courses.map((course, courseIndex) => (
-                                  <li key={courseIndex} className="text-golf-navy-600">• {course}</li>
+                                  <li key={courseIndex} className="text-emerald-700">• {course}</li>
                                 ))}
                               </ul>
                             </div>
@@ -507,41 +523,41 @@ const Index = () => {
                 </Card>
 
                 {/* Practical Info */}
-                <Card className="p-6 glass-card">
-                  <h4 className="text-xl font-semibold text-golf-navy-900 mb-4 flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-golf-green-600" />
+                <Card className="p-6 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl">
+                  <h4 className="text-xl font-semibold text-emerald-900 mb-4 flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-emerald-600" />
                     Travel Essentials
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h5 className="font-semibold text-golf-navy-800 mb-2">Flights & Transport</h5>
+                      <h5 className="font-semibold text-emerald-900 mb-2">Flights & Transport</h5>
                       <ul className="space-y-1">
                         {recommendation.practicalInfo.flights.map((item, index) => (
-                          <li key={index} className="text-sm text-golf-navy-700">• {item}</li>
+                          <li key={index} className="text-sm text-emerald-700">• {item}</li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <h5 className="font-semibold text-golf-navy-800 mb-2">Accommodation</h5>
+                      <h5 className="font-semibold text-emerald-900 mb-2">Accommodation</h5>
                       <ul className="space-y-1">
                         {recommendation.practicalInfo.accommodation.map((item, index) => (
-                          <li key={index} className="text-sm text-golf-navy-700">• {item}</li>
+                          <li key={index} className="text-sm text-emerald-700">• {item}</li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <h5 className="font-semibold text-golf-navy-800 mb-2">Local Transport</h5>
+                      <h5 className="font-semibold text-emerald-900 mb-2">Local Transport</h5>
                       <ul className="space-y-1">
                         {recommendation.practicalInfo.transportation.map((item, index) => (
-                          <li key={index} className="text-sm text-golf-navy-700">• {item}</li>
+                          <li key={index} className="text-sm text-emerald-700">• {item}</li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <h5 className="font-semibold text-golf-navy-800 mb-2">Equipment & Gear</h5>
+                      <h5 className="font-semibold text-emerald-900 mb-2">Equipment & Gear</h5>
                       <ul className="space-y-1">
                         {recommendation.practicalInfo.equipment.map((item, index) => (
-                          <li key={index} className="text-sm text-golf-navy-700">• {item}</li>
+                          <li key={index} className="text-sm text-emerald-700">• {item}</li>
                         ))}
                       </ul>
                     </div>
@@ -549,25 +565,25 @@ const Index = () => {
                 </Card>
               </div>
             ) : (
-              <Card className="p-12 glass-card text-center">
+              <Card className="p-12 bg-white/70 backdrop-blur-sm border-0 shadow-xl rounded-2xl text-center">
                 <div className="max-w-md mx-auto">
-                  <div className="p-4 bg-golf-green-100 rounded-full w-fit mx-auto mb-6">
-                    <Map className="h-12 w-12 text-golf-green-600" />
+                  <div className="p-6 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl w-fit mx-auto mb-6">
+                    <Waves className="h-12 w-12 text-emerald-600" />
                   </div>
-                  <h3 className="text-2xl font-bold text-golf-navy-900 mb-4">
+                  <h3 className="text-2xl font-bold text-emerald-900 mb-4">
                     Ready for Your Golf Adventure?
                   </h3>
-                  <p className="text-golf-navy-600 mb-6">
-                    Fill out your travel preferences to receive personalized golf destination recommendations from around the world.
+                  <p className="text-emerald-700 mb-6 leading-relaxed">
+                    Fill out your travel preferences to receive personalized golf destination recommendations from the world's most beautiful courses.
                   </p>
-                  <div className="space-y-3 text-sm text-golf-navy-500">
+                  <div className="space-y-3 text-sm text-emerald-600">
                     <div className="flex items-center justify-center gap-2">
                       <Plane className="h-4 w-4" />
-                      <span>Global golf destinations</span>
+                      <span>Coastal destinations</span>
                     </div>
                     <div className="flex items-center justify-center gap-2">
                       <MapPin className="h-4 w-4" />
-                      <span>World-class courses</span>
+                      <span>Links courses</span>
                     </div>
                     <div className="flex items-center justify-center gap-2">
                       <Star className="h-4 w-4" />
