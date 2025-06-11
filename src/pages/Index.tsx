@@ -75,6 +75,7 @@ const Index = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3dW5jdmRkaWt2cXRjbXNhYnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk2Njk5ODMsImV4cCI6MjA2NTI0NTk4M30.A7WKvStX_TXh9NyLDVLfP7d9ent56nKK1XSbM-owsAw',
         },
         body: JSON.stringify({
           prompt: testPrompt,
@@ -83,7 +84,6 @@ const Index = () => {
       });
 
       console.log('Test response status:', response.status);
-      console.log('Test response headers:', [...response.headers.entries()]);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -208,6 +208,7 @@ const Index = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3dW5jdmRkaWt2cXRjbXNhYnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk2Njk5ODMsImV4cCI6MjA2NTI0NTk4M30.A7WKvStX_TXh9NyLDVLfP7d9ent56nKK1XSbM-owsAw',
         },
         body: JSON.stringify({
           prompt: prompt,
@@ -216,13 +217,10 @@ const Index = () => {
       });
 
       console.log('Edge function response status:', response.status);
-      console.log('Edge function response headers:', response.headers);
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Edge function error response:', errorText);
-        console.error('Response status:', response.status);
-        console.error('Response statusText:', response.statusText);
         
         let errorMessage = 'Failed to generate recommendations';
         try {
@@ -263,11 +261,6 @@ const Index = () => {
       
     } catch (error) {
       console.error('Error generating recommendation:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
       
       // Provide more helpful error messages
       let userMessage = "Failed to generate recommendations";

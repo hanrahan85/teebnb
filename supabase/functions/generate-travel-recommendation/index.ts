@@ -17,12 +17,14 @@ serve(async (req) => {
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     
     if (!openaiApiKey) {
+      console.error('OpenAI API key not configured');
       throw new Error('OpenAI API key not configured');
     }
 
     const { prompt, formData } = await req.json();
 
-    console.log('Generating travel recommendation for:', formData.travelerName);
+    console.log('Generating travel recommendation for:', formData?.travelerName || 'Unknown');
+    console.log('Using prompt length:', prompt?.length || 0);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -47,6 +49,8 @@ serve(async (req) => {
       }),
     });
 
+    console.log('OpenAI API response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       console.error('OpenAI API error:', errorData);
@@ -56,11 +60,12 @@ serve(async (req) => {
     const data = await response.json();
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid OpenAI response structure:', data);
       throw new Error('Invalid response from OpenAI API');
     }
     
     const aiResponse = data.choices[0].message.content;
-    console.log('Raw AI response:', aiResponse);
+    console.log('Raw AI response length:', aiResponse?.length || 0);
     
     // Parse the JSON response with better error handling
     let parsedRecommendation;
@@ -76,6 +81,7 @@ serve(async (req) => {
         try {
           parsedRecommendation = JSON.parse(jsonMatch[1]);
         } catch (secondParseError) {
+          console.error('Second JSON parsing error:', secondParseError);
           throw new Error('Failed to parse AI response as JSON');
         }
       } else {
