@@ -40,8 +40,8 @@ const Index = () => {
 
     // Generate travel recommendations based on input
     const travelRecommendation: TravelRecommendation = {
-      title: `Golf Travel Itinerary for ${formData.travelerName}`,
-      summary: `A curated golf travel experience designed for ${formData.travelerName} featuring world-class courses, premium accommodations, and unforgettable golf destinations tailored to your preferences and budget.`,
+      title: `Curated Golf Experience for ${formData.travelerName}`,
+      summary: `An exclusive golf journey crafted for ${formData.travelerName}, featuring championship courses, luxury accommodations, and bespoke experiences at the world's finest golf destinations.`,
       destinations: [
         {
           name: "The Grove",
@@ -131,10 +131,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stone-50 to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-luxury-cream-50 via-luxury-cream-100 to-luxury-brown-50">
       <HeroSection />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 luxury-texture">
         <div className="grid lg:grid-cols-2 gap-20">
           <TravelForm
             formData={formData}
