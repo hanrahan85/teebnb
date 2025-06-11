@@ -1,85 +1,77 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Award, MapPin, Star, Trophy, Crown, Sparkles } from "lucide-react";
+import { Play, Star, MapPin, Trophy } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-luxury-brown-900 via-luxury-brown-800 to-luxury-forest-900">
-      {/* Sophisticated luxury pattern overlay */}
-      <div className="absolute inset-0 luxury-texture opacity-30"></div>
+    <div className="relative min-h-screen golf-hero-bg overflow-hidden">
+      {/* Subtle overlay pattern */}
+      <div className="absolute inset-0 luxury-pattern"></div>
       
-      {/* Elegant golf pattern */}
-      <div className="absolute inset-0 golf-pattern opacity-20"></div>
-      
-      {/* Subtle gradient overlays for depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-luxury-brown-900/60 via-transparent to-luxury-brown-800/40"></div>
-      <div className="absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-t from-luxury-brown-900/80 to-transparent"></div>
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 flex items-center min-h-screen">
-        <div className="text-center w-full">
-          {/* Luxury badge */}
-          <div className="mb-8 flex justify-center">
-            <Badge className="px-6 py-3 bg-luxury-gold-500/20 text-luxury-gold-400 border-luxury-gold-400/30 backdrop-blur-md text-base font-display">
-              <Crown className="h-5 w-5 mr-2" />
-              Est. 1923 • Luxury Golf Experiences
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-4xl">
+          {/* Premium badge */}
+          <div className="mb-8 fade-in">
+            <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-6 py-2 text-sm font-medium">
+              <Trophy className="h-4 w-4 mr-2" />
+              Premium Golf Destinations
             </Badge>
           </div>
           
-          <h1 className="text-7xl md:text-9xl font-display font-bold mb-8 animate-fade-in">
-            <span className="text-luxury-gold block mb-4">TeeBnB</span>
-            <span className="text-4xl md:text-5xl text-luxury-cream-200 font-light tracking-wider">
-              Championship Golf Estates
-            </span>
+          {/* Main heading */}
+          <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 fade-in tracking-tight">
+            TeeBnB
           </h1>
           
-          <p className="text-2xl md:text-3xl text-luxury-cream-300 mb-6 max-w-4xl mx-auto animate-fade-in font-display font-light leading-relaxed">
-            Curated Collection of the World's Finest Golf Destinations
+          <p className="text-2xl md:text-3xl text-white/90 mb-4 font-light fade-in">
+            Luxury Golf Resort Experiences
           </p>
           
-          <p className="text-lg text-luxury-cream-400 mb-16 max-w-3xl mx-auto leading-relaxed font-body">
-            Experience championship courses, luxury accommodations, and impeccable service at golf's most prestigious venues
+          <p className="text-lg text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed fade-in">
+            Discover championship courses, world-class accommodations, and unforgettable golf experiences at the finest destinations around the globe.
           </p>
           
-          <div className="flex flex-wrap justify-center gap-6 text-sm mb-12">
-            <Badge variant="secondary" className="px-8 py-4 glass-luxury hover:bg-white/30 transition-all text-base font-body">
-              <Trophy className="h-5 w-5 mr-3 text-luxury-gold-500" />
-              Championship Venues
-            </Badge>
-            <Badge variant="secondary" className="px-8 py-4 glass-luxury hover:bg-white/30 transition-all text-base font-body">
-              <Crown className="h-5 w-5 mr-3 text-luxury-gold-500" />
-              Luxury Concierge
-            </Badge>
-            <Badge variant="secondary" className="px-8 py-4 glass-luxury hover:bg-white/30 transition-all text-base font-body">
-              <Sparkles className="h-5 w-5 mr-3 text-luxury-gold-500" />
-              Exclusive Access
-            </Badge>
-          </div>
-          
-          <div className="flex justify-center">
+          {/* Action buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 fade-in">
             <Button 
               onClick={() => window.location.href = '/reviews'}
-              className="btn-luxury text-white px-12 py-6 rounded-full text-xl font-display font-semibold shadow-2xl hover:shadow-luxury-gold-500/30 transform hover:scale-105 transition-all duration-300"
+              className="btn-primary text-lg px-10 py-5"
             >
-              Explore Premium Golf Destinations
+              Explore Destinations
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              className="btn-secondary text-lg group"
+            >
+              <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+              Watch Video
             </Button>
           </div>
           
-          {/* Decorative elements */}
-          <div className="mt-20 flex justify-center space-x-12 opacity-60">
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto fade-in">
             <div className="text-center">
-              <div className="text-3xl font-display font-bold text-luxury-gold-400">500+</div>
-              <div className="text-luxury-cream-400 font-body">Premium Courses</div>
+              <div className="text-3xl font-bold text-white mb-1">500+</div>
+              <div className="text-white/70 text-sm uppercase tracking-wider">Premium Courses</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-display font-bold text-luxury-gold-400">50+</div>
-              <div className="text-luxury-cream-400 font-body">Countries</div>
+              <div className="text-3xl font-bold text-white mb-1">50+</div>
+              <div className="text-white/70 text-sm uppercase tracking-wider">Countries</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-display font-bold text-luxury-gold-400">25</div>
-              <div className="text-luxury-cream-400 font-body">Years Excellence</div>
+              <div className="text-3xl font-bold text-white mb-1">25</div>
+              <div className="text-white/70 text-sm uppercase tracking-wider">Years Experience</div>
             </div>
           </div>
+        </div>
+      </div>
+      
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/60 animate-bounce">
+        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+          <div className="w-1 h-3 bg-white/50 rounded-full mt-2"></div>
         </div>
       </div>
     </div>

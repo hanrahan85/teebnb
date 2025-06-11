@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import HeroSection from "@/components/HeroSection";
@@ -131,20 +130,22 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-luxury-cream-50 via-luxury-cream-100 to-luxury-brown-50">
+    <div className="min-h-screen">
       <HeroSection />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 luxury-texture">
-        <div className="grid lg:grid-cols-2 gap-20">
-          <TravelForm
-            formData={formData}
-            isGenerating={isGenerating}
-            onInputChange={handleInputChange}
-            onGenerate={generateRecommendation}
-          />
-          
-          <div className="space-y-10">
-            <TravelRecommendations recommendation={recommendation} />
+      <div className="section-luxury">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="grid lg:grid-cols-2 gap-16">
+            <TravelForm
+              formData={formData}
+              isGenerating={isGenerating}
+              onInputChange={handleInputChange}
+              onGenerate={generateRecommendation}
+            />
+            
+            <div className="space-y-8">
+              <TravelRecommendations recommendation={recommendation} />
+            </div>
           </div>
         </div>
       </div>
