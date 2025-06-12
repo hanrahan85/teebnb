@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import HeroSection from "@/components/HeroSection";
 import TravelForm from "@/components/TravelForm";
 import TravelRecommendations from "@/components/TravelRecommendations";
+import FamousGolfCourses from "@/components/FamousGolfCourses";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
@@ -32,6 +33,7 @@ const Index = () => {
   const [recommendation, setRecommendation] = useState<TravelRecommendation | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
+  const [showFamousCourses, setShowFamousCourses] = useState(false);
 
   // Update form data when user changes
   useEffect(() => {
@@ -122,6 +124,7 @@ const Index = () => {
     }
 
     setIsGenerating(true);
+    setShowFamousCourses(true); // Show famous courses when create button is clicked
     
     try {
       const currentDate = new Date();
@@ -248,14 +251,14 @@ const Index = () => {
         try {
           await saveTravelSubmission(formData, data.recommendation);
           console.log('Successfully saved travel data to database');
-          toast.success("Your detailed golf travel itinerary with bookable details is ready and saved!");
+          toast.success("Your detailed golf travel itinerary is ready and saved!");
         } catch (saveError) {
           console.error('Error saving to database:', saveError);
           toast.success("Your detailed golf travel itinerary is ready!");
           toast.error("Note: Data saving failed, but recommendations are still available.");
         }
       } else {
-        toast.success("Your detailed golf travel itinerary with bookable details is ready!");
+        toast.success("Your detailed golf travel itinerary is ready!");
         toast.info("Sign in to save your recommendations for later.");
       }
       
@@ -367,6 +370,7 @@ const Index = () => {
             />
             
             <div className="space-y-8">
+              {showFamousCourses && <FamousGolfCourses />}
               <TravelRecommendations recommendation={recommendation} />
             </div>
           </div>

@@ -1,14 +1,33 @@
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Award, Calendar, Clock, DollarSign, Star, TreePine, Plane, Hotel, Clock3 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { MapPin, Award, Calendar, Clock, Star, TreePine, Plane, Hotel, Clock3, Mail, Phone, User } from "lucide-react";
 import { TravelRecommendation } from "@/types/travel";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface TravelRecommendationsProps {
   recommendation: TravelRecommendation | null;
 }
 
 const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) => {
+  const [bookingData, setBookingData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
+
+  const handleBookingSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Send booking request email
+    toast.success("Booking request sent! We'll contact you soon.");
+    setBookingData({ name: "", email: "", phone: "", message: "" });
+  };
+
   if (!recommendation) {
     return (
       <Card className="p-16 bg-white/90 backdrop-blur-xl border border-stone-200/60 shadow-2xl rounded-3xl text-center">
@@ -25,15 +44,15 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
           <div className="space-y-6 text-slate-600">
             <div className="flex items-center justify-center gap-4">
               <Plane className="h-6 w-6 text-emerald-600" />
-              <span className="text-lg font-medium">Specific flight details & pricing</span>
+              <span className="text-lg font-medium">Specific flight details</span>
             </div>
             <div className="flex items-center justify-center gap-4">
               <Hotel className="h-6 w-6 text-emerald-600" />
-              <span className="text-lg font-medium">Available hotels with rates</span>
+              <span className="text-lg font-medium">Available hotels</span>
             </div>
             <div className="flex items-center justify-center gap-4">
               <Clock3 className="h-6 w-6 text-emerald-600" />
-              <span className="text-lg font-medium">Exact tee times & green fees</span>
+              <span className="text-lg font-medium">Exact tee times</span>
             </div>
           </div>
         </div>
@@ -64,11 +83,11 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
         </div>
       </Card>
 
-      {/* Destinations with Booking Details */}
+      {/* Destinations without Pricing */}
       <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
         <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
           <Award className="h-7 w-7 text-emerald-600" />
-          Bookable Destinations & Pricing
+          Golf Destinations & Details
         </h4>
         <div className="space-y-8">
           {recommendation.destinations.map((dest, index) => (
@@ -81,24 +100,17 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
               </div>
               <p className="text-slate-700 mb-4 leading-relaxed text-base">{dest.description}</p>
               
-              {/* Enhanced Cost Breakdown */}
-              <div className="mb-6 p-4 bg-white/80 rounded-xl border border-emerald-200">
-                <div className="flex items-center gap-3 mb-2">
-                  <DollarSign className="h-5 w-5 text-emerald-600" />
-                  <span className="font-bold text-slate-800 text-lg">Pricing Breakdown</span>
-                </div>
-                <p className="text-slate-700 text-base font-medium">{dest.estimatedCost}</p>
-              </div>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <p className="font-bold text-slate-800 mb-3 text-base flex items-center gap-2">
                     <Clock3 className="h-4 w-4 text-emerald-600" />
-                    Available Tee Times & Fees:
+                    Available Golf Courses:
                   </p>
                   <ul className="space-y-2">
                     {dest.courses.map((course, courseIndex) => (
-                      <li key={courseIndex} className="text-slate-700 text-base bg-white/60 p-2 rounded-lg">• {course}</li>
+                      <li key={courseIndex} className="text-slate-700 text-base bg-white/60 p-2 rounded-lg">
+                        • {course.split(' - Green Fee:')[0]} - {course.split(' - Tee Time: ')[1]}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -109,7 +121,9 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
                   </p>
                   <ul className="space-y-2">
                     {dest.highlights.map((highlight, highlightIndex) => (
-                      <li key={highlightIndex} className="text-slate-700 text-base bg-white/60 p-2 rounded-lg">• {highlight}</li>
+                      <li key={highlightIndex} className="text-slate-700 text-base bg-white/60 p-2 rounded-lg">
+                        • {highlight.split(' - $')[0]}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -119,7 +133,7 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
         </div>
       </Card>
 
-      {/* Detailed Itinerary with Times */}
+      {/* Detailed Itinerary without Pricing */}
       <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
         <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
           <Calendar className="h-7 w-7 text-emerald-600" />
@@ -144,7 +158,9 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
                     </p>
                     <ul className="space-y-2">
                       {day.activities.map((activity, actIndex) => (
-                        <li key={actIndex} className="text-slate-700 text-base bg-white/70 p-2 rounded-lg">• {activity}</li>
+                        <li key={actIndex} className="text-slate-700 text-base bg-white/70 p-2 rounded-lg">
+                          • {activity.split(' - $')[0]}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -155,7 +171,9 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
                     </p>
                     <ul className="space-y-2">
                       {day.courses.map((course, courseIndex) => (
-                        <li key={courseIndex} className="text-slate-700 text-base bg-white/70 p-2 rounded-lg">• {course}</li>
+                        <li key={courseIndex} className="text-slate-700 text-base bg-white/70 p-2 rounded-lg">
+                          • {course.split(' - $')[0]}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -166,7 +184,7 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
         </div>
       </Card>
 
-      {/* Enhanced Practical Info with Booking Details */}
+      {/* Practical Info without Pricing */}
       <Card className="p-8 bg-white/80 backdrop-blur-lg border border-stone-200/50 shadow-2xl rounded-3xl">
         <h4 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
           <Clock className="h-7 w-7 text-emerald-600" />
@@ -176,22 +194,26 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
           <div>
             <h5 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
               <Plane className="h-5 w-5 text-blue-600" />
-              Flight Reservations
+              Flight Information
             </h5>
             <ul className="space-y-3">
               {recommendation.practicalInfo.flights.map((item, index) => (
-                <li key={index} className="text-slate-700 text-base bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">• {item}</li>
+                <li key={index} className="text-slate-700 text-base bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
+                  • {item.split(' - $')[0]}
+                </li>
               ))}
             </ul>
           </div>
           <div>
             <h5 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
               <Hotel className="h-5 w-5 text-purple-600" />
-              Hotel Bookings
+              Hotel Information
             </h5>
             <ul className="space-y-3">
               {recommendation.practicalInfo.accommodation.map((item, index) => (
-                <li key={index} className="text-slate-700 text-base bg-purple-50 p-3 rounded-lg border-l-4 border-purple-400">• {item}</li>
+                <li key={index} className="text-slate-700 text-base bg-purple-50 p-3 rounded-lg border-l-4 border-purple-400">
+                  • {item.split(' - $')[0]}
+                </li>
               ))}
             </ul>
           </div>
@@ -202,7 +224,9 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
             </h5>
             <ul className="space-y-3">
               {recommendation.practicalInfo.transportation.map((item, index) => (
-                <li key={index} className="text-slate-700 text-base bg-orange-50 p-3 rounded-lg border-l-4 border-orange-400">• {item}</li>
+                <li key={index} className="text-slate-700 text-base bg-orange-50 p-3 rounded-lg border-l-4 border-orange-400">
+                  • {item.split(' - $')[0]}
+                </li>
               ))}
             </ul>
           </div>
@@ -213,16 +237,91 @@ const TravelRecommendations = ({ recommendation }: TravelRecommendationsProps) =
             </h5>
             <ul className="space-y-3">
               {recommendation.practicalInfo.equipment.map((item, index) => (
-                <li key={index} className="text-slate-700 text-base bg-emerald-50 p-3 rounded-lg border-l-4 border-emerald-400">• {item}</li>
+                <li key={index} className="text-slate-700 text-base bg-emerald-50 p-3 rounded-lg border-l-4 border-emerald-400">
+                  • {item.split(' - $')[0]}
+                </li>
               ))}
             </ul>
           </div>
         </div>
-        
-        <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-emerald-50 rounded-xl border border-blue-200">
-          <h6 className="text-lg font-bold text-slate-900 mb-2">Ready to Book?</h6>
-          <p className="text-slate-700 text-base">All recommendations include specific contact information, booking references, and available time slots. Contact the providers directly using the details above to secure your reservations.</p>
+      </Card>
+
+      {/* Booking Signup Section */}
+      <Card className="p-8 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 shadow-2xl rounded-3xl">
+        <div className="text-center mb-8">
+          <h4 className="text-3xl font-bold text-slate-900 mb-4">Ready to Book Your Golf Adventure?</h4>
+          <p className="text-slate-700 text-lg">Fill out the form below and we'll get in touch to finalize your booking</p>
         </div>
+        
+        <form onSubmit={handleBookingSubmit} className="max-w-2xl mx-auto space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="bookingName" className="text-slate-800 font-semibold mb-3 block">
+                <User className="h-4 w-4 inline mr-2" />
+                Full Name *
+              </Label>
+              <Input
+                id="bookingName"
+                value={bookingData.name}
+                onChange={(e) => setBookingData(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Enter your full name"
+                required
+                className="h-12 border-emerald-300 focus:border-emerald-500 bg-white rounded-xl"
+              />
+            </div>
+            <div>
+              <Label htmlFor="bookingEmail" className="text-slate-800 font-semibold mb-3 block">
+                <Mail className="h-4 w-4 inline mr-2" />
+                Email Address *
+              </Label>
+              <Input
+                id="bookingEmail"
+                type="email"
+                value={bookingData.email}
+                onChange={(e) => setBookingData(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="Enter your email"
+                required
+                className="h-12 border-emerald-300 focus:border-emerald-500 bg-white rounded-xl"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <Label htmlFor="bookingPhone" className="text-slate-800 font-semibold mb-3 block">
+              <Phone className="h-4 w-4 inline mr-2" />
+              Phone Number
+            </Label>
+            <Input
+              id="bookingPhone"
+              type="tel"
+              value={bookingData.phone}
+              onChange={(e) => setBookingData(prev => ({ ...prev, phone: e.target.value }))}
+              placeholder="Enter your phone number"
+              className="h-12 border-emerald-300 focus:border-emerald-500 bg-white rounded-xl"
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="bookingMessage" className="text-slate-800 font-semibold mb-3 block">
+              Additional Message
+            </Label>
+            <textarea
+              id="bookingMessage"
+              value={bookingData.message}
+              onChange={(e) => setBookingData(prev => ({ ...prev, message: e.target.value }))}
+              placeholder="Any special requests or questions?"
+              rows={4}
+              className="w-full border border-emerald-300 focus:border-emerald-500 bg-white rounded-xl p-3 resize-none"
+            />
+          </div>
+          
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white h-14 text-lg font-semibold rounded-xl shadow-lg"
+          >
+            Send Booking Request
+          </Button>
+        </form>
       </Card>
     </div>
   );
