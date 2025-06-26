@@ -22,10 +22,21 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    // Create Supabase client with service role key for admin operations
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('Missing Supabase environment variables');
+      throw new Error('Server configuration error');
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
 
     console.log('Verifying token:', token);
 
@@ -55,19 +66,26 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Found verification record:', verification);
 
-    // Get the user by email
-    const { data: user, error: userError } = await supabaseAdmin.auth.admin.getUserByEmail(verification.email);
+    // Get the user by email using admin client
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.listUsers();
     
-    if (userError || !user) {
-      console.error('User lookup error:', userError);
+    if (userError) {
+      console.error('Error listing users:', userError);
+      throw new Error('Failed to find user');
+    }
+
+    const user = userData.users.find(u => u.email === verification.email);
+    
+    if (!user) {
+      console.error('User not found for email:', verification.email);
       throw new Error('User not found');
     }
 
-    console.log('Found user:', user.user.id);
+    console.log('Found user:', user.id);
 
     // Update user to mark email as confirmed
     const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
-      user.user.id,
+      user.id,
       { email_confirm: true }
     );
 
@@ -81,7 +99,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Mark verification as used
     const { error: markUsedError } = await supabaseAdmin
       .from('email_verifications')
-      .update({ verified: true, user_id: user.user.id })
+      .update({ verified: true, user_id: user.id })
       .eq('token', token);
 
     if (markUsedError) {
