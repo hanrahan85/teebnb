@@ -33,6 +33,147 @@ export type Database = {
         }
         Relationships: []
       }
+      property_listings: {
+        Row: {
+          amenities: Json | null
+          bathrooms: number
+          bedrooms: number
+          beds: number
+          can_host_groups: boolean | null
+          cancellation_policy: string | null
+          checkin_time: string | null
+          checkout_time: string | null
+          cleaning_fee: number | null
+          cover_image: string | null
+          created_at: string | null
+          distance_to_course: number | null
+          distance_unit: string | null
+          full_address: string
+          golf_bag_storage: boolean | null
+          host_bio: string | null
+          host_email: string | null
+          host_name: string
+          host_phone: string | null
+          host_photo: string | null
+          house_rules: string | null
+          id: string
+          instant_booking: boolean | null
+          languages_spoken: string[] | null
+          latitude: number | null
+          longitude: number | null
+          max_guests: number
+          maximum_stay: number | null
+          minimum_stay: number | null
+          nearby_golf_courses: string[] | null
+          nightly_price: number
+          parking_availability: string | null
+          partner_course_name: string | null
+          partnered_with_course: boolean | null
+          photos: string[] | null
+          property_privacy: string
+          property_title: string
+          property_type: string
+          security_deposit: number | null
+          status: string | null
+          tournament_discounts: boolean | null
+          tournament_pricing: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amenities?: Json | null
+          bathrooms: number
+          bedrooms: number
+          beds: number
+          can_host_groups?: boolean | null
+          cancellation_policy?: string | null
+          checkin_time?: string | null
+          checkout_time?: string | null
+          cleaning_fee?: number | null
+          cover_image?: string | null
+          created_at?: string | null
+          distance_to_course?: number | null
+          distance_unit?: string | null
+          full_address: string
+          golf_bag_storage?: boolean | null
+          host_bio?: string | null
+          host_email?: string | null
+          host_name: string
+          host_phone?: string | null
+          host_photo?: string | null
+          house_rules?: string | null
+          id?: string
+          instant_booking?: boolean | null
+          languages_spoken?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          max_guests: number
+          maximum_stay?: number | null
+          minimum_stay?: number | null
+          nearby_golf_courses?: string[] | null
+          nightly_price: number
+          parking_availability?: string | null
+          partner_course_name?: string | null
+          partnered_with_course?: boolean | null
+          photos?: string[] | null
+          property_privacy: string
+          property_title: string
+          property_type: string
+          security_deposit?: number | null
+          status?: string | null
+          tournament_discounts?: boolean | null
+          tournament_pricing?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amenities?: Json | null
+          bathrooms?: number
+          bedrooms?: number
+          beds?: number
+          can_host_groups?: boolean | null
+          cancellation_policy?: string | null
+          checkin_time?: string | null
+          checkout_time?: string | null
+          cleaning_fee?: number | null
+          cover_image?: string | null
+          created_at?: string | null
+          distance_to_course?: number | null
+          distance_unit?: string | null
+          full_address?: string
+          golf_bag_storage?: boolean | null
+          host_bio?: string | null
+          host_email?: string | null
+          host_name?: string
+          host_phone?: string | null
+          host_photo?: string | null
+          house_rules?: string | null
+          id?: string
+          instant_booking?: boolean | null
+          languages_spoken?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          max_guests?: number
+          maximum_stay?: number | null
+          minimum_stay?: number | null
+          nearby_golf_courses?: string[] | null
+          nightly_price?: number
+          parking_availability?: string | null
+          partner_course_name?: string | null
+          partnered_with_course?: boolean | null
+          photos?: string[] | null
+          property_privacy?: string
+          property_title?: string
+          property_type?: string
+          security_deposit?: number | null
+          status?: string | null
+          tournament_discounts?: boolean | null
+          tournament_pricing?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       travel_recommendations: {
         Row: {
           created_at: string | null

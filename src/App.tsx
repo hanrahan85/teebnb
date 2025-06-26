@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ListProperty from "./pages/ListProperty";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/auth" element={<Auth />} />
+              <Route path="/list-property" element={<ListProperty />} />
               <Route path="/" element={<Index />} />
             </Routes>
           </BrowserRouter>
