@@ -90,17 +90,23 @@ const MapView = () => {
 
   return (
     <div className="h-screen flex">
-      {/* Beautiful Mansion Image */}
+      {/* Luxury Golf Estate Mansion */}
       <div className="flex-1 relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1920&h=1080&fit=crop&auto=format&q=90"
-          alt="Luxury mansion overlooking championship golf course"
+          src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&h=1080&fit=crop&auto=format&q=90"
+          alt="Elegant mansion estate overlooking championship golf course"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent"></div>
-        <div className="absolute bottom-8 left-8 text-white">
-          <h2 className="text-4xl font-bold mb-2">Luxury Golf Estate</h2>
-          <p className="text-xl opacity-90">Championship Course Views</p>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent"></div>
+        <div className="absolute bottom-12 left-12 text-white max-w-md">
+          <h2 className="text-5xl font-bold mb-4 leading-tight">Luxury Golf Estate</h2>
+          <p className="text-xl opacity-90 mb-2">Championship Course Views</p>
+          <p className="text-lg opacity-80">Experience world-class accommodations at America's most prestigious golf destinations</p>
+        </div>
+        <div className="absolute top-8 left-8">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-white">
+            <span className="text-sm font-medium">Featured Property</span>
+          </div>
         </div>
       </div>
 
