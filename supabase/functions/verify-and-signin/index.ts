@@ -107,12 +107,12 @@ const handler = async (req: Request): Promise<Response> => {
       console.error('Mark verification used error:', markUsedError);
     }
 
-    // Generate a magic link for automatic sign in
+    // Generate a magic link for automatic sign in with localhost redirect
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email: verification.email,
       options: {
-        redirectTo: `http://localhost:3000/list-property?welcome=true`
+        redirectTo: 'http://localhost:3000/list-property?welcome=true'
       }
     });
 
@@ -122,12 +122,13 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(null, {
         status: 302,
         headers: {
-          'Location': `http://localhost:3000/auth?verified=true`
+          'Location': 'http://localhost:3000/auth?verified=true'
         }
       });
     }
 
     console.log('Generated magic link, redirecting user');
+    console.log('Magic link URL:', linkData.properties.action_link);
 
     // Redirect to the magic link which will sign them in automatically
     return new Response(null, {
