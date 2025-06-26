@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -8,15 +8,31 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Mail, Lock, User, Trophy, MapPin, Star } from "lucide-react";
+import { Home, Mail, Lock, User, Trophy, MapPin, Star, CheckCircle } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
+  const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate("/list-property");
+    }
+  }, [user, navigate]);
+
+  // Check if user just verified their email
+  useEffect(() => {
+    if (searchParams.get('verified') === 'true') {
+      toast.success("Email verified successfully! You can now sign in.");
+    }
+  }, [searchParams]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +45,11 @@ const Auth = () => {
     const { error } = await signIn(email, password);
     
     if (error) {
-      toast.error(error.message);
+      if (error.message.includes('Email not confirmed')) {
+        toast.error("Please check your email and click the verification link before signing in.");
+      } else {
+        toast.error(error.message);
+      }
     } else {
       toast.success("Welcome back to TeeBnB!");
       navigate("/list-property");
@@ -59,11 +79,36 @@ const Auth = () => {
         toast.error(error.message);
       }
     } else {
-      toast.success("Account created successfully! You can now list your property.");
-      navigate("/list-property");
+      setShowVerificationMessage(true);
+      toast.success("Account created! Please check your email to verify your account.");
     }
     setLoading(false);
   };
+
+  if (showVerificationMessage) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md mx-auto p-8 bg-white/95 backdrop-blur-sm border border-emerald-200/60 shadow-2xl rounded-3xl text-center">
+          <CheckCircle className="h-16 w-16 text-emerald-600 mx-auto mb-6" />
+          <h1 className="text-2xl font-bold text-emerald-900 mb-4">Check Your Email</h1>
+          <p className="text-emerald-700 mb-6">
+            We've sent a verification link to <strong>{email}</strong>. 
+            Please click the link in your email to verify your account.
+          </p>
+          <p className="text-sm text-emerald-600 mb-6">
+            After verification, you'll be redirected back here to sign in.
+          </p>
+          <Button
+            onClick={() => setShowVerificationMessage(false)}
+            variant="outline"
+            className="w-full"
+          >
+            Back to Sign In
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 flex items-center justify-center p-4">

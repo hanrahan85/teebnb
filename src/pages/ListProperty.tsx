@@ -12,7 +12,7 @@ const ListProperty = () => {
   const { user } = useAuth();
 
   return (
-    <AuthGuard requireEmailVerification={false}>
+    <AuthGuard requireEmailVerification={true}>
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 sticky top-0 z-50">

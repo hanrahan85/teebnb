@@ -51,10 +51,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     console.log('Signing up user:', email);
+    const redirectUrl = `${window.location.origin}/auth?verified=true`;
+    
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName
         }
@@ -65,13 +68,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Signup error:', error);
     } else {
       console.log('Signup successful:', data);
-      // If signup is successful and we have a user but no session (due to email confirmation being required),
-      // we'll set the user manually to allow them to proceed
-      if (data.user && !data.session) {
-        console.log('Setting user without session for immediate access');
-        setUser(data.user);
-        setLoading(false);
-      }
     }
     
     return { error };

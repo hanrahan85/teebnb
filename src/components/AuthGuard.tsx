@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -8,15 +8,23 @@ interface AuthGuardProps {
   requireEmailVerification?: boolean;
 }
 
-const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireEmailVerification = false }) => {
+const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireEmailVerification = true }) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
+    if (!loading) {
+      if (!user) {
+        navigate('/auth');
+        return;
+      }
+      
+      if (requireEmailVerification && user && !user.email_confirmed_at) {
+        navigate('/auth');
+        return;
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, requireEmailVerification]);
 
   if (loading) {
     return (
@@ -27,6 +35,10 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireEmailVerificatio
   }
 
   if (!user) {
+    return null;
+  }
+
+  if (requireEmailVerification && !user.email_confirmed_at) {
     return null;
   }
 
