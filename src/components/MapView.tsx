@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { Card } from "@/components/ui/card";
@@ -92,9 +91,9 @@ const MapView = () => {
       try {
         setIsLoading(true);
         
-        // Initialize Google Maps API
+        // Initialize Google Maps API with your API key
         const loader = new Loader({
-          apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY_HERE',
+          apiKey: 'AIzaSyDfh6_XLksUa434ud9vbAma1sjaVY3g2-U',
           version: 'weekly',
           libraries: ['places']
         });
@@ -184,7 +183,7 @@ const MapView = () => {
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <p className="text-gray-600 text-sm">
-            Please add your Google Maps API key to the environment variables.
+            Please check your Google Maps API key configuration.
           </p>
         </div>
       </div>
