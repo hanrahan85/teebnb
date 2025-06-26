@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { AuthGuard } from '@/components/AuthGuard';
+import AuthGuard from '@/components/AuthGuard';
 import PropertyListingForm from '@/components/PropertyListingForm';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
