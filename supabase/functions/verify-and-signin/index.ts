@@ -41,21 +41,24 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Verifying token:', token);
 
-    // Verify the token and get user info
-    const { data: verification, error: verifyError } = await supabaseAdmin
+    // First, check if the token exists at all
+    const { data: allVerifications, error: checkError } = await supabaseAdmin
       .from('email_verifications')
       .select('*')
-      .eq('token', token)
-      .eq('verified', false)
-      .single();
+      .eq('token', token);
 
-    if (verifyError || !verification) {
-      console.error('Verification error:', verifyError);
+    if (checkError) {
+      console.error('Database error:', checkError);
+      throw new Error('Database error');
+    }
+
+    if (!allVerifications || allVerifications.length === 0) {
+      console.error('Token not found:', token);
       return new Response(`
         <html>
           <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
             <h1 style="color: #dc2626;">Verification Link Invalid</h1>
-            <p>This verification link is invalid or has already been used.</p>
+            <p>This verification link is invalid or has expired.</p>
             <p><a href="http://localhost:3000/auth" style="color: #059669;">Go to Sign In</a></p>
           </body>
         </html>
@@ -65,7 +68,33 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
+    const verification = allVerifications[0];
     console.log('Found verification record:', verification);
+
+    // Check if already verified
+    if (verification.verified) {
+      console.log('Token already used, but will still sign in user');
+      // Continue with sign-in process even if already verified
+    }
+
+    // Check if expired
+    const now = new Date();
+    const expiresAt = new Date(verification.expires_at);
+    if (now > expiresAt) {
+      console.error('Token expired:', token);
+      return new Response(`
+        <html>
+          <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+            <h1 style="color: #dc2626;">Verification Link Expired</h1>
+            <p>This verification link has expired. Please request a new one.</p>
+            <p><a href="http://localhost:3000/auth" style="color: #059669;">Go to Sign In</a></p>
+          </body>
+        </html>
+      `, {
+        status: 400,
+        headers: { 'Content-Type': 'text/html' }
+      });
+    }
 
     // Get the user by email using admin client
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.listUsers();
@@ -84,7 +113,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Found user:', user.id);
 
-    // Update user to mark email as confirmed
+    // Update user to mark email as confirmed (idempotent operation)
     const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       user.id,
       { email_confirm: true }
@@ -97,14 +126,16 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('User email confirmed');
 
-    // Mark verification as used
-    const { error: markUsedError } = await supabaseAdmin
-      .from('email_verifications')
-      .update({ verified: true, user_id: user.id })
-      .eq('token', token);
+    // Mark verification as used (only if not already verified)
+    if (!verification.verified) {
+      const { error: markUsedError } = await supabaseAdmin
+        .from('email_verifications')
+        .update({ verified: true, user_id: user.id })
+        .eq('token', token);
 
-    if (markUsedError) {
-      console.error('Mark verification used error:', markUsedError);
+      if (markUsedError) {
+        console.error('Mark verification used error:', markUsedError);
+      }
     }
 
     // Generate a magic link for automatic sign in with localhost redirect
