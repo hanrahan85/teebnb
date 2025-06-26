@@ -118,7 +118,7 @@ const Index = () => {
                 ) : (
                   <Button onClick={() => window.location.href = '/auth'} variant="outline" size="sm">
                     <LogIn className="h-4 w-4 mr-2" />
-                    Sign In
+                    List Your Property
                   </Button>
                 )}
               </div>
@@ -167,7 +167,7 @@ const Index = () => {
               ) : (
                 <Button onClick={() => window.location.href = '/auth'} variant="outline" size="sm">
                   <LogIn className="h-4 w-4 mr-2" />
-                  Sign In
+                  List Your Property
                 </Button>
               )}
             </div>
@@ -182,7 +182,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-bold mb-6">Stay Near World-Class Golf Courses</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Book unique accommodations near the world's top golf destinations. Perfect for tournaments, golf vacations, and course visits.
+            Book unique accommodations near the world's top golf destinations globally. Perfect for tournaments, golf vacations, and course visits.
           </p>
           <div className="flex justify-center gap-8 text-center">
             <div>

@@ -19,15 +19,43 @@ const SearchFilters = () => {
     bedrooms: ''
   });
 
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const propertyTypes = ['House', 'Apartment', 'Villa', 'Condo', 'Townhouse'];
   const [showFilters, setShowFilters] = useState(false);
+
+  const golfCourseSuggestions = [
+    'Augusta National Golf Club, Georgia',
+    'St. Andrews Old Course, Scotland',
+    'Pebble Beach Golf Links, California',
+    'Royal County Down, Northern Ireland',
+    'Shinnecock Hills Golf Club, New York',
+    'Cypress Point Club, California',
+    'Royal Melbourne Golf Club, Australia',
+    'Muirfield Golf Links, Scotland',
+    'Pine Valley Golf Club, New Jersey',
+    'Oakmont Country Club, Pennsylvania'
+  ];
+
+  const filteredSuggestions = golfCourseSuggestions.filter(course =>
+    course.toLowerCase().includes(filters.location.toLowerCase())
+  );
+
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilters({...filters, location: e.target.value});
+    setShowSuggestions(true);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setFilters({...filters, location: suggestion});
+    setShowSuggestions(false);
+  };
 
   return (
     <div className="w-full bg-white shadow-lg">
       {/* Main Search Bar */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-          <div>
+          <div className="relative">
             <Label htmlFor="location" className="text-sm font-medium">Golf Course / Location</Label>
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -36,8 +64,26 @@ const SearchFilters = () => {
                 placeholder="St. Andrews, Augusta..."
                 className="pl-10"
                 value={filters.location}
-                onChange={(e) => setFilters({...filters, location: e.target.value})}
+                onChange={handleLocationChange}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               />
+              {showSuggestions && filters.location && filteredSuggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+                  {filteredSuggestions.slice(0, 5).map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-gray-400" />
+                        {suggestion}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           
