@@ -53,9 +53,14 @@ const Auth = () => {
     const { error } = await signUp(email, password, fullName);
     
     if (error) {
-      toast.error(error.message);
+      if (error.message.includes('User already registered')) {
+        toast.error("This email is already registered. Please sign in instead.");
+      } else {
+        toast.error(error.message);
+      }
     } else {
-      toast.success("Welcome to TeeBnB! Please check your email to verify your account before listing your property.");
+      toast.success("Account created successfully! You can now list your property.");
+      navigate("/list-property");
     }
     setLoading(false);
   };
