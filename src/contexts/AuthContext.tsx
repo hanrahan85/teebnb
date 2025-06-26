@@ -52,7 +52,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, fullName?: string) => {
     console.log('Signing up user:', email);
     
-    // Sign up with email confirmation disabled - we'll handle verification ourselves
+    // Use Supabase's built-in email confirmation with proper redirect
+    const redirectUrl = `${window.location.origin}/auth?verified=true`;
+    
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
@@ -60,32 +62,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         data: {
           full_name: fullName
         },
-        emailRedirectTo: undefined // Disable Supabase's default email confirmation
+        emailRedirectTo: redirectUrl
       }
     });
     
     if (error) {
       console.error('Signup error:', error);
-      return { error };
-    }
-
-    // Send our custom verification email
-    try {
-      const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
-        body: { email, fullName: fullName || 'Golf Host' }
-      });
-      
-      if (emailError) {
-        console.error('Email sending error:', emailError);
-        return { error: emailError };
-      }
-    } catch (emailError) {
-      console.error('Email function error:', emailError);
-      return { error: emailError };
+    } else {
+      console.log('Signup successful:', data);
     }
     
-    console.log('Signup successful:', data);
-    return { error: null };
+    return { error };
   };
 
   const signIn = async (email: string, password: string) => {

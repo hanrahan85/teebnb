@@ -128,10 +128,10 @@ const Auth = () => {
           </p>
           <div className="bg-emerald-50 p-4 rounded-lg mb-6">
             <p className="text-sm text-emerald-700 mb-2">
-              📱 <strong>Check your email and click the verification link</strong>
+              📱 <strong>Click the verification link in your email</strong>
             </p>
             <p className="text-xs text-emerald-600">
-              The link will bring you back here automatically!
+              You'll be redirected back here automatically after verification!
             </p>
           </div>
           <Button
