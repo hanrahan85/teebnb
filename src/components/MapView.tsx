@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
+import { Loader } from '@googlemaps/js-api-loader';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, Bed, Users } from "lucide-react";
@@ -32,6 +33,8 @@ const MapView = () => {
   const [selectedCourse, setSelectedCourse] = useState<GolfCourse | null>(null);
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Mock data for now - will replace with real data from Supabase
   const mockCourses: GolfCourse[] = [
@@ -85,62 +88,108 @@ const MapView = () => {
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Initialize Google Maps
-    const googleMap = new google.maps.Map(mapRef.current, {
-      center: { lat: 56.3467, lng: -2.8175 }, // St. Andrews
-      zoom: 10,
-      styles: [
-        {
-          featureType: "poi.business",
-          stylers: [{ visibility: "off" }]
-        }
-      ]
-    });
+    const initializeMap = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Initialize Google Maps API
+        const loader = new Loader({
+          apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY_HERE',
+          version: 'weekly',
+          libraries: ['places']
+        });
 
-    setMap(googleMap);
+        await loader.load();
 
-    // Add golf course markers
-    mockCourses.forEach(course => {
-      const marker = new google.maps.Marker({
-        position: { lat: course.latitude, lng: course.longitude },
-        map: googleMap,
-        title: course.name,
-        icon: {
-          url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12V7a1 1 0 0 1 1-1h4l2-2h4a1 1 0 0 1 1 1v4"/>
-              <circle cx="12" cy="13" r="8"/>
-            </svg>
-          `),
-          scaledSize: new google.maps.Size(32, 32)
-        }
-      });
+        // Create the map
+        const googleMap = new google.maps.Map(mapRef.current!, {
+          center: { lat: 56.3467, lng: -2.8175 }, // St. Andrews
+          zoom: 10,
+          styles: [
+            {
+              featureType: "poi.business",
+              stylers: [{ visibility: "off" }]
+            }
+          ]
+        });
 
-      marker.addListener('click', () => {
-        setSelectedCourse(course);
-        setAccommodations(mockAccommodations); // Filter by distance in real implementation
-      });
-    });
+        setMap(googleMap);
 
-    // Add accommodation markers
-    mockAccommodations.forEach(accommodation => {
-      const marker = new google.maps.Marker({
-        position: { lat: accommodation.latitude, lng: accommodation.longitude },
-        map: googleMap,
-        title: accommodation.title,
-        icon: {
-          url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#3b82f6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9,22 9,12 15,12 15,22"/>
-            </svg>
-          `),
-          scaledSize: new google.maps.Size(24, 24)
-        }
-      });
-    });
+        // Add golf course markers
+        mockCourses.forEach(course => {
+          const marker = new google.maps.Marker({
+            position: { lat: course.latitude, lng: course.longitude },
+            map: googleMap,
+            title: course.name,
+            icon: {
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12V7a1 1 0 0 1 1-1h4l2-2h4a1 1 0 0 1 1 1v4"/>
+                  <circle cx="12" cy="13" r="8"/>
+                </svg>
+              `),
+              scaledSize: new google.maps.Size(32, 32)
+            }
+          });
 
+          marker.addListener('click', () => {
+            setSelectedCourse(course);
+            setAccommodations(mockAccommodations); // Filter by distance in real implementation
+          });
+        });
+
+        // Add accommodation markers
+        mockAccommodations.forEach(accommodation => {
+          const marker = new google.maps.Marker({
+            position: { lat: accommodation.latitude, lng: accommodation.longitude },
+            map: googleMap,
+            title: accommodation.title,
+            icon: {
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#3b82f6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9,22 9,12 15,12 15,22"/>
+                </svg>
+              `),
+              scaledSize: new google.maps.Size(24, 24)
+            }
+          });
+        });
+
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error loading Google Maps:', err);
+        setError('Failed to load map. Please check your API key.');
+        setIsLoading(false);
+      }
+    };
+
+    initializeMap();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading map...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <p className="text-gray-600 text-sm">
+            Please add your Google Maps API key to the environment variables.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex">
