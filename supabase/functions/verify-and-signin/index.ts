@@ -146,8 +146,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Email verification complete, redirecting to app...');
 
-    // Simple redirect to the auth page with a verified flag
-    // This avoids the magic link complexity and lets the user sign in normally
+    // Fixed redirect URL with proper absolute path
     return new Response(null, {
       status: 302,
       headers: {
