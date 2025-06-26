@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Users, DollarSign, Home, Filter } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarIcon, MapPin, Users, DollarSign, Home, Filter } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const SearchFilters = () => {
   const [filters, setFilters] = useState({
@@ -19,6 +23,8 @@ const SearchFilters = () => {
     bedrooms: ''
   });
 
+  const [checkInDate, setCheckInDate] = useState<Date>();
+  const [checkOutDate, setCheckOutDate] = useState<Date>();
   const [showSuggestions, setShowSuggestions] = useState(false);
   const propertyTypes = ['House', 'Apartment', 'Villa', 'Condo', 'Townhouse'];
   const [showFilters, setShowFilters] = useState(false);
@@ -33,7 +39,12 @@ const SearchFilters = () => {
     'Royal Melbourne Golf Club, Australia',
     'Muirfield Golf Links, Scotland',
     'Pine Valley Golf Club, New Jersey',
-    'Oakmont Country Club, Pennsylvania'
+    'Oakmont Country Club, Pennsylvania',
+    'TPC Sawgrass, Florida',
+    'Bethpage Black, New York',
+    'Whistling Straits, Wisconsin',
+    'Torrey Pines, California',
+    'Kiawah Island Ocean Course, South Carolina'
   ];
 
   const filteredSuggestions = golfCourseSuggestions.filter(course =>
@@ -68,9 +79,9 @@ const SearchFilters = () => {
                 onFocus={() => setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               />
-              {showSuggestions && filters.location && filteredSuggestions.length > 0 && (
+              {showSuggestions && filteredSuggestions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
-                  {filteredSuggestions.slice(0, 5).map((suggestion, index) => (
+                  {filteredSuggestions.slice(0, 8).map((suggestion, index) => (
                     <div
                       key={index}
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
@@ -89,22 +100,57 @@ const SearchFilters = () => {
           
           <div>
             <Label htmlFor="checkin" className="text-sm font-medium">Check In</Label>
-            <Input
-              id="checkin"
-              type="date"
-              value={filters.checkIn}
-              onChange={(e) => setFilters({...filters, checkIn: e.target.value})}
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal h-10",
+                    !checkInDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {checkInDate ? format(checkInDate, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={checkInDate}
+                  onSelect={setCheckInDate}
+                  initialFocus
+                  className={cn("p-6 pointer-events-auto scale-125")}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           
           <div>
             <Label htmlFor="checkout" className="text-sm font-medium">Check Out</Label>
-            <Input
-              id="checkout"
-              type="date"
-              value={filters.checkOut}
-              onChange={(e) => setFilters({...filters, checkOut: e.target.value})}
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal h-10",
+                    !checkOutDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {checkOutDate ? format(checkOutDate, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={checkOutDate}
+                  onSelect={setCheckOutDate}
+                  disabled={(date) => checkInDate ? date <= checkInDate : false}
+                  initialFocus
+                  className={cn("p-6 pointer-events-auto scale-125")}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           
           <div>
