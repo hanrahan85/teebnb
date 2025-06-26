@@ -14,6 +14,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (!token) {
       console.log('No token provided');
       return new Response(`
+        <!DOCTYPE html>
         <html>
           <head>
             <meta charset="UTF-8">
@@ -30,7 +31,10 @@ const handler = async (req: Request): Promise<Response> => {
         </html>
       `, {
         status: 400,
-        headers: { 'Content-Type': 'text/html' }
+        headers: { 
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-cache'
+        }
       });
     }
 
@@ -69,6 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (!verifications || verifications.length === 0) {
       console.error('Token not found in database');
       return new Response(`
+        <!DOCTYPE html>
         <html>
           <head>
             <meta charset="UTF-8">
@@ -85,7 +90,10 @@ const handler = async (req: Request): Promise<Response> => {
         </html>
       `, {
         status: 400,
-        headers: { 'Content-Type': 'text/html' }
+        headers: { 
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-cache'
+        }
       });
     }
 
@@ -102,6 +110,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (now > expiresAt) {
       console.error('Token expired');
       return new Response(`
+        <!DOCTYPE html>
         <html>
           <head>
             <meta charset="UTF-8">
@@ -118,7 +127,10 @@ const handler = async (req: Request): Promise<Response> => {
         </html>
       `, {
         status: 400,
-        headers: { 'Content-Type': 'text/html' }
+        headers: { 
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-cache'
+        }
       });
     }
 
@@ -169,6 +181,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Show a beautiful success page with auto-redirect
     return new Response(`
+      <!DOCTYPE html>
       <html>
         <head>
           <meta charset="UTF-8">
@@ -208,7 +221,10 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `, {
       status: 200,
-      headers: { 'Content-Type': 'text/html' }
+      headers: { 
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache'
+      }
     });
 
   } catch (error: any) {
@@ -217,6 +233,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.error("Stack:", error.stack);
     
     return new Response(`
+      <!DOCTYPE html>
       <html>
         <head>
           <meta charset="UTF-8">
@@ -234,7 +251,10 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `, {
       status: 500,
-      headers: { 'Content-Type': 'text/html' }
+      headers: { 
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache'
+      }
     });
   }
 };
