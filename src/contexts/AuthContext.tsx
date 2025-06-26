@@ -65,6 +65,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Signup error:', error);
     } else {
       console.log('Signup successful:', data);
+      // If signup is successful and we have a user but no session (due to email confirmation being required),
+      // we'll set the user manually to allow them to proceed
+      if (data.user && !data.session) {
+        console.log('Setting user without session for immediate access');
+        setUser(data.user);
+        setLoading(false);
+      }
     }
     
     return { error };
@@ -88,6 +95,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
   };
 
   const value = {
