@@ -101,7 +101,7 @@ const MapView = () => {
         <div className="absolute bottom-12 left-12 text-white max-w-md">
           <h2 className="text-5xl font-bold mb-4 leading-tight">Luxury Golf Estate</h2>
           <p className="text-xl opacity-90 mb-2">Championship Course Views</p>
-          <p className="text-lg opacity-80">Experience world-class accommodations at America's most prestigious golf destinations</p>
+          <p className="text-lg opacity-80">Experience world-class accommodations at the world's most prestigious golf destinations globally</p>
         </div>
         <div className="absolute top-8 left-8">
           <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-white">
