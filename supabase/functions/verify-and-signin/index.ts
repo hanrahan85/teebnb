@@ -14,13 +14,16 @@ const handler = async (req: Request): Promise<Response> => {
     if (!token) {
       console.log('No token provided');
       return new Response(`<!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invalid Verification Link</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    </style>
   </head>
-  <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin: 0;">
+  <body style="text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
     <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <h1 style="color: #dc2626; margin-bottom: 20px;">❌ Invalid Verification Link</h1>
       <p style="font-size: 18px; margin-bottom: 30px;">This verification link is missing required parameters.</p>
@@ -31,7 +34,9 @@ const handler = async (req: Request): Promise<Response> => {
         status: 400,
         headers: { 
           'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
       });
     }
@@ -71,13 +76,16 @@ const handler = async (req: Request): Promise<Response> => {
     if (!verifications || verifications.length === 0) {
       console.error('Token not found in database');
       return new Response(`<!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invalid Verification Link</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    </style>
   </head>
-  <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin: 0;">
+  <body style="text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
     <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <h1 style="color: #dc2626; margin-bottom: 20px;">❌ Verification Link Invalid</h1>
       <p style="font-size: 18px; margin-bottom: 30px;">This verification link is invalid or has already been used.</p>
@@ -88,7 +96,9 @@ const handler = async (req: Request): Promise<Response> => {
         status: 400,
         headers: { 
           'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
       });
     }
@@ -106,13 +116,16 @@ const handler = async (req: Request): Promise<Response> => {
     if (now > expiresAt) {
       console.error('Token expired');
       return new Response(`<!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verification Link Expired</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    </style>
   </head>
-  <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin: 0;">
+  <body style="text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
     <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <h1 style="color: #dc2626; margin-bottom: 20px;">⏰ Verification Link Expired</h1>
       <p style="font-size: 18px; margin-bottom: 30px;">This verification link has expired. Please request a new one.</p>
@@ -123,7 +136,9 @@ const handler = async (req: Request): Promise<Response> => {
         status: 400,
         headers: { 
           'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
       });
     }
@@ -175,12 +190,13 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Show a beautiful success page with auto-redirect
     return new Response(`<!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Verified Successfully!</title>
     <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
       @keyframes bounce {
         0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
         40% { transform: translateY(-30px); }
@@ -189,7 +205,7 @@ const handler = async (req: Request): Promise<Response> => {
       .bounce { animation: bounce 2s infinite; }
     </style>
   </head>
-  <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); min-height: 100vh; margin: 0;">
+  <body style="text-align: center; padding: 50px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); min-height: 100vh;">
     <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <div class="bounce" style="font-size: 80px; margin-bottom: 20px;">✅</div>
       <h1 style="color: #059669; margin-bottom: 20px; font-size: 32px;">Email Verified!</h1>
@@ -215,7 +231,9 @@ const handler = async (req: Request): Promise<Response> => {
       status: 200,
       headers: { 
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
     });
 
@@ -225,13 +243,16 @@ const handler = async (req: Request): Promise<Response> => {
     console.error("Stack:", error.stack);
     
     return new Response(`<!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verification Error</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    </style>
   </head>
-  <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); min-height: 100vh; margin: 0;">
+  <body style="text-align: center; padding: 50px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); min-height: 100vh;">
     <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <h1 style="color: #dc2626; margin-bottom: 20px;">⚠️ Verification Error</h1>
       <p style="font-size: 18px; margin-bottom: 15px;">There was an error verifying your email.</p>
@@ -243,7 +264,9 @@ const handler = async (req: Request): Promise<Response> => {
       status: 500,
       headers: { 
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
     });
   }
