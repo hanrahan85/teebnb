@@ -51,13 +51,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     console.log('Signing up user:', email);
-    const redirectUrl = `${window.location.origin}/auth?verified=true`;
     
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName
         }
@@ -66,11 +64,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (error) {
       console.error('Signup error:', error);
-    } else {
-      console.log('Signup successful:', data);
+      return { error };
+    }
+
+    // Send custom verification email
+    try {
+      const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
+        body: { email, fullName: fullName || 'Golf Host' }
+      });
+      
+      if (emailError) {
+        console.error('Email sending error:', emailError);
+        // Don't fail signup if email fails, user can try again
+      }
+    } catch (emailError) {
+      console.error('Email function error:', emailError);
     }
     
-    return { error };
+    console.log('Signup successful:', data);
+    return { error: null };
   };
 
   const signIn = async (email: string, password: string) => {
