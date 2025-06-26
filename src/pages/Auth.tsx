@@ -22,7 +22,7 @@ const Auth = () => {
 
   // Check if user is already authenticated
   useEffect(() => {
-    if (user) {
+    if (user && user.email_confirmed_at) {
       navigate("/list-property");
     }
   }, [user, navigate]);
@@ -30,7 +30,9 @@ const Auth = () => {
   // Check if user just verified their email
   useEffect(() => {
     if (searchParams.get('verified') === 'true') {
-      toast.success("Email verified successfully! You can now sign in.");
+      toast.success("Email verified successfully! You can now sign in with your credentials.", {
+        duration: 6000,
+      });
     }
   }, [searchParams]);
 
@@ -45,8 +47,11 @@ const Auth = () => {
     const { error } = await signIn(email, password);
     
     if (error) {
+      console.error('Sign in error:', error);
       if (error.message.includes('Email not confirmed')) {
-        toast.error("Please check your email and click the verification link before signing in.");
+        toast.error("Please verify your email first. Check your inbox for the verification link.");
+      } else if (error.message.includes('Invalid login credentials')) {
+        toast.error("Invalid email or password. Please check your credentials.");
       } else {
         toast.error(error.message);
       }
@@ -73,8 +78,9 @@ const Auth = () => {
     const { error } = await signUp(email, password, fullName);
     
     if (error) {
+      console.error('Sign up error:', error);
       if (error.message.includes('User already registered')) {
-        toast.error("This email is already registered. Please sign in instead.");
+        toast.error("This email is already registered. Please sign in instead or use a different email.");
       } else {
         toast.error(error.message);
       }
@@ -96,7 +102,7 @@ const Auth = () => {
             Please click the link in your email to verify your account.
           </p>
           <p className="text-sm text-emerald-600 mb-6">
-            After verification, you'll be redirected back here to sign in.
+            After verification, return here and sign in with your credentials.
           </p>
           <Button
             onClick={() => setShowVerificationMessage(false)}
@@ -172,6 +178,18 @@ const Auth = () => {
             <h1 className="text-3xl font-bold text-emerald-900 mb-2">Join TeeBnB</h1>
             <p className="text-emerald-600">Start hosting golf travelers at your property</p>
           </div>
+
+          {searchParams.get('verified') === 'true' && (
+            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+              <div className="flex items-center gap-2 text-emerald-700">
+                <CheckCircle className="h-5 w-5" />
+                <span className="font-medium">Email Verified!</span>
+              </div>
+              <p className="text-sm text-emerald-600 mt-1">
+                You can now sign in with your credentials below.
+              </p>
+            </div>
+          )}
 
           <Tabs defaultValue="signup" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
