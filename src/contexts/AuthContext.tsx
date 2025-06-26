@@ -70,28 +70,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error };
     }
 
-    // Send custom TeeBnB branded email if user needs confirmation
-    if (data.user && !data.user.email_confirmed_at) {
-      try {
-        const { error: emailError } = await supabase.functions.invoke('send-custom-auth-email', {
-          body: { 
-            email, 
-            token: 'verification-token', // Use a placeholder since we don't have access to the actual token
-            type: 'signup',
-            redirectTo: redirectUrl
-          }
-        });
-        
-        if (emailError) {
-          console.error('Custom email error:', emailError);
-          // Don't fail signup if custom email fails, fallback to Supabase default
-        }
-      } catch (emailError) {
-        console.error('Custom email function error:', emailError);
-        // Continue with signup even if custom email fails
-      }
-    }
-    
     console.log('Signup successful:', data);
     return { error: null };
   };
