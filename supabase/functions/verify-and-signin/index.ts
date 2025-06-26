@@ -18,7 +18,7 @@ const handler = async (req: Request): Promise<Response> => {
           <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
             <h1 style="color: #dc2626;">Invalid Verification Link</h1>
             <p>This verification link is missing required parameters.</p>
-            <p><a href="http://localhost:3000/auth" style="color: #059669;">Go to Sign In</a></p>
+            <p><a href="https://id-preview--1b23bbbf-3efc-45f7-a6fd-0f5bf5af3d3b.lovable.app/auth" style="color: #059669;">Go to Sign In</a></p>
           </body>
         </html>
       `, {
@@ -66,7 +66,7 @@ const handler = async (req: Request): Promise<Response> => {
           <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
             <h1 style="color: #dc2626;">Verification Link Invalid</h1>
             <p>This verification link is invalid or has expired.</p>
-            <p><a href="http://localhost:3000/auth" style="color: #059669;">Go to Sign In</a></p>
+            <p><a href="https://id-preview--1b23bbbf-3efc-45f7-a6fd-0f5bf5af3d3b.lovable.app/auth" style="color: #059669;">Go to Sign In</a></p>
           </body>
         </html>
       `, {
@@ -92,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
           <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
             <h1 style="color: #dc2626;">Verification Link Expired</h1>
             <p>This verification link has expired. Please request a new one.</p>
-            <p><a href="http://localhost:3000/auth" style="color: #059669;">Go to Sign In</a></p>
+            <p><a href="https://id-preview--1b23bbbf-3efc-45f7-a6fd-0f5bf5af3d3b.lovable.app/auth" style="color: #059669;">Go to Sign In</a></p>
           </body>
         </html>
       `, {
@@ -146,11 +146,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Email verification complete, redirecting to app...');
 
-    // Fixed redirect URL with proper absolute path
+    // Use the Lovable preview URL instead of localhost for better compatibility
     return new Response(null, {
       status: 302,
       headers: {
-        'Location': 'http://localhost:3000/auth?verified=true'
+        'Location': 'https://id-preview--1b23bbbf-3efc-45f7-a6fd-0f5bf5af3d3b.lovable.app/auth?verified=true'
       }
     });
 
@@ -165,7 +165,7 @@ const handler = async (req: Request): Promise<Response> => {
           <h1 style="color: #dc2626;">Verification Error</h1>
           <p>There was an error verifying your email. Please try again.</p>
           <p>Error: ${error.message}</p>
-          <p><a href="http://localhost:3000/auth" style="color: #059669;">Go to Sign In</a></p>
+          <p><a href="https://id-preview--1b23bbbf-3efc-45f7-a6fd-0f5bf5af3d3b.lovable.app/auth" style="color: #059669;">Go to Sign In</a></p>
         </body>
       </html>
     `, {
