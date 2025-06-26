@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Mail, Lock, User, Trophy, MapPin, Star, CheckCircle } from "lucide-react";
+import { Home, Mail, Lock, User, Trophy, MapPin, Star, CheckCircle, Loader2 } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -16,6 +16,7 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [showVerificationMessage, setShowVerificationMessage] = useState(false);
+  const [activeTab, setActiveTab] = useState("signup");
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -30,9 +31,18 @@ const Auth = () => {
   // Check if user just verified their email
   useEffect(() => {
     if (searchParams.get('verified') === 'true') {
-      toast.success("Email verified successfully! You can now sign in with your credentials.", {
-        duration: 6000,
+      toast.success("🎉 Email verified successfully! You can now sign in with your credentials.", {
+        duration: 8000,
+        style: {
+          background: '#10b981',
+          color: 'white',
+          border: 'none',
+          fontSize: '16px',
+          fontWeight: 'bold',
+        }
       });
+      // Switch to sign in tab if user just verified
+      setActiveTab("signin");
     }
   }, [searchParams]);
 
@@ -49,14 +59,21 @@ const Auth = () => {
     if (error) {
       console.error('Sign in error:', error);
       if (error.message.includes('Email not confirmed')) {
-        toast.error("Please verify your email first. Check your inbox for the verification link.");
+        toast.error("Please verify your email first. Check your inbox for the verification link.", {
+          duration: 6000,
+        });
       } else if (error.message.includes('Invalid login credentials')) {
         toast.error("Invalid email or password. Please check your credentials.");
       } else {
         toast.error(error.message);
       }
     } else {
-      toast.success("Welcome back to TeeBnB!");
+      toast.success("🏌️ Welcome back to TeeBnB!", {
+        style: {
+          background: '#10b981',
+          color: 'white',
+        }
+      });
       navigate("/list-property");
     }
     setLoading(false);
@@ -81,12 +98,19 @@ const Auth = () => {
       console.error('Sign up error:', error);
       if (error.message.includes('User already registered')) {
         toast.error("This email is already registered. Please sign in instead or use a different email.");
+        setActiveTab("signin");
       } else {
         toast.error(error.message);
       }
     } else {
       setShowVerificationMessage(true);
-      toast.success("Account created! Please check your email to verify your account.");
+      toast.success("📧 Account created! Please check your email to verify your account.", {
+        duration: 8000,
+        style: {
+          background: '#10b981',
+          color: 'white',
+        }
+      });
     }
     setLoading(false);
   };
@@ -95,19 +119,25 @@ const Auth = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md mx-auto p-8 bg-white/95 backdrop-blur-sm border border-emerald-200/60 shadow-2xl rounded-3xl text-center">
-          <CheckCircle className="h-16 w-16 text-emerald-600 mx-auto mb-6" />
-          <h1 className="text-2xl font-bold text-emerald-900 mb-4">Check Your Email</h1>
-          <p className="text-emerald-700 mb-6">
-            We've sent a verification link to <strong>{email}</strong>. 
-            Please click the link in your email to verify your account.
+          <div className="animate-bounce mb-6">
+            <Mail className="h-20 w-20 text-emerald-600 mx-auto" />
+          </div>
+          <h1 className="text-3xl font-bold text-emerald-900 mb-4">Check Your Email!</h1>
+          <p className="text-emerald-700 mb-6 text-lg">
+            We've sent a verification link to <strong className="text-emerald-800">{email}</strong>
           </p>
-          <p className="text-sm text-emerald-600 mb-6">
-            After verification, return here and sign in with your credentials.
-          </p>
+          <div className="bg-emerald-50 p-4 rounded-lg mb-6">
+            <p className="text-sm text-emerald-700 mb-2">
+              📱 <strong>Check your email and click the verification link</strong>
+            </p>
+            <p className="text-xs text-emerald-600">
+              The link will bring you back here automatically!
+            </p>
+          </div>
           <Button
             onClick={() => setShowVerificationMessage(false)}
             variant="outline"
-            className="w-full"
+            className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50"
           >
             Back to Sign In
           </Button>
@@ -183,7 +213,7 @@ const Auth = () => {
             <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
               <div className="flex items-center gap-2 text-emerald-700">
                 <CheckCircle className="h-5 w-5" />
-                <span className="font-medium">Email Verified!</span>
+                <span className="font-medium">Email Verified Successfully! 🎉</span>
               </div>
               <p className="text-sm text-emerald-600 mt-1">
                 You can now sign in with your credentials below.
@@ -191,7 +221,7 @@ const Auth = () => {
             </div>
           )}
 
-          <Tabs defaultValue="signup" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="signup">Get Started</TabsTrigger>
               <TabsTrigger value="signin">I'm a Host</TabsTrigger>
@@ -212,6 +242,7 @@ const Auth = () => {
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Enter your full name"
                       className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -229,6 +260,7 @@ const Auth = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
                       className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -246,6 +278,7 @@ const Auth = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Choose a password (min. 6 characters)"
                       className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -255,7 +288,14 @@ const Auth = () => {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white h-12 text-lg font-semibold rounded-xl"
                 >
-                  {loading ? "Creating account..." : "Start Hosting"}
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Creating account...
+                    </>
+                  ) : (
+                    "Start Hosting"
+                  )}
                 </Button>
               </form>
             </TabsContent>
@@ -275,6 +315,7 @@ const Auth = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
                       className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -292,6 +333,7 @@ const Auth = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -301,7 +343,14 @@ const Auth = () => {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white h-12 text-lg font-semibold rounded-xl"
                 >
-                  {loading ? "Signing in..." : "Continue to Dashboard"}
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    "Continue to Dashboard"
+                  )}
                 </Button>
               </form>
             </TabsContent>
