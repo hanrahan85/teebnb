@@ -31,6 +31,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Server configuration error');
     }
 
+    console.log('Creating Supabase admin client...');
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
