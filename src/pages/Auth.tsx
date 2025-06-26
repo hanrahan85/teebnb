@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TreePine, Mail, Lock, User } from "lucide-react";
+import { Home, Mail, Lock, User, Trophy, MapPin, Star } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -31,8 +31,8 @@ const Auth = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Welcome back!");
-      navigate("/");
+      toast.success("Welcome back to TeeBnB!");
+      navigate("/list-property");
     }
     setLoading(false);
   };
@@ -55,138 +55,191 @@ const Auth = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Account created! Please check your email to verify your account.");
+      toast.success("Welcome to TeeBnB! Please check your email to verify your account before listing your property.");
     }
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-8 bg-white/90 backdrop-blur-xl border border-stone-200/60 shadow-2xl rounded-3xl">
-        <div className="text-center mb-8">
-          <div className="p-4 bg-gradient-to-br from-slate-700 via-emerald-600 to-teal-600 rounded-2xl w-fit mx-auto mb-6">
-            <TreePine className="h-12 w-12 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        
+        {/* Left side - Marketing content */}
+        <div className="hidden lg:block space-y-8">
+          <div>
+            <h1 className="text-5xl font-bold text-emerald-900 mb-4">
+              TeeBnB Host
+            </h1>
+            <p className="text-xl text-emerald-700 mb-8">
+              Turn your golf-adjacent property into a profitable accommodation for golf travelers worldwide
+            </p>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Golf Travel Planner</h1>
-          <p className="text-slate-600">Access your personalized golf travel experiences</p>
+
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-emerald-100 rounded-full">
+                <Trophy className="h-6 w-6 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-emerald-900">Premium Golf Destinations</h3>
+                <p className="text-emerald-600">Host guests visiting world-class golf courses and tournaments</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-emerald-100 rounded-full">
+                <MapPin className="h-6 w-6 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-emerald-900">Perfect Location</h3>
+                <p className="text-emerald-600">Properties near golf courses are in high demand year-round</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-emerald-100 rounded-full">
+                <Star className="h-6 w-6 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-emerald-900">Premium Earnings</h3>
+                <p className="text-emerald-600">Golf travelers often book longer stays and pay premium rates</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-emerald-100 p-6 rounded-2xl">
+            <h3 className="text-lg font-semibold text-emerald-900 mb-2">Start earning today</h3>
+            <p className="text-emerald-700">Join thousands of hosts already earning from golf tourism</p>
+          </div>
         </div>
 
-        <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          </TabsList>
+        {/* Right side - Auth form */}
+        <Card className="w-full max-w-md mx-auto p-8 bg-white/95 backdrop-blur-sm border border-emerald-200/60 shadow-2xl rounded-3xl">
+          <div className="text-center mb-8">
+            <div className="p-4 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl w-fit mx-auto mb-6">
+              <Home className="h-12 w-12 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-emerald-900 mb-2">Join TeeBnB</h1>
+            <p className="text-emerald-600">Start hosting golf travelers at your property</p>
+          </div>
 
-          <TabsContent value="signin">
-            <form onSubmit={handleSignIn} className="space-y-6">
-              <div>
-                <Label htmlFor="signin-email" className="text-slate-800 font-semibold mb-3 block">
-                  Email Address
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-                  <Input
-                    id="signin-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="pl-10 h-12 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-xl"
-                  />
+          <Tabs defaultValue="signup" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="signup">Get Started</TabsTrigger>
+              <TabsTrigger value="signin">I'm a Host</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="signup">
+              <form onSubmit={handleSignUp} className="space-y-6">
+                <div>
+                  <Label htmlFor="signup-name" className="text-emerald-800 font-semibold mb-3 block">
+                    Full Name
+                  </Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                    <Input
+                      id="signup-name"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <Label htmlFor="signin-password" className="text-slate-800 font-semibold mb-3 block">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-                  <Input
-                    id="signin-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    className="pl-10 h-12 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-xl"
-                  />
+                <div>
+                  <Label htmlFor="signup-email" className="text-emerald-800 font-semibold mb-3 block">
+                    Email Address
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-slate-800 via-emerald-700 to-teal-700 hover:from-slate-900 hover:via-emerald-800 hover:to-teal-800 text-white h-12 text-lg font-semibold rounded-xl"
-              >
-                {loading ? "Signing in..." : "Sign In"}
-              </Button>
-            </form>
-          </TabsContent>
-
-          <TabsContent value="signup">
-            <form onSubmit={handleSignUp} className="space-y-6">
-              <div>
-                <Label htmlFor="signup-name" className="text-slate-800 font-semibold mb-3 block">
-                  Full Name
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Enter your full name"
-                    className="pl-10 h-12 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-xl"
-                  />
+                <div>
+                  <Label htmlFor="signup-password" className="text-emerald-800 font-semibold mb-3 block">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Choose a password (min. 6 characters)"
+                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <Label htmlFor="signup-email" className="text-slate-800 font-semibold mb-3 block">
-                  Email Address
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="pl-10 h-12 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-xl"
-                  />
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white h-12 text-lg font-semibold rounded-xl"
+                >
+                  {loading ? "Creating account..." : "Start Hosting"}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="signin">
+              <form onSubmit={handleSignIn} className="space-y-6">
+                <div>
+                  <Label htmlFor="signin-email" className="text-emerald-800 font-semibold mb-3 block">
+                    Email Address
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                    <Input
+                      id="signin-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <Label htmlFor="signup-password" className="text-slate-800 font-semibold mb-3 block">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Choose a password (min. 6 characters)"
-                    className="pl-10 h-12 border-stone-300 focus:border-emerald-500 bg-white/95 rounded-xl"
-                  />
+                <div>
+                  <Label htmlFor="signin-password" className="text-emerald-800 font-semibold mb-3 block">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                    <Input
+                      id="signin-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-slate-800 via-emerald-700 to-teal-700 hover:from-slate-900 hover:via-emerald-800 hover:to-teal-800 text-white h-12 text-lg font-semibold rounded-xl"
-              >
-                {loading ? "Creating account..." : "Create Account"}
-              </Button>
-            </form>
-          </TabsContent>
-        </Tabs>
-      </Card>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white h-12 text-lg font-semibold rounded-xl"
+                >
+                  {loading ? "Signing in..." : "Continue to Dashboard"}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -165,7 +165,7 @@ const Index = () => {
                   </Button>
                 </div>
               ) : (
-                <Button onClick={() => window.location.href = '/list-property'} variant="outline" size="sm">
+                <Button onClick={() => window.location.href = '/auth'} variant="outline" size="sm">
                   <LogIn className="h-4 w-4 mr-2" />
                   List Your Property
                 </Button>
@@ -278,7 +278,7 @@ const Index = () => {
             <Button 
               size="lg" 
               className="bg-emerald-600 hover:bg-emerald-700"
-              onClick={() => window.location.href = '/list-property'}
+              onClick={() => window.location.href = '/auth'}
             >
               <Home className="h-5 w-5 mr-2" />
               Become a Host
