@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ListProperty from "./pages/ListProperty";
 import SearchResults from "./pages/SearchResults";
+import AccommodationDetails from "./pages/AccommodationDetails";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App: React.FC = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/list-property" element={<ListProperty />} />
               <Route path="/search-results" element={<SearchResults />} />
+              <Route path="/accommodation/:id" element={<AccommodationDetails />} />
               <Route path="/" element={<Index />} />
             </Routes>
           </BrowserRouter>

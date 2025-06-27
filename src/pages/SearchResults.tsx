@@ -53,7 +53,7 @@ const SearchResults = () => {
         </div>
       </div>
     );
-  }
+  };
 
   const getAvailabilityColor = (availability: string) => {
     switch (availability.toLowerCase()) {
@@ -75,6 +75,20 @@ const SearchResults = () => {
     if (amenityLower.includes('coffee') || amenityLower.includes('breakfast')) return <Coffee className="h-4 w-4" />;
     if (amenityLower.includes('golf')) return <Trophy className="h-4 w-4" />;
     return null;
+  };
+
+  const handleViewDetails = (accommodation: Accommodation, index: number) => {
+    navigate(`/accommodation/${index}`, {
+      state: {
+        accommodation,
+        searchData: {
+          location: results.searchLocation,
+          checkIn: results.searchDates.checkIn,
+          checkOut: results.searchDates.checkOut,
+          guests: results.guests
+        }
+      }
+    });
   };
 
   return (
@@ -203,13 +217,7 @@ const SearchResults = () => {
 
                 <Button 
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                  onClick={() => {
-                    if (accommodation.bookingInfo.startsWith('http')) {
-                      window.open(accommodation.bookingInfo, '_blank');
-                    } else {
-                      navigator.clipboard.writeText(accommodation.bookingInfo);
-                    }
-                  }}
+                  onClick={() => handleViewDetails(accommodation, index)}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   View Details
