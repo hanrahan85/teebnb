@@ -1,5 +1,4 @@
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -117,20 +116,28 @@
     box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
   }
 
-  /* Override any remaining yellow/amber backgrounds */
-  .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500,
-  .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500 {
+  /* Remove all yellow/amber variations - replace with neutral */
+  .bg-yellow-50, .bg-amber-50 {
     background-color: rgb(248 250 252) !important;
   }
 
-  .text-yellow-400, .text-yellow-500, .text-yellow-600,
-  .text-amber-400, .text-amber-500, .text-amber-600 {
-    color: rgb(180 83 9) !important; /* Sophisticated amber tone */
+  .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500,
+  .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500 {
+    background-color: rgb(229 231 235) !important;
   }
 
-  .border-yellow-400, .border-yellow-500,
-  .border-amber-400, .border-amber-500 {
+  .text-yellow-300, .text-yellow-400, .text-yellow-500, .text-yellow-600, .text-yellow-700,
+  .text-amber-300, .text-amber-400, .text-amber-500, .text-amber-600, .text-amber-700 {
+    color: rgb(107 114 128) !important;
+  }
+
+  .border-yellow-200, .border-yellow-300, .border-yellow-400, .border-yellow-500,
+  .border-amber-200, .border-amber-300, .border-amber-400, .border-amber-500 {
     border-color: rgb(212 212 212) !important;
+  }
+
+  .fill-yellow-400, .fill-amber-400, .fill-yellow-500, .fill-amber-500 {
+    fill: rgb(107 114 128) !important;
   }
 }
 
@@ -188,6 +195,12 @@
     .text-gray-600, .text-gray-700, .text-gray-800 {
       color: rgb(82 82 82) !important;
     }
+
+    /* Remove yellow/amber on mobile */
+    .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500,
+    .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500 {
+      background-color: rgb(229 231 235) !important;
+    }
   }
 
   /* Extra small screens */
@@ -208,8 +221,19 @@
       color: rgb(64 64 64) !important;
     }
 
-    .bg-yellow-500 {
-      background-color: rgb(34 197 94) !important; /* Green instead of yellow */
+    /* Remove all yellow variations on mobile */
+    .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500, .bg-yellow-600,
+    .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500, .bg-amber-600 {
+      background-color: rgb(229 231 235) !important;
+    }
+
+    .text-yellow-300, .text-yellow-400, .text-yellow-500, .text-yellow-600, .text-yellow-700,
+    .text-amber-300, .text-amber-400, .text-amber-500, .text-amber-600, .text-amber-700 {
+      color: rgb(107 114 128) !important;
+    }
+
+    .fill-yellow-400, .fill-amber-400, .fill-yellow-500, .fill-amber-500 {
+      fill: rgb(107 114 128) !important;
     }
   }
 }

@@ -63,7 +63,7 @@ const AccommodationCard = ({ accommodation, onClick }: AccommodationCardProps) =
             {accommodation.title}
           </h3>
           <div className="flex items-center gap-1 ml-2">
-            <Star className="h-4 w-4 fill-amber-600 text-amber-600" />
+            <Star className="h-4 w-4 fill-neutral-500 text-neutral-500" />
             <span className="text-sm font-medium text-neutral-900">{accommodation.rating}</span>
             <span className="text-sm text-neutral-500">({accommodation.review_count})</span>
           </div>
