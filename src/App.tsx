@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ListProperty from "./pages/ListProperty";
+import SearchResults from "./pages/SearchResults";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/auth" element={<Auth />} />
               <Route path="/list-property" element={<ListProperty />} />
+              <Route path="/search-results" element={<SearchResults />} />
               <Route path="/" element={<Index />} />
             </Routes>
           </BrowserRouter>

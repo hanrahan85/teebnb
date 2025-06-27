@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,8 @@ interface SearchFiltersProps {
 }
 
 const SearchFilters = ({ onSearchResults }: SearchFiltersProps) => {
+  const navigate = useNavigate();
+  
   const [filters, setFilters] = useState({
     location: '',
     checkIn: '',
@@ -113,6 +116,10 @@ const SearchFilters = ({ onSearchResults }: SearchFiltersProps) => {
           description: `Found ${data.accommodations.length} accommodations near ${data.searchLocation}`,
         });
         
+        // Navigate to search results page with data
+        navigate('/search-results', { state: { results: data } });
+        
+        // Also call the callback if provided (for backward compatibility)
         if (onSearchResults) {
           onSearchResults(data);
         }
