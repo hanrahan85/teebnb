@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -7,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Mail, Lock, User, Trophy, MapPin, Star, CheckCircle, Loader2 } from "lucide-react";
+import { Home, Mail, Lock, User, CheckCircle, Loader2 } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,7 @@ const Auth = () => {
   // Check if user is already authenticated
   useEffect(() => {
     if (user) {
+      console.log('User is authenticated, redirecting to list-property');
       navigate("/list-property");
     }
   }, [user, navigate]);
@@ -35,23 +37,27 @@ const Auth = () => {
     }
 
     setLoading(true);
+    console.log('Attempting sign in for:', email);
+    
     const { error } = await signIn(email, password);
     
     if (error) {
       console.error('Sign in error:', error);
       if (error.message.includes('Email not confirmed')) {
-        toast.error("Please check your email and click the confirmation link before signing in.", {
-          duration: 6000,
+        toast.error("Please check your email and click the verification link first.", {
+          duration: 8000,
         });
       } else if (error.message.includes('Invalid login credentials')) {
-        toast.error("Invalid email or password. Please make sure you've confirmed your email first.", {
-          duration: 6000,
+        toast.error("Invalid email or password. Make sure you've verified your email first.", {
+          duration: 8000,
         });
       } else {
-        toast.error(error.message);
+        toast.error(`Sign in failed: ${error.message}`, {
+          duration: 6000,
+        });
       }
     } else {
-      toast.success("🏌️ Welcome back to TeeBnB!", {
+      toast.success("🏌️ Welcome to TeeBnB!", {
         style: {
           background: '#10b981',
           color: 'white',
@@ -75,32 +81,26 @@ const Auth = () => {
     }
 
     setLoading(true);
+    console.log('Attempting signup for:', email);
     
-    // Use a completely new email for testing
-    const testEmail = email.toLowerCase().trim();
-    console.log('Attempting signup with:', testEmail);
-    
-    const { error } = await signUp(testEmail, password, fullName);
+    const { error } = await signUp(email, password, fullName);
     
     if (error) {
       console.error('Sign up error:', error);
-      if (error.message.includes('User already registered')) {
-        toast.error("This email is already registered. Try signing in instead or use a different email.", {
-          duration: 6000,
-        });
-        setActiveTab("signin");
-      } else if (error.message.includes('already been registered')) {
-        toast.error("This email has already been used. Please try a different email address.", {
-          duration: 6000,
+      if (error.message.includes('User already registered') || error.message.includes('already been registered')) {
+        toast.error("This email is already registered. Please use a different email or try signing in.", {
+          duration: 8000,
         });
       } else {
-        toast.error(`Signup failed: ${error.message}`);
+        toast.error(`Signup failed: ${error.message}`, {
+          duration: 6000,
+        });
       }
     } else {
-      console.log('Signup successful - user should receive verification email');
+      console.log('Signup successful - verification email should be sent');
       setShowVerificationMessage(true);
-      toast.success("📧 Account created! Please check your email (including spam folder) for the verification link.", {
-        duration: 10000,
+      toast.success("📧 Account created! Check your email for the verification link.", {
+        duration: 12000,
         style: {
           background: '#10b981',
           color: 'white',
@@ -125,23 +125,13 @@ const Auth = () => {
             <p className="text-sm text-emerald-700 mb-2">
               📱 <strong>Click the verification link in your email</strong>
             </p>
-            <p className="text-xs text-emerald-600">
-              Check your spam folder if you don't see it in your inbox!
+            <p className="text-xs text-emerald-600 mb-2">
+              Check your spam/junk folder if you don't see it!
             </p>
-            <p className="text-xs text-emerald-600 mt-2">
-              After clicking the link, come back here and try signing in.
+            <p className="text-xs text-emerald-600">
+              After clicking the link, you'll be automatically taken to list your property.
             </p>
           </div>
-          <Button
-            onClick={() => {
-              setShowVerificationMessage(false);
-              setActiveTab("signin");
-            }}
-            variant="outline"
-            className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 mb-4"
-          >
-            Back to Sign In
-          </Button>
           <Button
             onClick={() => {
               setShowVerificationMessage(false);
@@ -149,8 +139,8 @@ const Auth = () => {
               setPassword("");
               setFullName("");
             }}
-            variant="ghost"
-            className="w-full text-emerald-600 hover:bg-emerald-50"
+            variant="outline"
+            className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50"
           >
             Try Different Email
           </Button>
@@ -177,38 +167,33 @@ const Auth = () => {
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-emerald-100 rounded-full">
-                <Trophy className="h-6 w-6 text-emerald-600" />
+                <CheckCircle className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-emerald-900">Premium Golf Destinations</h3>
-                <p className="text-emerald-600">Host guests visiting world-class golf courses and tournaments</p>
+                <h3 className="text-lg font-semibold text-emerald-900">Simple 3-Step Process</h3>
+                <p className="text-emerald-600">Sign up → Verify email → List your property</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
               <div className="p-3 bg-emerald-100 rounded-full">
-                <MapPin className="h-6 w-6 text-emerald-600" />
+                <Mail className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-emerald-900">Perfect Location</h3>
-                <p className="text-emerald-600">Properties near golf courses are in high demand year-round</p>
+                <h3 className="text-lg font-semibold text-emerald-900">Instant Verification</h3>
+                <p className="text-emerald-600">Quick email verification gets you started in minutes</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
               <div className="p-3 bg-emerald-100 rounded-full">
-                <Star className="h-6 w-6 text-emerald-600" />
+                <Home className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-emerald-900">Premium Earnings</h3>
-                <p className="text-emerald-600">Golf travelers often book longer stays and pay premium rates</p>
+                <h3 className="text-lg font-semibold text-emerald-900">Start Earning Today</h3>
+                <p className="text-emerald-600">List your property and connect with golf travelers</p>
               </div>
             </div>
-          </div>
-
-          <div className="bg-emerald-100 p-6 rounded-2xl">
-            <h3 className="text-lg font-semibold text-emerald-900 mb-2">Start earning today</h3>
-            <p className="text-emerald-700">Join thousands of hosts already earning from golf tourism</p>
           </div>
         </div>
 
@@ -295,7 +280,7 @@ const Auth = () => {
                       Creating account...
                     </>
                   ) : (
-                    "Start Hosting"
+                    "Create Account & Verify Email"
                   )}
                 </Button>
               </form>
@@ -350,7 +335,7 @@ const Auth = () => {
                       Signing in...
                     </>
                   ) : (
-                    "Continue to Dashboard"
+                    "Sign In & Continue"
                   )}
                 </Button>
               </form>

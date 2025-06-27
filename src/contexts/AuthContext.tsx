@@ -50,16 +50,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
-    console.log('Signing up user:', email);
+    console.log('Starting signup process for:', email);
     
-    // First, let's try to sign up without any redirects to see what happens
+    // Get the current URL for redirect
+    const redirectUrl = `${window.location.origin}/list-property?welcome=true`;
+    
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName
-        }
+        },
+        emailRedirectTo: redirectUrl
       }
     });
     
@@ -70,11 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error };
     }
 
-    // If signup was successful, log details about email confirmation
-    if (data?.user && !data.user.email_confirmed_at) {
-      console.log('User created but email not confirmed. User should receive confirmation email.');
-    }
-
+    console.log('Signup successful. User will receive verification email.');
     return { error: null };
   };
 
