@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -88,17 +87,17 @@ export default {
 						800: '#663125',
 						900: '#542a22',
 					},
-					gold: {
-						50: '#fffbeb',
-						100: '#fef3c7',
-						200: '#fde68a',
-						300: '#fcd34d',
-						400: '#fbbf24',
-						500: '#f59e0b',
-						600: '#d97706',
-						700: '#b45309',
-						800: '#92400e',
-						900: '#78350f',
+					green: {
+						50: '#f0fdf4',
+						100: '#dcfce7',
+						200: '#bbf7d0',
+						300: '#86efac',
+						400: '#4ade80',
+						500: '#22c55e',
+						600: '#16a34a',
+						700: '#15803d',
+						800: '#166534',
+						900: '#14532d',
 					},
 					forest: {
 						50: '#f0f9f0',
@@ -151,11 +150,11 @@ export default {
 				},
 				'luxury-glow': {
 					'0%, 100%': { 
-						boxShadow: '0 0 20px rgba(184, 134, 11, 0.3)',
+						boxShadow: '0 0 20px rgba(34, 197, 94, 0.3)',
 						transform: 'scale(1)'
 					},
 					'50%': { 
-						boxShadow: '0 0 40px rgba(184, 134, 11, 0.5)',
+						boxShadow: '0 0 40px rgba(34, 197, 94, 0.5)',
 						transform: 'scale(1.02)'
 					},
 				},
@@ -173,7 +172,7 @@ export default {
 				'shimmer': 'shimmer 2s linear infinite',
 			},
 			backgroundImage: {
-				'luxury-gradient': 'linear-gradient(135deg, #8e4531 0%, #a0522d 25%, #b8860b 50%, #daa520 75%, #ffd700 100%)',
+				'luxury-gradient': 'linear-gradient(135deg, #166534 0%, #15803d 25%, #16a34a 50%, #22c55e 75%, #4ade80 100%)',
 				'hero-luxury': 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
 				'golf-green': 'linear-gradient(135deg, #166534 0%, #22c55e 50%, #86efac 100%)',
 			}
