@@ -70,6 +70,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error };
     }
 
+    // Send custom TeeBnB branded email using the edge function
+    if (data.user && !data.user.email_confirmed_at) {
+      try {
+        // Get the verification URL from Supabase's response
+        const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+          type: 'signup',
+          email: email,
+          options: {
+            redirectTo: redirectUrl
+          }
+        });
+
+        if (linkError) {
+          console.error('Link generation error:', linkError);
+        } else if (linkData.properties?.verification_token) {
+          // Send custom email with the actual verification token
+          const { error: emailError } = await supabase.functions.invoke('send-custom-auth-email', {
+            body: { 
+              email, 
+              token: linkData.properties.verification_token,
+              type: 'signup',
+              redirectTo: redirectUrl
+            }
+          });
+          
+          if (emailError) {
+            console.error('Custom email error:', emailError);
+          } else {
+            console.log('Custom verification email sent successfully');
+          }
+        }
+      } catch (emailError) {
+        console.error('Custom email function error:', emailError);
+      }
+    }
+
     console.log('Signup successful:', data);
     return { error: null };
   };

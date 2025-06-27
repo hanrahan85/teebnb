@@ -58,12 +58,14 @@ const Auth = () => {
     
     if (error) {
       console.error('Sign in error:', error);
-      if (error.message.includes('Email not confirmed')) {
+      if (error.message.includes('Email not confirmed') || error.message.includes('signup')) {
         toast.error("Please verify your email first. Check your inbox for the verification link.", {
           duration: 6000,
         });
       } else if (error.message.includes('Invalid login credentials')) {
-        toast.error("Invalid email or password. Please check your credentials.");
+        toast.error("Invalid email or password. If you just signed up, please check your email for verification first.", {
+          duration: 6000,
+        });
       } else {
         toast.error(error.message);
       }
@@ -97,7 +99,9 @@ const Auth = () => {
     if (error) {
       console.error('Sign up error:', error);
       if (error.message.includes('User already registered')) {
-        toast.error("This email is already registered. Please sign in instead or use a different email.");
+        toast.error("This email is already registered. Please sign in instead or check your email for verification.", {
+          duration: 6000,
+        });
         setActiveTab("signin");
       } else {
         toast.error(error.message);
