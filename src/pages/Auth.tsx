@@ -44,7 +44,7 @@ const Auth = () => {
           duration: 6000,
         });
       } else if (error.message.includes('Invalid login credentials')) {
-        toast.error("Invalid email or password. Make sure you've confirmed your email first.", {
+        toast.error("Invalid email or password. Please make sure you've confirmed your email first.", {
           duration: 6000,
         });
       } else {
@@ -75,22 +75,32 @@ const Auth = () => {
     }
 
     setLoading(true);
-    const { error } = await signUp(email, password, fullName);
+    
+    // Use a completely new email for testing
+    const testEmail = email.toLowerCase().trim();
+    console.log('Attempting signup with:', testEmail);
+    
+    const { error } = await signUp(testEmail, password, fullName);
     
     if (error) {
       console.error('Sign up error:', error);
       if (error.message.includes('User already registered')) {
-        toast.error("This email is already registered. Please sign in instead.", {
+        toast.error("This email is already registered. Try signing in instead or use a different email.", {
           duration: 6000,
         });
         setActiveTab("signin");
+      } else if (error.message.includes('already been registered')) {
+        toast.error("This email has already been used. Please try a different email address.", {
+          duration: 6000,
+        });
       } else {
-        toast.error(error.message);
+        toast.error(`Signup failed: ${error.message}`);
       }
     } else {
+      console.log('Signup successful - user should receive verification email');
       setShowVerificationMessage(true);
-      toast.success("📧 Account created! Please check your email to verify your account.", {
-        duration: 8000,
+      toast.success("📧 Account created! Please check your email (including spam folder) for the verification link.", {
+        duration: 10000,
         style: {
           background: '#10b981',
           color: 'white',
@@ -116,7 +126,10 @@ const Auth = () => {
               📱 <strong>Click the verification link in your email</strong>
             </p>
             <p className="text-xs text-emerald-600">
-              After clicking the link, come back here and try signing in!
+              Check your spam folder if you don't see it in your inbox!
+            </p>
+            <p className="text-xs text-emerald-600 mt-2">
+              After clicking the link, come back here and try signing in.
             </p>
           </div>
           <Button
@@ -125,9 +138,21 @@ const Auth = () => {
               setActiveTab("signin");
             }}
             variant="outline"
-            className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+            className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 mb-4"
           >
             Back to Sign In
+          </Button>
+          <Button
+            onClick={() => {
+              setShowVerificationMessage(false);
+              setEmail("");
+              setPassword("");
+              setFullName("");
+            }}
+            variant="ghost"
+            className="w-full text-emerald-600 hover:bg-emerald-50"
+          >
+            Try Different Email
           </Button>
         </Card>
       </div>
