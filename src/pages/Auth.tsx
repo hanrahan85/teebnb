@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -23,28 +22,10 @@ const Auth = () => {
 
   // Check if user is already authenticated
   useEffect(() => {
-    if (user && user.email_confirmed_at) {
+    if (user) {
       navigate("/list-property");
     }
   }, [user, navigate]);
-
-  // Check if user just verified their email
-  useEffect(() => {
-    if (searchParams.get('verified') === 'true') {
-      toast.success("🎉 Email verified successfully! You can now sign in with your credentials.", {
-        duration: 8000,
-        style: {
-          background: '#10b981',
-          color: 'white',
-          border: 'none',
-          fontSize: '16px',
-          fontWeight: 'bold',
-        }
-      });
-      // Switch to sign in tab if user just verified
-      setActiveTab("signin");
-    }
-  }, [searchParams]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,12 +39,12 @@ const Auth = () => {
     
     if (error) {
       console.error('Sign in error:', error);
-      if (error.message.includes('Email not confirmed') || error.message.includes('signup')) {
-        toast.error("Please verify your email first. Check your inbox for the verification link.", {
+      if (error.message.includes('Email not confirmed')) {
+        toast.error("Please check your email and click the confirmation link before signing in.", {
           duration: 6000,
         });
       } else if (error.message.includes('Invalid login credentials')) {
-        toast.error("Invalid email or password. If you just signed up, please check your email for verification first.", {
+        toast.error("Invalid email or password. Make sure you've confirmed your email first.", {
           duration: 6000,
         });
       } else {
@@ -99,7 +80,7 @@ const Auth = () => {
     if (error) {
       console.error('Sign up error:', error);
       if (error.message.includes('User already registered')) {
-        toast.error("This email is already registered. Please sign in instead or check your email for verification.", {
+        toast.error("This email is already registered. Please sign in instead.", {
           duration: 6000,
         });
         setActiveTab("signin");
@@ -135,11 +116,14 @@ const Auth = () => {
               📱 <strong>Click the verification link in your email</strong>
             </p>
             <p className="text-xs text-emerald-600">
-              You'll be redirected back here automatically after verification!
+              After clicking the link, come back here and try signing in!
             </p>
           </div>
           <Button
-            onClick={() => setShowVerificationMessage(false)}
+            onClick={() => {
+              setShowVerificationMessage(false);
+              setActiveTab("signin");
+            }}
             variant="outline"
             className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50"
           >
@@ -212,18 +196,6 @@ const Auth = () => {
             <h1 className="text-3xl font-bold text-emerald-900 mb-2">Join TeeBnB</h1>
             <p className="text-emerald-600">Start hosting golf travelers at your property</p>
           </div>
-
-          {searchParams.get('verified') === 'true' && (
-            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-              <div className="flex items-center gap-2 text-emerald-700">
-                <CheckCircle className="h-5 w-5" />
-                <span className="font-medium">Email Verified Successfully! 🎉</span>
-              </div>
-              <p className="text-sm text-emerald-600 mt-1">
-                You can now sign in with your credentials below.
-              </p>
-            </div>
-          )}
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
