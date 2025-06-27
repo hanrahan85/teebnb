@@ -1,7 +1,7 @@
-
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import SearchFilters from "@/components/SearchFilters";
+import SearchResults from "@/components/SearchResults";
 import MapView from "@/components/MapView";
 import AccommodationCard from "@/components/AccommodationCard";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import {
 const Index = () => {
   const { user, signOut } = useAuth();
   const [viewMode, setViewMode] = useState<'map' | 'grid'>('map');
+  const [searchResults, setSearchResults] = useState(null);
 
   // Mock data - will be replaced with real Supabase data
   const featuredCourses = [
@@ -82,6 +83,11 @@ const Index = () => {
     await signOut();
   };
 
+  const handleSearchResults = (results: any) => {
+    setSearchResults(results);
+    setViewMode('grid'); // Switch to grid view to show results
+  };
+
   if (viewMode === 'map') {
     return (
       <div className="min-h-screen flex flex-col">
@@ -126,7 +132,7 @@ const Index = () => {
           </div>
         </header>
 
-        <SearchFilters />
+        <SearchFilters onSearchResults={handleSearchResults} />
         <MapView />
       </div>
     );
@@ -175,121 +181,128 @@ const Index = () => {
         </div>
       </header>
 
-      <SearchFilters />
+      <SearchFilters onSearchResults={handleSearchResults} />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold mb-6">Stay Near World-Class Golf Courses</h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Book unique accommodations near the world's top golf destinations globally. Perfect for tournaments, golf vacations, and course visits.
-          </p>
-          <div className="flex justify-center gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold">100+</div>
-              <div className="text-emerald-100">Golf Courses</div>
+      {/* Show search results if available */}
+      {searchResults ? (
+        <SearchResults results={searchResults} />
+      ) : (
+        <>
+          {/* Hero Section */}
+          <section className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h1 className="text-5xl font-bold mb-6">Stay Near World-Class Golf Courses</h1>
+              <p className="text-xl mb-8 max-w-3xl mx-auto">
+                Book unique accommodations near the world's top golf destinations globally. Perfect for tournaments, golf vacations, and course visits.
+              </p>
+              <div className="flex justify-center gap-8 text-center">
+                <div>
+                  <div className="text-3xl font-bold">100+</div>
+                  <div className="text-emerald-100">Golf Courses</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold">500+</div>
+                  <div className="text-emerald-100">Accommodations</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold">50+</div>
+                  <div className="text-emerald-100">Countries</div>
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold">500+</div>
-              <div className="text-emerald-100">Accommodations</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold">50+</div>
-              <div className="text-emerald-100">Countries</div>
-            </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      {/* Featured Golf Courses */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Featured Golf Destinations</h2>
-            <p className="text-neutral-600 text-lg">Discover accommodations near championship courses</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            {featuredCourses.map(course => (
-              <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white border-neutral-200">
-                <div className="relative h-64">
-                  <img
-                    src={course.image}
-                    alt={course.name}
-                    className="w-full h-full object-cover"
+          {/* Featured Golf Courses */}
+          <section className="py-16 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-neutral-900 mb-4">Featured Golf Destinations</h2>
+                <p className="text-neutral-600 text-lg">Discover accommodations near championship courses</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                {featuredCourses.map(course => (
+                  <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white border-neutral-200">
+                    <div className="relative h-64">
+                      <img
+                        src={course.image}
+                        alt={course.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-4 left-4 text-white">
+                        <h3 className="text-xl font-bold">{course.name}</h3>
+                        <p className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          {course.location}
+                        </p>
+                      </div>
+                      {course.upcoming_tournament && (
+                        <Badge className="absolute top-4 right-4 bg-emerald-600 text-white border-0">
+                          <Trophy className="h-3 w-3 mr-1" />
+                          {course.upcoming_tournament}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="p-4 bg-white">
+                      <div className="flex justify-between items-center">
+                        <span className="text-neutral-600">{course.accommodations} accommodations nearby</span>
+                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                          View Stays
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Featured Accommodations */}
+          <section className="py-16 bg-neutral-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-neutral-900 mb-4">Featured Accommodations</h2>
+                <p className="text-neutral-600 text-lg">Hand-picked stays near top golf courses</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {mockAccommodations.map(accommodation => (
+                  <AccommodationCard 
+                    key={accommodation.id} 
+                    accommodation={accommodation}
+                    onClick={() => console.log('Navigate to accommodation detail')}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="text-xl font-bold">{course.name}</h3>
-                    <p className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {course.location}
-                    </p>
-                  </div>
-                  {course.upcoming_tournament && (
-                    <Badge className="absolute top-4 right-4 bg-emerald-600 text-white border-0">
-                      <Trophy className="h-3 w-3 mr-1" />
-                      {course.upcoming_tournament}
-                    </Badge>
-                  )}
-                </div>
-                <div className="p-4 bg-white">
-                  <div className="flex justify-between items-center">
-                    <span className="text-neutral-600">{course.accommodations} accommodations nearby</span>
-                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                      View Stays
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+                ))}
+              </div>
+            </div>
+          </section>
 
-      {/* Featured Accommodations */}
-      <section className="py-16 bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Featured Accommodations</h2>
-            <p className="text-neutral-600 text-lg">Hand-picked stays near top golf courses</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mockAccommodations.map(accommodation => (
-              <AccommodationCard 
-                key={accommodation.id} 
-                accommodation={accommodation}
-                onClick={() => console.log('Navigate to accommodation detail')}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-16 bg-neutral-100">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-neutral-900 mb-6">Ready to Host Golf Travelers?</h2>
-          <p className="text-neutral-600 text-lg mb-8">
-            List your property near golf courses and earn extra income during tournaments and peak golf season.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button 
-              size="lg" 
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
-              onClick={() => window.location.href = '/auth'}
-            >
-              <Home className="h-5 w-5 mr-2" />
-              Become a Host
-            </Button>
-            <Button size="lg" variant="outline" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
-              <Plane className="h-5 w-5 mr-2" />
-              Plan Golf Trip
-            </Button>
-          </div>
-        </div>
-      </section>
+          {/* Call to Action */}
+          <section className="py-16 bg-neutral-100">
+            <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl font-bold text-neutral-900 mb-6">Ready to Host Golf Travelers?</h2>
+              <p className="text-neutral-600 text-lg mb-8">
+                List your property near golf courses and earn extra income during tournaments and peak golf season.
+              </p>
+              <div className="flex justify-center gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  onClick={() => window.location.href = '/auth'}
+                >
+                  <Home className="h-5 w-5 mr-2" />
+                  Become a Host
+                </Button>
+                <Button size="lg" variant="outline" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
+                  <Plane className="h-5 w-5 mr-2" />
+                  Plan Golf Trip
+                </Button>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 };

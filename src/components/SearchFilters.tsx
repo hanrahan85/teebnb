@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,11 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarIcon, MapPin, Users, DollarSign, Home, Filter } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Users, DollarSign, Home, Filter, Search, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/components/ui/use-toast";
 
-const SearchFilters = () => {
+interface SearchFiltersProps {
+  onSearchResults?: (results: any) => void;
+}
+
+const SearchFilters = ({ onSearchResults }: SearchFiltersProps) => {
   const [filters, setFilters] = useState({
     location: '',
     checkIn: '',
@@ -26,8 +31,11 @@ const SearchFilters = () => {
   const [checkInDate, setCheckInDate] = useState<Date>();
   const [checkOutDate, setCheckOutDate] = useState<Date>();
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const propertyTypes = ['House', 'Apartment', 'Villa', 'Condo', 'Townhouse'];
   const [showFilters, setShowFilters] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const { toast } = useToast();
+
+  const propertyTypes = ['House', 'Apartment', 'Villa', 'Condo', 'Townhouse'];
 
   const golfCourseSuggestions = [
     'Augusta National Golf Club, Georgia',
@@ -59,6 +67,69 @@ const SearchFilters = () => {
   const handleSuggestionClick = (suggestion: string) => {
     setFilters({...filters, location: suggestion});
     setShowSuggestions(false);
+  };
+
+  const handleSearch = async () => {
+    if (!filters.location.trim()) {
+      toast({
+        title: "Location Required",
+        description: "Please select a golf course or location to search for accommodations.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSearching(true);
+
+    try {
+      const searchData = {
+        location: filters.location,
+        checkIn: checkInDate ? format(checkInDate, 'yyyy-MM-dd') : '',
+        checkOut: checkOutDate ? format(checkOutDate, 'yyyy-MM-dd') : '',
+        guests: filters.guests,
+        filters: {
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          propertyType: filters.propertyType,
+          bedrooms: filters.bedrooms
+        }
+      };
+
+      console.log('Searching with data:', searchData);
+
+      const { data, error } = await supabase.functions.invoke('search-accommodations', {
+        body: searchData
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('Search results:', data);
+
+      if (data.success) {
+        toast({
+          title: "Search Complete",
+          description: `Found ${data.accommodations.length} accommodations near ${data.searchLocation}`,
+        });
+        
+        if (onSearchResults) {
+          onSearchResults(data);
+        }
+      } else {
+        throw new Error(data.error || 'Search failed');
+      }
+
+    } catch (error) {
+      console.error('Search error:', error);
+      toast({
+        title: "Search Failed",
+        description: "Unable to search for accommodations. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
@@ -171,8 +242,22 @@ const SearchFilters = () => {
           </div>
           
           <div className="flex gap-2">
-            <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white">
-              Search
+            <Button 
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+              onClick={handleSearch}
+              disabled={isSearching}
+            >
+              {isSearching ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Searching...
+                </>
+              ) : (
+                <>
+                  <Search className="mr-2 h-4 w-4" />
+                  Search
+                </>
+              )}
             </Button>
             <Button
               variant="outline"
