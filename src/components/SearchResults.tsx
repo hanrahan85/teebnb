@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, Wifi, Car, Coffee, Trophy, ExternalLink } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Accommodation {
   name: string;
