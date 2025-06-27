@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -33,8 +34,8 @@ const LocationSection = ({ form }: LocationSectionProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Location</h2>
-        <p className="text-gray-600">Help guests find your property and nearby golf courses</p>
+        <h2 className="text-2xl font-bold text-emerald-900 mb-2">Location</h2>
+        <p className="text-emerald-700">Help guests find your property and nearby golf courses</p>
       </div>
 
       <FormField
@@ -42,7 +43,7 @@ const LocationSection = ({ form }: LocationSectionProps) => {
         name="fullAddress"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Full Address *</FormLabel>
+            <FormLabel className="text-emerald-900">Full Address *</FormLabel>
             <FormControl>
               <Input placeholder="123 Golf Course Road, St. Andrews, Scotland" {...field} />
             </FormControl>
@@ -57,7 +58,7 @@ const LocationSection = ({ form }: LocationSectionProps) => {
           name="distanceToCourse"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Distance to Nearest Golf Course</FormLabel>
+              <FormLabel className="text-emerald-900">Distance to Nearest Golf Course</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -77,7 +78,7 @@ const LocationSection = ({ form }: LocationSectionProps) => {
           name="distanceUnit"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Distance Unit</FormLabel>
+              <FormLabel className="text-emerald-900">Distance Unit</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -98,7 +99,7 @@ const LocationSection = ({ form }: LocationSectionProps) => {
       </div>
 
       <div>
-        <FormLabel>Nearby Golf Courses</FormLabel>
+        <FormLabel className="text-emerald-900">Nearby Golf Courses</FormLabel>
         <div className="mt-2 space-y-3">
           <div className="flex gap-2">
             <Input
@@ -107,7 +108,12 @@ const LocationSection = ({ form }: LocationSectionProps) => {
               onChange={(e) => setNewGolfCourse(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addGolfCourse())}
             />
-            <Button type="button" onClick={addGolfCourse} variant="outline">
+            <Button 
+              type="button" 
+              onClick={addGolfCourse} 
+              variant="outline"
+              className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+            >
               Add
             </Button>
           </div>
@@ -115,13 +121,13 @@ const LocationSection = ({ form }: LocationSectionProps) => {
           {nearbyGolfCourses.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {nearbyGolfCourses.map((course: string, index: number) => (
-                <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                <Badge key={index} variant="secondary" className="flex items-center gap-1 bg-emerald-100 text-emerald-800">
                   {course}
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="h-4 w-4 p-0"
+                    className="h-4 w-4 p-0 text-emerald-600 hover:text-emerald-800"
                     onClick={() => removeGolfCourse(index)}
                   >
                     <X className="h-3 w-3" />
@@ -138,7 +144,7 @@ const LocationSection = ({ form }: LocationSectionProps) => {
         name="parkingAvailability"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Parking Availability</FormLabel>
+            <FormLabel className="text-emerald-900">Parking Availability</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -161,3 +167,4 @@ const LocationSection = ({ form }: LocationSectionProps) => {
 };
 
 export default LocationSection;
+

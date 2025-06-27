@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -12,8 +13,8 @@ const PricingSection = ({ form }: PricingSectionProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Pricing & Availability</h2>
-        <p className="text-gray-600">Set your rates and booking requirements</p>
+        <h2 className="text-2xl font-bold text-emerald-900 mb-2">Pricing & Availability</h2>
+        <p className="text-emerald-700">Set your rates and booking requirements</p>
       </div>
 
       <FormField
@@ -21,7 +22,7 @@ const PricingSection = ({ form }: PricingSectionProps) => {
         name="nightlyPrice"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Nightly Price (EUR) *</FormLabel>
+            <FormLabel className="text-emerald-900">Nightly Price (EUR) *</FormLabel>
             <FormControl>
               <Input 
                 type="number" 
@@ -43,7 +44,7 @@ const PricingSection = ({ form }: PricingSectionProps) => {
           name="cleaningFee"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Cleaning Fee (EUR)</FormLabel>
+              <FormLabel className="text-emerald-900">Cleaning Fee (EUR)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -64,7 +65,7 @@ const PricingSection = ({ form }: PricingSectionProps) => {
           name="securityDeposit"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Security Deposit (EUR)</FormLabel>
+              <FormLabel className="text-emerald-900">Security Deposit (EUR)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -87,7 +88,7 @@ const PricingSection = ({ form }: PricingSectionProps) => {
           name="minimumStay"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Minimum Stay (nights) *</FormLabel>
+              <FormLabel className="text-emerald-900">Minimum Stay (nights) *</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -106,7 +107,7 @@ const PricingSection = ({ form }: PricingSectionProps) => {
           name="maximumStay"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Maximum Stay (nights)</FormLabel>
+              <FormLabel className="text-emerald-900">Maximum Stay (nights)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -133,3 +134,4 @@ const PricingSection = ({ form }: PricingSectionProps) => {
 };
 
 export default PricingSection;
+

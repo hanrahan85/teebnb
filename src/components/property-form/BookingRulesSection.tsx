@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -15,18 +16,18 @@ const BookingRulesSection = ({ form }: BookingRulesSectionProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Booking & Rules</h2>
-        <p className="text-gray-600">Set your booking policies and house rules</p>
+        <h2 className="text-2xl font-bold text-emerald-900 mb-2">Booking & Rules</h2>
+        <p className="text-emerald-700">Set your booking policies and house rules</p>
       </div>
 
       <FormField
         control={form.control}
         name="instantBooking"
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border-emerald-200 border p-4 bg-emerald-50/30">
             <div className="space-y-0.5">
-              <FormLabel className="text-base">Instant Booking Enabled?</FormLabel>
-              <div className="text-[0.8rem] text-muted-foreground">
+              <FormLabel className="text-base text-emerald-900">Instant Booking Enabled?</FormLabel>
+              <div className="text-[0.8rem] text-emerald-700">
                 Allow guests to book immediately without approval
               </div>
             </div>
@@ -45,7 +46,7 @@ const BookingRulesSection = ({ form }: BookingRulesSectionProps) => {
         name="cancellationPolicy"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Cancellation Policy *</FormLabel>
+            <FormLabel className="text-emerald-900">Cancellation Policy *</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -68,7 +69,7 @@ const BookingRulesSection = ({ form }: BookingRulesSectionProps) => {
         name="houseRules"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>House Rules</FormLabel>
+            <FormLabel className="text-emerald-900">House Rules</FormLabel>
             <FormControl>
               <Textarea
                 placeholder="e.g., No smoking, No parties, Check-in after 4pm, Quiet hours 10pm-8am..."
@@ -87,7 +88,7 @@ const BookingRulesSection = ({ form }: BookingRulesSectionProps) => {
           name="checkinTime"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Check-in Time</FormLabel>
+              <FormLabel className="text-emerald-900">Check-in Time</FormLabel>
               <FormControl>
                 <Input 
                   type="time"
@@ -104,7 +105,7 @@ const BookingRulesSection = ({ form }: BookingRulesSectionProps) => {
           name="checkoutTime"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Check-out Time</FormLabel>
+              <FormLabel className="text-emerald-900">Check-out Time</FormLabel>
               <FormControl>
                 <Input 
                   type="time"
@@ -121,3 +122,4 @@ const BookingRulesSection = ({ form }: BookingRulesSectionProps) => {
 };
 
 export default BookingRulesSection;
+

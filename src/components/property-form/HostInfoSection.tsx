@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -36,8 +37,8 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Host Information</h2>
-        <p className="text-gray-600">Tell guests about yourself</p>
+        <h2 className="text-2xl font-bold text-emerald-900 mb-2">Host Information</h2>
+        <p className="text-emerald-700">Tell guests about yourself</p>
       </div>
 
       <FormField
@@ -45,7 +46,7 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
         name="hostName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Full Name *</FormLabel>
+            <FormLabel className="text-emerald-900">Full Name *</FormLabel>
             <FormControl>
               <Input placeholder="Enter your full name" {...field} />
             </FormControl>
@@ -59,7 +60,7 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
         name="hostBio"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Short Bio</FormLabel>
+            <FormLabel className="text-emerald-900">Short Bio</FormLabel>
             <FormControl>
               <Textarea
                 placeholder="Tell guests a little about yourself, your experience with golf, or what makes your property special..."
@@ -73,7 +74,7 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
       />
 
       <div>
-        <FormLabel>Languages Spoken</FormLabel>
+        <FormLabel className="text-emerald-900">Languages Spoken</FormLabel>
         <div className="mt-2 space-y-3">
           <div className="flex flex-wrap gap-2">
             {commonLanguages.map((language) => (
@@ -84,6 +85,7 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
                 size="sm"
                 onClick={() => addLanguage(language)}
                 disabled={languagesSpoken.includes(language)}
+                className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
               >
                 {language}
               </Button>
@@ -101,6 +103,7 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
               type="button" 
               onClick={() => addLanguage(newLanguage)} 
               variant="outline"
+              className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
             >
               Add
             </Button>
@@ -109,13 +112,13 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
           {languagesSpoken.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {languagesSpoken.map((language: string, index: number) => (
-                <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                <Badge key={index} variant="secondary" className="flex items-center gap-1 bg-emerald-100 text-emerald-800">
                   {language}
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="h-4 w-4 p-0"
+                    className="h-4 w-4 p-0 text-emerald-600 hover:text-emerald-800"
                     onClick={() => removeLanguage(index)}
                   >
                     <X className="h-3 w-3" />
@@ -132,7 +135,7 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
         name="hostPhone"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Phone Number</FormLabel>
+            <FormLabel className="text-emerald-900">Phone Number</FormLabel>
             <FormControl>
               <Input placeholder="+1 (555) 123-4567" {...field} />
             </FormControl>
@@ -141,9 +144,9 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
         )}
       />
 
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <p className="text-sm text-gray-600">
-          <strong>Email:</strong> Your email will be automatically included from your account.
+      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+        <p className="text-sm text-emerald-700">
+          <strong className="text-emerald-900">Email:</strong> Your email will be automatically included from your account.
         </p>
       </div>
     </div>
@@ -151,3 +154,4 @@ const HostInfoSection = ({ form }: HostInfoSectionProps) => {
 };
 
 export default HostInfoSection;
+

@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -88,19 +89,19 @@ const PhotosSection = ({ form }: PhotosSectionProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Photos</h2>
-        <p className="text-gray-600">Upload at least 3 high-quality photos of your property</p>
+        <h2 className="text-2xl font-bold text-emerald-900 mb-2">Photos</h2>
+        <p className="text-emerald-700">Upload at least 3 high-quality photos of your property</p>
       </div>
 
       <div>
-        <FormLabel>Upload Images (3-10 photos required)</FormLabel>
+        <FormLabel className="text-emerald-900">Upload Images (3-10 photos required)</FormLabel>
         <div className="mt-2">
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+          <div className="border-2 border-dashed border-emerald-300 rounded-lg p-6 bg-emerald-50/30">
             <div className="text-center">
-              <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <ImageIcon className="mx-auto h-12 w-12 text-emerald-600" />
               <div className="mt-4">
                 <label htmlFor="photo-upload" className="cursor-pointer">
-                  <Button type="button" variant="outline" disabled={uploading}>
+                  <Button type="button" variant="outline" disabled={uploading} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
                     <Upload className="mr-2 h-4 w-4" />
                     {uploading ? 'Uploading...' : 'Choose Photos'}
                   </Button>
@@ -115,7 +116,7 @@ const PhotosSection = ({ form }: PhotosSectionProps) => {
                   />
                 </label>
               </div>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-emerald-600">
                 PNG, JPG, GIF up to 10MB each. Select multiple files.
               </p>
             </div>
@@ -167,7 +168,7 @@ const PhotosSection = ({ form }: PhotosSectionProps) => {
           name="coverImage"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel>Select Cover Image</FormLabel>
+              <FormLabel className="text-emerald-900">Select Cover Image</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
@@ -183,7 +184,7 @@ const PhotosSection = ({ form }: PhotosSectionProps) => {
                       />
                       <Label
                         htmlFor={`cover-${index}`}
-                        className="block cursor-pointer rounded-lg border-2 border-gray-200 peer-checked:border-emerald-600 peer-checked:ring-2 peer-checked:ring-emerald-600"
+                        className="block cursor-pointer rounded-lg border-2 border-emerald-200 peer-checked:border-emerald-600 peer-checked:ring-2 peer-checked:ring-emerald-600"
                       >
                         <img
                           src={photo}
@@ -205,3 +206,4 @@ const PhotosSection = ({ form }: PhotosSectionProps) => {
 };
 
 export default PhotosSection;
+

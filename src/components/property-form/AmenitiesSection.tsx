@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
@@ -26,8 +27,8 @@ const AmenitiesSection = ({ form }: AmenitiesSectionProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Amenities</h2>
-        <p className="text-gray-600">What amenities does your property offer?</p>
+        <h2 className="text-2xl font-bold text-emerald-900 mb-2">Amenities</h2>
+        <p className="text-emerald-700">What amenities does your property offer?</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -57,3 +58,4 @@ const AmenitiesSection = ({ form }: AmenitiesSectionProps) => {
 };
 
 export default AmenitiesSection;
+
