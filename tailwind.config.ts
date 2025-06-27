@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -110,6 +111,18 @@ export default {
 						700: '#266326',
 						800: '#225022',
 						900: '#1e421e',
+					},
+					neutral: {
+						50: '#fafafa',
+						100: '#f5f5f5',
+						200: '#e5e5e5',
+						300: '#d4d4d4',
+						400: '#a3a3a3',
+						500: '#737373',
+						600: '#525252',
+						700: '#404040',
+						800: '#262626',
+						900: '#171717',
 					}
 				}
 			},
@@ -175,6 +188,7 @@ export default {
 				'luxury-gradient': 'linear-gradient(135deg, #166534 0%, #15803d 25%, #16a34a 50%, #22c55e 75%, #4ade80 100%)',
 				'hero-luxury': 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
 				'golf-green': 'linear-gradient(135deg, #166534 0%, #22c55e 50%, #86efac 100%)',
+				'mobile-neutral': 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)',
 			}
 		}
 	},
