@@ -86,12 +86,12 @@ const Index = () => {
     return (
       <div className="min-h-screen flex flex-col">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <header className="bg-white border-b border-neutral-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <h1 className="text-2xl font-bold text-emerald-600">TeeBnB</h1>
-                <Badge variant="outline" className="ml-3">Golf Course Accommodations</Badge>
+                <Badge variant="outline" className="ml-3 border-neutral-300 bg-neutral-50 text-neutral-700">Golf Course Accommodations</Badge>
               </div>
               
               <div className="flex items-center gap-4">
@@ -99,7 +99,7 @@ const Index = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50"
                 >
                   <Grid className="h-4 w-4" />
                   Grid View
@@ -107,16 +107,16 @@ const Index = () => {
                 
                 {user ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-neutral-600">
                       {user.user_metadata?.full_name || user.email}
                     </span>
-                    <Button onClick={handleSignOut} variant="outline" size="sm">
+                    <Button onClick={handleSignOut} variant="outline" size="sm" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
                       <LogOut className="h-4 w-4 mr-2" />
                       Sign Out
                     </Button>
                   </div>
                 ) : (
-                  <Button onClick={() => window.location.href = '/auth'} variant="outline" size="sm">
+                  <Button onClick={() => window.location.href = '/auth'} variant="outline" size="sm" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
                     <LogIn className="h-4 w-4 mr-2" />
                     List Your Property
                   </Button>
@@ -133,14 +133,14 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-neutral-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-emerald-600">TeeBnB</h1>
-              <Badge variant="outline" className="ml-3">Golf Course Accommodations</Badge>
+              <Badge variant="outline" className="ml-3 border-neutral-300 bg-neutral-50 text-neutral-700">Golf Course Accommodations</Badge>
             </div>
             
             <div className="flex items-center gap-4">
@@ -148,7 +148,7 @@ const Index = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setViewMode('map')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50"
               >
                 <Map className="h-4 w-4" />
                 Map View
@@ -156,16 +156,16 @@ const Index = () => {
               
               {user ? (
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-neutral-600">
                     {user.user_metadata?.full_name || user.email}
                   </span>
-                  <Button onClick={handleSignOut} variant="outline" size="sm">
+                  <Button onClick={handleSignOut} variant="outline" size="sm" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </Button>
                 </div>
               ) : (
-                <Button onClick={() => window.location.href = '/auth'} variant="outline" size="sm">
+                <Button onClick={() => window.location.href = '/auth'} variant="outline" size="sm" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
                   <LogIn className="h-4 w-4 mr-2" />
                   List Your Property
                 </Button>
@@ -202,16 +202,16 @@ const Index = () => {
       </section>
 
       {/* Featured Golf Courses */}
-      <section className="py-16">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Golf Destinations</h2>
-            <p className="text-gray-600 text-lg">Discover accommodations near championship courses</p>
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Featured Golf Destinations</h2>
+            <p className="text-neutral-600 text-lg">Discover accommodations near championship courses</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             {featuredCourses.map(course => (
-              <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white border-neutral-200">
                 <div className="relative h-64">
                   <img
                     src={course.image}
@@ -227,16 +227,16 @@ const Index = () => {
                     </p>
                   </div>
                   {course.upcoming_tournament && (
-                    <Badge className="absolute top-4 right-4 bg-yellow-500">
+                    <Badge className="absolute top-4 right-4 bg-emerald-600 text-white border-0">
                       <Trophy className="h-3 w-3 mr-1" />
                       {course.upcoming_tournament}
                     </Badge>
                   )}
                 </div>
-                <div className="p-4">
+                <div className="p-4 bg-white">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">{course.accommodations} accommodations nearby</span>
-                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+                    <span className="text-neutral-600">{course.accommodations} accommodations nearby</span>
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
                       View Stays
                     </Button>
                   </div>
@@ -248,11 +248,11 @@ const Index = () => {
       </section>
 
       {/* Featured Accommodations */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Accommodations</h2>
-            <p className="text-gray-600 text-lg">Hand-picked stays near top golf courses</p>
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Featured Accommodations</h2>
+            <p className="text-neutral-600 text-lg">Hand-picked stays near top golf courses</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -268,22 +268,22 @@ const Index = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-emerald-50">
+      <section className="py-16 bg-neutral-100">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Ready to Host Golf Travelers?</h2>
-          <p className="text-gray-600 text-lg mb-8">
+          <h2 className="text-3xl font-bold text-neutral-900 mb-6">Ready to Host Golf Travelers?</h2>
+          <p className="text-neutral-600 text-lg mb-8">
             List your property near golf courses and earn extra income during tournaments and peak golf season.
           </p>
           <div className="flex justify-center gap-4">
             <Button 
               size="lg" 
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white"
               onClick={() => window.location.href = '/auth'}
             >
               <Home className="h-5 w-5 mr-2" />
               Become a Host
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
               <Plane className="h-5 w-5 mr-2" />
               Plan Golf Trip
             </Button>

@@ -32,7 +32,7 @@ const AccommodationCard = ({ accommodation, onClick }: AccommodationCardProps) =
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={onClick}>
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group bg-white border-neutral-200" onClick={onClick}>
       <div className="relative">
         <div className="aspect-video overflow-hidden">
           <img
@@ -46,37 +46,37 @@ const AccommodationCard = ({ accommodation, onClick }: AccommodationCardProps) =
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-3 right-3 bg-white/80 hover:bg-white"
+          className="absolute top-3 right-3 bg-white/90 hover:bg-white border border-neutral-200"
         >
-          <Heart className="h-4 w-4" />
+          <Heart className="h-4 w-4 text-neutral-600" />
         </Button>
         
         {/* Property Type Badge */}
-        <Badge className="absolute bottom-3 left-3 bg-white/90 text-gray-800">
+        <Badge className="absolute bottom-3 left-3 bg-white/95 text-neutral-700 border border-neutral-200">
           {accommodation.property_type}
         </Badge>
       </div>
       
-      <div className="p-4">
+      <div className="p-4 bg-white">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="font-semibold text-gray-900 line-clamp-2 flex-1">
+          <h3 className="font-semibold text-neutral-900 line-clamp-2 flex-1">
             {accommodation.title}
           </h3>
           <div className="flex items-center gap-1 ml-2">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-medium">{accommodation.rating}</span>
-            <span className="text-sm text-gray-500">({accommodation.review_count})</span>
+            <Star className="h-4 w-4 fill-amber-600 text-amber-600" />
+            <span className="text-sm font-medium text-neutral-900">{accommodation.rating}</span>
+            <span className="text-sm text-neutral-500">({accommodation.review_count})</span>
           </div>
         </div>
         
         {accommodation.distance_to_course && (
-          <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
+          <div className="flex items-center gap-1 text-sm text-neutral-600 mb-2">
             <MapPin className="h-4 w-4" />
             <span>{accommodation.distance_to_course}km from golf course</span>
           </div>
         )}
         
-        <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+        <div className="flex items-center gap-4 text-sm text-neutral-600 mb-3">
           <div className="flex items-center gap-1">
             <Bed className="h-4 w-4" />
             <span>{accommodation.bedrooms} bedrooms</span>
@@ -93,14 +93,14 @@ const AccommodationCard = ({ accommodation, onClick }: AccommodationCardProps) =
             {accommodation.amenities.slice(0, 3).map((amenity, index) => {
               const IconComponent = amenityIcons[amenity as keyof typeof amenityIcons];
               return (
-                <Badge key={index} variant="outline" className="text-xs">
+                <Badge key={index} variant="outline" className="text-xs border-neutral-300 bg-neutral-50 text-neutral-700">
                   {IconComponent && <IconComponent className="h-3 w-3 mr-1" />}
                   {amenity}
                 </Badge>
               );
             })}
             {accommodation.amenities.length > 3 && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs border-neutral-300 bg-neutral-50 text-neutral-700">
                 +{accommodation.amenities.length - 3} more
               </Badge>
             )}
@@ -109,14 +109,14 @@ const AccommodationCard = ({ accommodation, onClick }: AccommodationCardProps) =
         
         <div className="flex justify-between items-center">
           <div>
-            <span className="text-xl font-bold text-gray-900">
+            <span className="text-xl font-bold text-neutral-900">
               ${accommodation.price_per_night}
             </span>
-            <span className="text-gray-600"> / night</span>
+            <span className="text-neutral-600"> / night</span>
           </div>
           <Button 
             size="sm" 
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white"
             onClick={(e) => {
               e.stopPropagation();
               // Handle booking action
