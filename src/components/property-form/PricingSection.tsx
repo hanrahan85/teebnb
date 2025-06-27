@@ -122,9 +122,9 @@ const PricingSection = ({ form }: PricingSectionProps) => {
         />
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-medium text-blue-900 mb-2">Coming Soon: Advanced Pricing</h3>
-        <p className="text-sm text-blue-700">
+      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+        <h3 className="font-medium text-emerald-900 mb-2">Coming Soon: Advanced Pricing</h3>
+        <p className="text-sm text-emerald-700">
           Tournament week pricing and calendar availability features will be available in the next update.
         </p>
       </div>
