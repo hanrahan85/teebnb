@@ -1,4 +1,5 @@
 import React from 'react';
+import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -121,6 +122,8 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
+      
       {/* Hero Section */}
       <section className="relative min-h-screen golf-hero-bg overflow-hidden">
         <div className="absolute inset-0 luxury-pattern"></div>

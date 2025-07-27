@@ -16,7 +16,7 @@ import BookingFlow from "./pages/BookingFlow";
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
-  // Force redeployment - v2.0 - Complete TeeBnB Golf Platform
+  // Force redeployment - v2.1 - Updated Navigation with Logo
   console.log('App component rendering...');
   return (
     <QueryClientProvider client={queryClient}>
