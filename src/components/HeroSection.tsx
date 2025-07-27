@@ -19,16 +19,16 @@ const HeroSection = () => {
           </div>
           
           {/* Main heading */}
-          <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 fade-in tracking-tight">
+          <h1 className="text-6xl md:text-8xl font-heading font-bold text-white mb-6 fade-in tracking-tight">
             TeeBnB
           </h1>
           
-          <p className="text-2xl md:text-3xl text-white/90 mb-4 font-light fade-in">
-            Luxury Golf Resort Experiences
+          <p className="text-2xl md:text-3xl text-white/90 mb-4 font-accent italic fade-in">
+            Stay Where You Play
           </p>
           
-          <p className="text-lg text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed fade-in">
-            Discover championship courses, world-class accommodations, and unforgettable golf experiences at the finest destinations around the globe.
+          <p className="text-lg text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed fade-in font-body">
+            A modern, premium platform for golfers seeking accommodation near championship courses and tournaments — like Airbnb for golf lovers.
           </p>
           
           {/* Action buttons */}

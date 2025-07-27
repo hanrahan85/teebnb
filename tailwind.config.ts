@@ -132,9 +132,10 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			fontFamily: {
-				'display': ['Playfair Display', 'Georgia', 'serif'],
-				'body': ['Crimson Text', 'Georgia', 'serif'],
-				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'heading': ['Montserrat', 'system-ui', 'sans-serif'],
+				'body': ['Lato', 'Open Sans', 'system-ui', 'sans-serif'],
+				'accent': ['Playfair Display', 'Georgia', 'serif'],
+				'sans': ['Lato', 'Open Sans', 'system-ui', 'sans-serif'],
 			},
 			keyframes: {
 				'accordion-down': {
