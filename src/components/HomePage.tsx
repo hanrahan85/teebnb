@@ -128,33 +128,33 @@ const HomePage = () => {
       <section className="relative min-h-screen golf-hero-bg overflow-hidden">
         <div className="absolute inset-0 luxury-pattern"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-screen">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center pt-20 sm:pt-24 pb-12">
           <div className="text-center max-w-4xl">
             {/* TeeBnB Logo - Mobile Optimized */}
-            <div className="mb-4 sm:mb-6 fade-in">
+            <div className="mb-2 sm:mb-4 fade-in">
               <img 
                 src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
                 alt="TeeBnB" 
-                className="h-32 sm:h-48 md:h-64 lg:h-80 w-auto mx-auto mb-2 filter brightness-0 invert"
+                className="h-24 sm:h-32 md:h-40 lg:h-48 w-auto mx-auto mb-1 filter brightness-0 invert"
               />
             </div>
 
-            <div className="mb-6 sm:mb-8 fade-in">
+            <div className="mb-3 sm:mb-4 fade-in">
               <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 sm:px-6 text-sm font-heading font-semibold">
                 <Trophy className="h-4 w-4 mr-2" />
                 Premium Golf Destinations
               </Badge>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4 sm:mb-6 fade-in tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-3 sm:mb-4 fade-in tracking-tight leading-tight">
               Stay Where You Play
             </h2>
             
-            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 mb-8 sm:mb-12 font-body leading-relaxed fade-in max-w-3xl mx-auto px-4">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 mb-6 sm:mb-8 font-body leading-relaxed fade-in max-w-3xl mx-auto px-4">
               Book unique stays near top golf courses around the world
             </p>
             
-            <div className="flex flex-col gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 fade-in px-4">
+            <div className="flex flex-col gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 fade-in px-4">
               <Button 
                 variant="premium"
                 size="lg"
