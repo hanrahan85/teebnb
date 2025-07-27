@@ -17,14 +17,14 @@ const Navigation = () => {
   return (
     <nav className="bg-primary border-b border-primary-foreground/10 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo - Left Aligned */}
-          <div className="flex items-center">
+          <div className="flex items-center py-3">
             <a href="/" className="flex items-center">
               <img 
                 src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
                 alt="TeeBnB - Golf Accommodation Platform" 
-                className="h-10 w-auto transition-opacity duration-200 hover:opacity-90"
+                className="h-12 md:h-14 w-auto transition-opacity duration-200 hover:opacity-90"
               />
             </a>
           </div>
