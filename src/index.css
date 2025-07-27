@@ -111,6 +111,15 @@
     background-attachment: fixed;
   }
 
+  /* Mobile-specific background fix for iOS Safari performance */
+  @media screen and (max-width: 1024px) {
+    .golf-hero-bg {
+      background-attachment: scroll;
+      min-height: 100vh;
+      min-height: 100svh; /* Use small viewport height for better mobile support */
+    }
+  }
+
   .luxury-pattern {
     background-image: 
       radial-gradient(circle at 30px 30px, rgba(255,255,255,0.05) 2px, transparent 2px),
@@ -327,7 +336,7 @@
   }
 }
 
-.fade-in {
+  .fade-in {
   animation: fadeIn 0.8s ease-out forwards;
 }
 
@@ -339,5 +348,86 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Mobile-first responsive improvements */
+@layer utilities {
+  /* Minimum touch target sizes for mobile accessibility */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improved mobile spacing */
+  .mobile-px {
+    @apply px-4;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-px {
+      @apply px-6;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .mobile-px {
+      @apply px-8;
+    }
+  }
+  
+  /* Mobile text sizing */
+  .mobile-text {
+    @apply text-sm;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-text {
+      @apply text-base;
+    }
+  }
+  
+  /* Mobile button improvements */
+  .mobile-button {
+    @apply min-h-[48px] px-6 py-3 text-base;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-button {
+      @apply min-h-[44px] px-8 py-2;
+    }
+  }
+  
+  /* Responsive images */
+  .responsive-image {
+    @apply w-full h-auto object-cover;
+  }
+  
+  /* Mobile card spacing */
+  .mobile-card {
+    @apply p-4;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-card {
+      @apply p-6;
+    }
+  }
+  
+  /* Mobile grid improvements */
+  .mobile-grid {
+    @apply grid grid-cols-1 gap-4;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-grid {
+      @apply grid-cols-2 gap-6;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .mobile-grid {
+      @apply grid-cols-3 gap-8;
+    }
   }
 }
