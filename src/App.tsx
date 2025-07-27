@@ -16,7 +16,7 @@ import BookingFlow from "./pages/BookingFlow";
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
-  // Force redeployment - v2.4 - 300% Larger Hero Logo
+  // Force redeployment - v2.5 - Reduced Logo Spacing
   console.log('App component rendering with updated navigation...');
   return (
     <QueryClientProvider client={queryClient}>

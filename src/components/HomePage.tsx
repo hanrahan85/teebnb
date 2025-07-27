@@ -131,15 +131,15 @@ const HomePage = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-screen">
           <div className="text-center max-w-4xl">
             {/* TeeBnB Logo */}
-            <div className="mb-8 fade-in">
+            <div className="mb-2 fade-in">
               <img 
                 src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
                 alt="TeeBnB" 
-                className="h-60 md:h-80 lg:h-96 w-auto mx-auto mb-6 filter brightness-0 invert"
+                className="h-60 md:h-80 lg:h-96 w-auto mx-auto mb-2 filter brightness-0 invert"
               />
             </div>
 
-            <div className="mb-8 fade-in">
+            <div className="mb-4 fade-in">
               <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-6 py-2 text-sm font-heading font-semibold">
                 <Trophy className="h-4 w-4 mr-2" />
                 Premium Golf Destinations
