@@ -144,17 +144,11 @@
 
   /* MOBILE-FIRST AGGRESSIVE OVERRIDES - TABLETS AND MOBILE */
   @media screen and (max-width: 1024px) {
-    /* Override ALL possible yellow combinations */
-    *, *:before, *:after {
-      background-color: var(--override-bg, initial) !important;
-      color: var(--override-text, initial) !important;
-      border-color: var(--override-border, initial) !important;
-    }
-
-    :root {
-      --override-bg: rgb(248 250 252);
-      --override-text: rgb(64 64 64);
-      --override-border: rgb(212 212 212);
+    /* Only target specific yellow/amber elements instead of all elements */
+    [class*="yellow"], [class*="amber"] {
+      background-color: hsl(var(--background)) !important;
+      color: hsl(var(--foreground)) !important;
+      border-color: hsl(var(--border)) !important;
     }
 
     /* Specific yellow overrides for tablets */
@@ -183,13 +177,13 @@
   @media screen and (max-width: 768px) {
     /* Force body and html background */
     html, body {
-      background-color: rgb(250 250 250) !important;
+      background-color: hsl(var(--background)) !important;
     }
 
-    /* Override all elements with potential yellow */
-    div, span, p, h1, h2, h3, h4, h5, h6, button, input, select, textarea, label, a, li, ul, ol, section, article, header, footer, nav, main, aside {
-      background-color: inherit !important;
-      color: rgb(64 64 64) !important;
+    /* Only override elements that specifically contain yellow/amber classes */
+    [class*="yellow"], [class*="amber"] {
+      background-color: hsl(var(--background)) !important;
+      color: hsl(var(--foreground)) !important;
     }
 
     /* Specific overrides for common UI elements */
@@ -245,15 +239,10 @@
 
   /* EXTRA SMALL SCREENS - PHONES */
   @media screen and (max-width: 480px) {
-    /* Even more aggressive overrides for small phones */
-    * {
-      background-color: var(--mobile-bg, initial) !important;
-      color: var(--mobile-text, initial) !important;
-    }
-
-    :root {
-      --mobile-bg: rgb(250 250 250);
-      --mobile-text: rgb(64 64 64);
+    /* Target only yellow/amber elements, not all elements */
+    [class*="yellow"], [class*="amber"] {
+      background-color: hsl(var(--background)) !important;
+      color: hsl(var(--foreground)) !important;
     }
 
     /* Force all potential yellow elements to neutral */
