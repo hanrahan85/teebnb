@@ -19,11 +19,11 @@ const HeroSection = () => {
           </div>
           
           {/* Main heading */}
-          <h1 className="text-6xl md:text-8xl font-heading font-bold text-white mb-6 fade-in tracking-tight">
+          <h1 className="text-8xl md:text-9xl lg:text-[12rem] font-heading font-bold text-white mb-6 fade-in tracking-tight leading-tight">
             TeeBnB
           </h1>
           
-          <p className="text-2xl md:text-3xl text-white/90 mb-4 font-accent italic fade-in">
+          <p className="text-3xl md:text-4xl lg:text-5xl text-white/90 mb-8 font-accent italic fade-in">
             Stay Where You Play
           </p>
           

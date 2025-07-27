@@ -118,11 +118,28 @@ const PropertyListingForm = () => {
   });
 
   const onSubmit = async (data: PropertyListingFormData) => {
-    if (!user) return;
+    if (!user) {
+      toast.error('You must be logged in to create a listing');
+      return;
+    }
+    
+    // Validate current section before proceeding
+    const errors = form.formState.errors;
+    const hasErrors = Object.keys(errors).length > 0;
+    
+    if (hasErrors) {
+      // Get first error message
+      const firstError = Object.values(errors)[0];
+      const errorMessage = firstError?.message || 'Please fix the errors above';
+      toast.error(errorMessage);
+      return;
+    }
     
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
+      console.log('Submitting form data:', data);
+      
+      const { data: insertData, error } = await supabase
         .from('property_listings')
         .insert({
           user_id: user.id,
@@ -162,21 +179,48 @@ const PropertyListingForm = () => {
           host_phone: data.hostPhone,
           host_email: user.email,
           status: 'active',
-        });
+        })
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
-      toast.success('Property listed successfully!');
+      console.log('Successfully created listing:', insertData);
+      toast.success('🎉 Property listed successfully! Your listing is now live.');
       form.reset();
-    } catch (error) {
+      setCurrentSection(1);
+    } catch (error: any) {
       console.error('Error creating listing:', error);
-      toast.error('Failed to create listing. Please try again.');
+      
+      // Provide specific error messages
+      if (error.message?.includes('photos')) {
+        toast.error('Please upload at least 3 photos before publishing');
+      } else if (error.message?.includes('required')) {
+        toast.error('Please fill in all required fields');
+      } else if (error.code === '23505') {
+        toast.error('A listing with this information already exists');
+      } else {
+        toast.error(`Failed to create listing: ${error.message || 'Please try again'}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const nextSection = () => {
+  const nextSection = async () => {
+    // Validate current section before moving forward
+    const isValid = await form.trigger();
+    
+    if (!isValid) {
+      const errors = form.formState.errors;
+      const firstError = Object.values(errors)[0];
+      const errorMessage = firstError?.message || 'Please complete this section before continuing';
+      toast.error(errorMessage);
+      return;
+    }
+    
     if (currentSection < totalSections) {
       setCurrentSection(currentSection + 1);
     }

@@ -24,34 +24,83 @@ const PhotosSection = ({ form }: PhotosSectionProps) => {
   const coverImage = form.watch('coverImage');
 
   const uploadPhoto = async (file: File) => {
-    if (!user) return null;
+    if (!user) {
+      toast.error('You must be logged in to upload photos');
+      return null;
+    }
+
+    // Validate file type and size
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(`Invalid file type: ${file.name}. Please use JPG, PNG, GIF, or WebP.`);
+      return null;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      toast.error(`File too large: ${file.name}. Please use files under 10MB.`);
+      return null;
+    }
 
     const fileExt = file.name.split('.').pop();
-    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+    const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+    console.log('Uploading file:', fileName);
 
     const { data, error } = await supabase.storage
       .from('property-images')
       .upload(fileName, file);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Storage upload error:', error);
+      throw new Error(`Upload failed: ${error.message}`);
+    }
 
     const { data: { publicUrl } } = supabase.storage
       .from('property-images')
       .getPublicUrl(data.path);
 
+    console.log('Upload successful:', publicUrl);
     return publicUrl;
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (!files || files.length === 0) return;
+    if (!files || files.length === 0) {
+      toast.error('No files selected');
+      return;
+    }
+
+    // Check if adding these files would exceed the 10 photo limit
+    if (photos.length + files.length > 10) {
+      toast.error(`You can only upload a maximum of 10 photos. Current: ${photos.length}, Trying to add: ${files.length}`);
+      return;
+    }
 
     setUploading(true);
     try {
-      const uploadPromises = Array.from(files).map(file => uploadPhoto(file));
-      const uploadedUrls = await Promise.all(uploadPromises);
+      console.log(`Starting upload of ${files.length} file(s)`);
       
+      const uploadPromises = Array.from(files).map(async (file, index) => {
+        try {
+          const url = await uploadPhoto(file);
+          console.log(`File ${index + 1} uploaded:`, url);
+          return url;
+        } catch (error) {
+          console.error(`Error uploading file ${file.name}:`, error);
+          toast.error(`Failed to upload ${file.name}: ${error}`);
+          return null;
+        }
+      });
+      
+      const uploadedUrls = await Promise.all(uploadPromises);
       const validUrls = uploadedUrls.filter(url => url !== null) as string[];
+      
+      if (validUrls.length === 0) {
+        toast.error('No photos were uploaded successfully');
+        return;
+      }
+      
       const currentPhotos = photos;
       const newPhotos = [...currentPhotos, ...validUrls];
       
@@ -62,12 +111,21 @@ const PhotosSection = ({ form }: PhotosSectionProps) => {
         form.setValue('coverImage', validUrls[0]);
       }
       
-      toast.success(`${validUrls.length} photo(s) uploaded successfully`);
+      // Trigger validation to update form state
+      form.trigger('photos');
+      
+      toast.success(`✅ ${validUrls.length} photo(s) uploaded successfully`);
+      
+      if (validUrls.length !== files.length) {
+        toast.warning(`Note: ${files.length - validUrls.length} file(s) failed to upload`);
+      }
     } catch (error) {
-      console.error('Error uploading photos:', error);
-      toast.error('Failed to upload photos');
+      console.error('Error in file upload process:', error);
+      toast.error('Upload process failed. Please try again.');
     } finally {
       setUploading(false);
+      // Reset the input value so the same files can be selected again if needed
+      event.target.value = '';
     }
   };
 
