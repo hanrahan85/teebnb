@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -131,6 +132,7 @@ Start your day with our signature early breakfast service (available from 5:30 A
 
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
       {/* Navigation */}
       <nav className="bg-background border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

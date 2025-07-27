@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -361,6 +362,7 @@ const BookingFlow = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
       {/* Navigation */}
       <nav className="bg-background border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -21,8 +21,12 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <a href="/" className="flex items-center gap-2">
-              <h1 className="text-2xl font-heading font-bold text-primary">TeeBnB</h1>
+            <a href="/" className="flex items-center gap-3">
+              <img 
+                src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
+                alt="TeeBnB" 
+                className="h-8 w-auto"
+              />
               <Badge variant="outline" className="border-primary/30 bg-primary/5 text-primary text-xs">
                 <Trophy className="h-3 w-3 mr-1" />
                 Golf Stays

@@ -129,9 +129,11 @@ const HomePage = () => {
           <div className="text-center max-w-4xl">
             {/* TeeBnB Logo */}
             <div className="mb-6 fade-in">
-              <h1 className="text-5xl md:text-7xl font-heading font-bold text-white mb-4 tracking-tight">
-                TeeBnB
-              </h1>
+              <img 
+                src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
+                alt="TeeBnB" 
+                className="h-20 md:h-28 w-auto mx-auto mb-4 filter brightness-0 invert"
+              />
             </div>
 
             <div className="mb-8 fade-in">
@@ -272,7 +274,11 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-heading font-bold text-foreground mb-4">TeeBnB</h3>
+              <img 
+                src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
+                alt="TeeBnB" 
+                className="h-8 w-auto mb-4"
+              />
               <p className="text-muted-foreground font-body mb-6 max-w-md">
                 The world's leading platform for golf accommodation. Stay where you play.
               </p>
