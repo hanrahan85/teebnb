@@ -112,158 +112,193 @@ const Auth = () => {
 
   if (showVerificationMessage) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md mx-auto p-8 bg-white/95 backdrop-blur-sm border border-emerald-200/60 shadow-2xl rounded-3xl text-center">
-          <div className="animate-bounce mb-6">
-            <Mail className="h-20 w-20 text-emerald-600 mx-auto" />
-          </div>
-          <h1 className="text-3xl font-bold text-emerald-900 mb-4">Check Your Email!</h1>
-          <p className="text-emerald-700 mb-6 text-lg">
-            We've sent a verification link to <strong className="text-emerald-800">{email}</strong>
-          </p>
-          <div className="bg-emerald-50 p-4 rounded-lg mb-6">
-            <p className="text-sm text-emerald-700 mb-2">
-              📱 <strong>Click the verification link in your email</strong>
-            </p>
-            <p className="text-xs text-emerald-600 mb-2">
-              Check your spam/junk folder if you don't see it!
-            </p>
-            <p className="text-xs text-emerald-600">
-              After clicking the link, you'll be automatically taken to list your property.
-            </p>
-          </div>
-          <Button
-            onClick={() => {
-              setShowVerificationMessage(false);
-              setEmail("");
-              setPassword("");
-              setFullName("");
-            }}
-            variant="outline"
-            className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-          >
-            Try Different Email
-          </Button>
-        </Card>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10 relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23006633%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
+        </div>
+        
+        <div className="relative flex items-center justify-center p-4 min-h-screen">
+          <Card className="w-full max-w-md mx-auto p-8 bg-white/95 backdrop-blur-sm border-2 border-accent/20 shadow-2xl rounded-3xl hover:shadow-3xl transition-all duration-500 relative overflow-hidden text-center">
+            {/* Subtle gold accent border glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-accent/10 via-transparent to-accent/10 rounded-3xl"></div>
+            
+            <div className="relative">
+              <div className="animate-bounce mb-6">
+                <Mail className="h-20 w-20 text-primary mx-auto" />
+              </div>
+              <h1 className="text-3xl font-heading font-bold text-primary mb-4">Check Your Email!</h1>
+              <p className="text-primary/80 mb-6 text-lg font-body">
+                We've sent a verification link to <strong className="text-primary">{email}</strong>
+              </p>
+              <div className="bg-accent/10 border border-accent/20 p-6 rounded-2xl mb-6">
+                <p className="text-sm text-primary font-body mb-3">
+                  📱 <strong>Click the verification link in your email</strong>
+                </p>
+                <p className="text-xs text-primary/70 font-body mb-2">
+                  Check your spam/junk folder if you don't see it!
+                </p>
+                <p className="text-xs text-primary/70 font-body">
+                  After clicking the link, you'll be automatically taken to list your property.
+                </p>
+              </div>
+              <Button
+                onClick={() => {
+                  setShowVerificationMessage(false);
+                  setEmail("");
+                  setPassword("");
+                  setFullName("");
+                }}
+                variant="outline"
+                className="w-full border-2 border-primary/30 text-primary hover:bg-primary/5 h-12 font-heading font-semibold rounded-2xl transition-all duration-300"
+              >
+                Try Different Email
+              </Button>
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10 relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23006633%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
+      </div>
+      
+      <div className="relative flex items-center justify-center p-4 min-h-screen">
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         
         {/* Left side - Marketing content */}
-        <div className="hidden lg:block space-y-8">
+        <div className="hidden lg:block space-y-8 pl-8">
           <div>
-            <h1 className="text-5xl font-bold text-emerald-900 mb-4">
+            <h1 className="text-5xl font-heading font-bold text-primary mb-4 leading-tight">
               TeeBnB Host
             </h1>
-            <p className="text-xl text-emerald-700 mb-8">
+            <p className="text-xl font-body text-primary/80 mb-8 leading-relaxed">
               Turn your golf-adjacent property into a profitable accommodation for golf travelers worldwide
             </p>
           </div>
 
           <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-emerald-100 rounded-full">
-                <CheckCircle className="h-6 w-6 text-emerald-600" />
+            <div className="flex items-start gap-4 group">
+              <div className="p-3 bg-accent/20 rounded-full group-hover:bg-accent/30 transition-colors duration-300">
+                <CheckCircle className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-emerald-900">Simple 3-Step Process</h3>
-                <p className="text-emerald-600">Sign up → Verify email → List your property</p>
+                <h3 className="text-lg font-heading font-semibold text-primary">Simple 3-Step Process</h3>
+                <p className="text-primary/70 font-body">Sign up → Verify email → List your property</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-emerald-100 rounded-full">
-                <Mail className="h-6 w-6 text-emerald-600" />
+            <div className="flex items-start gap-4 group">
+              <div className="p-3 bg-accent/20 rounded-full group-hover:bg-accent/30 transition-colors duration-300">
+                <Mail className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-emerald-900">Instant Verification</h3>
-                <p className="text-emerald-600">Quick email verification gets you started in minutes</p>
+                <h3 className="text-lg font-heading font-semibold text-primary">Instant Verification</h3>
+                <p className="text-primary/70 font-body">Quick email verification gets you started in minutes</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-emerald-100 rounded-full">
-                <Home className="h-6 w-6 text-emerald-600" />
+            <div className="flex items-start gap-4 group">
+              <div className="p-3 bg-accent/20 rounded-full group-hover:bg-accent/30 transition-colors duration-300">
+                <Home className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-emerald-900">Start Earning Today</h3>
-                <p className="text-emerald-600">List your property and connect with golf travelers</p>
+                <h3 className="text-lg font-heading font-semibold text-primary">Start Earning Today</h3>
+                <p className="text-primary/70 font-body">List your property and connect with golf travelers</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Right side - Auth form */}
-        <Card className="w-full max-w-md mx-auto p-8 bg-white/95 backdrop-blur-sm border border-emerald-200/60 shadow-2xl rounded-3xl">
-          <div className="text-center mb-8">
-            <div className="p-4 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl w-fit mx-auto mb-6">
-              <Home className="h-12 w-12 text-white" />
+        <Card className="w-full max-w-md mx-auto p-8 bg-white/95 backdrop-blur-sm border-2 border-accent/20 shadow-2xl rounded-3xl hover:shadow-3xl transition-all duration-500 relative overflow-hidden">
+          {/* Subtle gold accent border glow */}
+          <div className="absolute inset-0 bg-gradient-to-r from-accent/10 via-transparent to-accent/10 rounded-3xl"></div>
+          
+          <div className="relative">
+            <div className="text-center mb-8">
+              <div className="p-4 bg-gradient-to-br from-primary to-primary/80 rounded-2xl w-fit mx-auto mb-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Home className="h-12 w-12 text-white" />
+              </div>
+              <h1 className="text-3xl font-heading font-bold text-primary mb-2">Join TeeBnB</h1>
+              <p className="text-primary/70 font-body">Start hosting golf travelers at your property</p>
             </div>
-            <h1 className="text-3xl font-bold text-emerald-900 mb-2">Join TeeBnB</h1>
-            <p className="text-emerald-600">Start hosting golf travelers at your property</p>
-          </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="signup">Get Started</TabsTrigger>
-              <TabsTrigger value="signin">I'm a Host</TabsTrigger>
-            </TabsList>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-8 bg-primary/5 border border-accent/20 rounded-2xl p-1">
+                <TabsTrigger 
+                  value="signup" 
+                  className="font-heading font-semibold data-[state=active]:bg-accent data-[state=active]:text-primary data-[state=active]:shadow-md rounded-xl transition-all duration-300"
+                >
+                  Get Started
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="signin"
+                  className="font-heading font-semibold data-[state=active]:bg-accent data-[state=active]:text-primary data-[state=active]:shadow-md rounded-xl transition-all duration-300"
+                >
+                  I'm a Host
+                </TabsTrigger>
+              </TabsList>
 
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-6">
-                <div>
-                  <Label htmlFor="signup-name" className="text-emerald-800 font-semibold mb-3 block">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-name" className="text-primary font-heading font-semibold text-sm flex items-center gap-2">
                     Full Name
+                    <span className="text-accent text-xs">*</span>
                   </Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary/50 group-focus-within:text-accent transition-colors duration-300" />
                     <Input
                       id="signup-name"
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Enter your full name"
-                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      className="pl-12 h-14 border-2 border-primary/20 focus:border-accent bg-white/95 rounded-2xl font-body text-primary placeholder:text-primary/40 hover:border-primary/30 transition-all duration-300 focus:shadow-lg focus:shadow-accent/20"
                       disabled={loading}
                     />
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="signup-email" className="text-emerald-800 font-semibold mb-3 block">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email" className="text-primary font-heading font-semibold text-sm flex items-center gap-2">
                     Email Address
+                    <span className="text-accent text-xs">*</span>
                   </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary/50 group-focus-within:text-accent transition-colors duration-300" />
                     <Input
                       id="signup-email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
-                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      className="pl-12 h-14 border-2 border-primary/20 focus:border-accent bg-white/95 rounded-2xl font-body text-primary placeholder:text-primary/40 hover:border-primary/30 transition-all duration-300 focus:shadow-lg focus:shadow-accent/20"
                       disabled={loading}
                     />
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="signup-password" className="text-emerald-800 font-semibold mb-3 block">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password" className="text-primary font-heading font-semibold text-sm flex items-center gap-2">
                     Password
+                    <span className="text-accent text-xs">*</span>
                   </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary/50 group-focus-within:text-accent transition-colors duration-300" />
                     <Input
                       id="signup-password"
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Choose a password (min. 6 characters)"
-                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      className="pl-12 h-14 border-2 border-primary/20 focus:border-accent bg-white/95 rounded-2xl font-body text-primary placeholder:text-primary/40 hover:border-primary/30 transition-all duration-300 focus:shadow-lg focus:shadow-accent/20"
                       disabled={loading}
                     />
                   </div>
@@ -272,7 +307,7 @@ const Auth = () => {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white h-12 text-lg font-semibold rounded-xl"
+                  className="w-full bg-accent hover:bg-accent/90 text-primary h-14 text-lg font-heading font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 border-2 border-accent/20 uppercase tracking-wide"
                 >
                   {loading ? (
                     <>
@@ -288,37 +323,39 @@ const Auth = () => {
 
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-6">
-                <div>
-                  <Label htmlFor="signin-email" className="text-emerald-800 font-semibold mb-3 block">
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email" className="text-primary font-heading font-semibold text-sm flex items-center gap-2">
                     Email Address
+                    <span className="text-accent text-xs">*</span>
                   </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary/50 group-focus-within:text-accent transition-colors duration-300" />
                     <Input
                       id="signin-email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
-                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      className="pl-12 h-14 border-2 border-primary/20 focus:border-accent bg-white/95 rounded-2xl font-body text-primary placeholder:text-primary/40 hover:border-primary/30 transition-all duration-300 focus:shadow-lg focus:shadow-accent/20"
                       disabled={loading}
                     />
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="signin-password" className="text-emerald-800 font-semibold mb-3 block">
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password" className="text-primary font-heading font-semibold text-sm flex items-center gap-2">
                     Password
+                    <span className="text-accent text-xs">*</span>
                   </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-400" />
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary/50 group-focus-within:text-accent transition-colors duration-300" />
                     <Input
                       id="signin-password"
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
-                      className="pl-10 h-12 border-emerald-300 focus:border-emerald-500 bg-white/95 rounded-xl"
+                      className="pl-12 h-14 border-2 border-primary/20 focus:border-accent bg-white/95 rounded-2xl font-body text-primary placeholder:text-primary/40 hover:border-primary/30 transition-all duration-300 focus:shadow-lg focus:shadow-accent/20"
                       disabled={loading}
                     />
                   </div>
@@ -327,7 +364,7 @@ const Auth = () => {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white h-12 text-lg font-semibold rounded-xl"
+                  className="w-full bg-accent hover:bg-accent/90 text-primary h-14 text-lg font-heading font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 border-2 border-accent/20 uppercase tracking-wide"
                 >
                   {loading ? (
                     <>
@@ -340,8 +377,10 @@ const Auth = () => {
                 </Button>
               </form>
             </TabsContent>
-          </Tabs>
+            </Tabs>
+          </div>
         </Card>
+        </div>
       </div>
     </div>
   );
