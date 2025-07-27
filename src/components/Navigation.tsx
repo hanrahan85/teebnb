@@ -9,6 +9,7 @@ import {
 
 const Navigation = () => {
   const { user, signOut } = useAuth();
+  console.log('Navigation component rendering with enlarged logo');
 
   const handleSignOut = async () => {
     await signOut();
