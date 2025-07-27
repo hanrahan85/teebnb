@@ -5,16 +5,18 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Index from "./pages/Index";
+import HomePage from "./components/HomePage";
 import Auth from "./pages/Auth";
 import ListProperty from "./pages/ListProperty";
 import SearchResults from "./pages/SearchResults";
 import AccommodationDetails from "./pages/AccommodationDetails";
+import PropertyDetail from "./pages/PropertyDetail";
+import BookingFlow from "./pages/BookingFlow";
 
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
-  // Force redeployment - v1.2
+  // Force redeployment - v2.0 - Complete TeeBnB Golf Platform
   console.log('App component rendering...');
   return (
     <QueryClientProvider client={queryClient}>
@@ -27,7 +29,9 @@ const App: React.FC = () => {
               <Route path="/list-property" element={<ListProperty />} />
               <Route path="/search-results" element={<SearchResults />} />
               <Route path="/accommodation/:id" element={<AccommodationDetails />} />
-              <Route path="/" element={<Index />} />
+              <Route path="/property/:id" element={<PropertyDetail />} />
+              <Route path="/booking" element={<BookingFlow />} />
+              <Route path="/" element={<HomePage />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
