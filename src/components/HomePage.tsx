@@ -127,6 +127,13 @@ const HomePage = () => {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-screen">
           <div className="text-center max-w-4xl">
+            {/* TeeBnB Logo */}
+            <div className="mb-6 fade-in">
+              <h1 className="text-5xl md:text-7xl font-heading font-bold text-white mb-4 tracking-tight">
+                TeeBnB
+              </h1>
+            </div>
+
             <div className="mb-8 fade-in">
               <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-6 py-2 text-sm font-heading font-semibold">
                 <Trophy className="h-4 w-4 mr-2" />
@@ -134,9 +141,9 @@ const HomePage = () => {
               </Badge>
             </div>
             
-            <h1 className="text-6xl md:text-8xl font-heading font-bold text-white mb-6 fade-in tracking-tight">
+            <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 fade-in tracking-tight">
               Stay Where You Play
-            </h1>
+            </h2>
             
             <p className="text-2xl md:text-3xl text-white/90 mb-12 font-body leading-relaxed fade-in max-w-3xl mx-auto">
               Book unique stays near top golf courses around the world
