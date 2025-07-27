@@ -88,6 +88,19 @@
     font-family: 'Lato', 'Open Sans', system-ui, sans-serif;
     line-height: 1.6;
   }
+  
+  /* Fallback fonts while custom fonts load */
+  .font-heading {
+    font-family: 'Montserrat', system-ui, sans-serif;
+  }
+  
+  .font-body {
+    font-family: 'Lato', 'Open Sans', system-ui, sans-serif;
+  }
+  
+  .font-accent {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
 
   .golf-hero-bg {
     background-image: 

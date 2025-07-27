@@ -14,7 +14,8 @@ import AccommodationDetails from "./pages/AccommodationDetails";
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
-  // Force redeployment - v1.1
+  // Force redeployment - v1.2
+  console.log('App component rendering...');
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
