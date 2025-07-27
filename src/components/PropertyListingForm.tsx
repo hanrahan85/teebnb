@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -7,8 +7,10 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { FormSection } from '@/components/ui/form-section';
+import { ProgressIndicator } from '@/components/ui/progress-indicator';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 
 import PropertyOverviewSection from './property-form/PropertyOverviewSection';
 import LocationSection from './property-form/LocationSection';
@@ -89,10 +91,18 @@ const PropertyListingForm = () => {
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSection, setCurrentSection] = useState(1);
+  const [completedSections, setCompletedSections] = useState<number[]>([]);
+  const [sectionsWithErrors, setSectionsWithErrors] = useState<number[]>([]);
   const totalSections = 8;
+
+  const sectionTitles = [
+    'Overview', 'Location', 'Amenities', 'Golf Features', 
+    'Photos', 'Pricing', 'Rules', 'Host Info'
+  ];
 
   const form = useForm<PropertyListingFormData>({
     resolver: zodResolver(propertyListingSchema),
+    mode: 'onChange', // Enable real-time validation
     defaultValues: {
       amenities: {
         wifi: false,
@@ -114,8 +124,90 @@ const PropertyListingForm = () => {
       instantBooking: false,
       minimumStay: 1,
       hostName: user?.user_metadata?.full_name || '',
+      photos: [],
+      nearbyGolfCourses: [],
+      languagesSpoken: [],
     },
   });
+
+  // Auto-save form data to localStorage
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (Object.keys(value).length > 0) {
+        localStorage.setItem('teebnb-property-form', JSON.stringify(value));
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  // Load saved form data on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('teebnb-property-form');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        form.reset(parsedData);
+        toast.info('Previous form data restored');
+      } catch (error) {
+        console.error('Failed to restore form data:', error);
+      }
+    }
+  }, [form]);
+
+  // Check section completion and errors
+  useEffect(() => {
+    const checkSectionStatus = async () => {
+      const completed: number[] = [];
+      const withErrors: number[] = [];
+
+      for (let i = 1; i <= totalSections; i++) {
+        const isValid = await validateSection(i);
+        if (isValid) {
+          completed.push(i);
+        } else {
+          const errors = form.formState.errors;
+          if (getSectionFields(i).some(field => getNestedError(errors, field))) {
+            withErrors.push(i);
+          }
+        }
+      }
+
+      setCompletedSections(completed);
+      setSectionsWithErrors(withErrors);
+    };
+
+    checkSectionStatus();
+  }, [form.formState, form.watch()]);
+
+  const getNestedError = (errors: any, path: string) => {
+    return path.split('.').reduce((current, key) => current?.[key], errors);
+  };
+
+  const getSectionFields = (section: number): string[] => {
+    switch (section) {
+      case 1: return ['propertyTitle', 'propertyType', 'maxGuests', 'bedrooms', 'beds', 'bathrooms', 'propertyPrivacy'];
+      case 2: return ['fullAddress'];
+      case 3: return []; // Amenities are optional
+      case 4: return []; // Golf features are optional
+      case 5: return ['photos', 'coverImage'];
+      case 6: return ['nightlyPrice', 'minimumStay'];
+      case 7: return ['cancellationPolicy'];
+      case 8: return ['hostName'];
+      default: return [];
+    }
+  };
+
+  const validateSection = async (section: number): Promise<boolean> => {
+    const fields = getSectionFields(section);
+    if (fields.length === 0) return true; // No required fields
+    
+    try {
+      const isValid = await form.trigger(fields as any);
+      return isValid;
+    } catch {
+      return false;
+    }
+  };
 
   const onSubmit = async (data: PropertyListingFormData) => {
     if (!user) {
@@ -211,100 +303,233 @@ const PropertyListingForm = () => {
 
   const nextSection = async () => {
     // Validate current section before moving forward
-    const isValid = await form.trigger();
+    const isValid = await validateSection(currentSection);
     
     if (!isValid) {
       const errors = form.formState.errors;
       const firstError = Object.values(errors)[0];
-      const errorMessage = firstError?.message || 'Please complete this section before continuing';
+      const errorMessage = firstError?.message || 'Please complete all required fields in this section';
       toast.error(errorMessage);
+      
+      // Scroll to first error field
+      setTimeout(() => {
+        const errorElement = document.querySelector('[aria-invalid="true"]');
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
       return;
     }
     
     if (currentSection < totalSections) {
       setCurrentSection(currentSection + 1);
+      toast.success(`✅ Section ${currentSection} completed!`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const prevSection = () => {
     if (currentSection > 1) {
       setCurrentSection(currentSection - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const renderCurrentSection = () => {
+    const sectionProps = {
+      isCompleted: completedSections.includes(currentSection),
+      hasErrors: sectionsWithErrors.includes(currentSection)
+    };
+
     switch (currentSection) {
       case 1:
-        return <PropertyOverviewSection form={form} />;
+        return (
+          <FormSection 
+            title="Property Overview" 
+            description="Tell us about your property basics"
+            {...sectionProps}
+          >
+            <PropertyOverviewSection form={form} />
+          </FormSection>
+        );
       case 2:
-        return <LocationSection form={form} />;
+        return (
+          <FormSection 
+            title="Location" 
+            description="Help guests find your property and nearby golf courses"
+            {...sectionProps}
+          >
+            <LocationSection form={form} />
+          </FormSection>
+        );
       case 3:
-        return <AmenitiesSection form={form} />;
+        return (
+          <FormSection 
+            title="Amenities" 
+            description="What amenities does your property offer?"
+            {...sectionProps}
+          >
+            <AmenitiesSection form={form} />
+          </FormSection>
+        );
       case 4:
-        return <GolfFeaturesSection form={form} />;
+        return (
+          <FormSection 
+            title="Golf-Specific Features" 
+            description="Highlight what makes your property special for golfers"
+            {...sectionProps}
+          >
+            <GolfFeaturesSection form={form} />
+          </FormSection>
+        );
       case 5:
-        return <PhotosSection form={form} />;
+        return (
+          <FormSection 
+            title="Photos" 
+            description="Upload at least 3 high-quality photos of your property"
+            {...sectionProps}
+          >
+            <PhotosSection form={form} />
+          </FormSection>
+        );
       case 6:
-        return <PricingSection form={form} />;
+        return (
+          <FormSection 
+            title="Pricing & Availability" 
+            description="Set your rates and booking requirements"
+            {...sectionProps}
+          >
+            <PricingSection form={form} />
+          </FormSection>
+        );
       case 7:
-        return <BookingRulesSection form={form} />;
+        return (
+          <FormSection 
+            title="Booking & Rules" 
+            description="Set your booking policies and house rules"
+            {...sectionProps}
+          >
+            <BookingRulesSection form={form} />
+          </FormSection>
+        );
       case 8:
-        return <HostInfoSection form={form} />;
+        return (
+          <FormSection 
+            title="Host Information" 
+            description="Tell guests about yourself"
+            {...sectionProps}
+          >
+            <HostInfoSection form={form} />
+          </FormSection>
+        );
       default:
-        return <PropertyOverviewSection form={form} />;
+        return (
+          <FormSection 
+            title="Property Overview" 
+            description="Tell us about your property basics"
+            {...sectionProps}
+          >
+            <PropertyOverviewSection form={form} />
+          </FormSection>
+        );
     }
+  };
+
+  const clearFormData = () => {
+    localStorage.removeItem('teebnb-property-form');
+    form.reset();
+    setCurrentSection(1);
+    setCompletedSections([]);
+    setSectionsWithErrors([]);
+    toast.success('Form cleared');
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>Section {currentSection} of {totalSections}</span>
-            <span>{Math.round((currentSection / totalSections) * 100)}% Complete</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentSection / totalSections) * 100}%` }}
-            />
-          </div>
-        </div>
+        {/* Enhanced Progress Indicator */}
+        <ProgressIndicator
+          currentSection={currentSection}
+          totalSections={totalSections}
+          completedSections={completedSections}
+          sectionsWithErrors={sectionsWithErrors}
+          sectionTitles={sectionTitles}
+        />
 
         {/* Current Section */}
         {renderCurrentSection()}
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between pt-8 border-t">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={prevSection}
-            disabled={currentSection === 1}
-          >
-            Previous
-          </Button>
-          
-          {currentSection < totalSections ? (
+        <div className="flex flex-col sm:flex-row justify-between gap-4 pt-8 border-t border-gray-200">
+          <div className="flex gap-2">
             <Button
               type="button"
-              onClick={nextSection}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              variant="outline"
+              onClick={prevSection}
+              disabled={currentSection === 1}
+              className="flex items-center gap-2"
             >
-              Next Section
+              <ArrowLeft className="h-4 w-4" />
+              Previous
             </Button>
-          ) : (
+            
             <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              type="button"
+              variant="ghost"
+              onClick={clearFormData}
+              className="text-gray-500 hover:text-gray-700"
             >
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Publish Listing
+              Clear Form
             </Button>
-          )}
+          </div>
+          
+          <div className="flex gap-2">
+            {currentSection < totalSections ? (
+              <Button
+                type="button"
+                onClick={nextSection}
+                className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2"
+              >
+                Next Section
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                disabled={isSubmitting || sectionsWithErrors.length > 0}
+                className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2 min-w-[200px]"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    Publish Listing
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </div>
+
+        {/* Form Status Summary */}
+        {sectionsWithErrors.length > 0 && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <h3 className="font-medium text-red-900 mb-2">
+              Please fix the following issues before publishing:
+            </h3>
+            <ul className="text-sm text-red-700 space-y-1">
+              {sectionsWithErrors.map(section => (
+                <li key={section}>
+                  • Section {section} ({sectionTitles[section - 1]}) has missing required fields
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </form>
     </Form>
   );

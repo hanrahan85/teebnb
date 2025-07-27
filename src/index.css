@@ -431,3 +431,60 @@
     }
   }
 }
+
+/* Form-specific enhancements */
+@layer components {
+  .form-section-completed {
+    @apply border-emerald-200 bg-emerald-50/30;
+  }
+  
+  .form-section-error {
+    @apply border-red-200 bg-red-50/30;
+  }
+  
+  .form-field-error {
+    @apply border-red-500 ring-red-500 focus-visible:ring-red-500;
+  }
+  
+  .progress-section {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .progress-section-active {
+    @apply bg-emerald-100 border-emerald-300 shadow-sm;
+  }
+  
+  .progress-section-completed {
+    @apply bg-emerald-50 border-emerald-200;
+  }
+  
+  .progress-section-error {
+    @apply bg-red-50 border-red-200;
+  }
+}
+
+/* Mobile-first responsive design for forms */
+@media (max-width: 640px) {
+  .progress-section {
+    @apply p-1;
+  }
+  
+  .form-section {
+    @apply p-4;
+  }
+  
+  .form-navigation {
+    @apply flex-col space-y-3;
+  }
+}
+
+/* Touch-friendly buttons on mobile */
+@media (hover: none) and (pointer: coarse) {
+  button {
+    @apply min-h-[44px];
+  }
+  
+  input, textarea, select {
+    @apply min-h-[44px] text-base;
+  }
+}
