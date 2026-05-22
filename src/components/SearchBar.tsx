@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { MapPin, Calendar as CalendarIcon, Users, Search } from 'lucide-react';
@@ -16,41 +15,134 @@ const QUICK_DESTINATIONS = [
   'Pebble Beach',
 ];
 
+const ALL_SUGGESTIONS = [
+  'St Andrews, Scotland',
+  'Gleneagles, Scotland',
+  'Carnoustie, Scotland',
+  'Turnberry, Scotland',
+  'Algarve, Portugal',
+  'Quinta do Lago, Portugal',
+  'Vilamoura, Portugal',
+  'Marbella, Spain',
+  'Costa del Sol, Spain',
+  'Valderrama, Spain',
+  'Pebble Beach, California',
+  'Scottsdale, Arizona',
+  'Kiawah Island, South Carolina',
+  'Augusta, Georgia',
+  'Pinehurst, North Carolina',
+  'Dubai, UAE',
+  'Cape Town, South Africa',
+  'Mauritius',
+];
+
 const SearchBar = () => {
   const navigate = useNavigate();
-  const [location, setLocation] = useState('');
+  const [locationInput, setLocationInput] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
   const [guests, setGuests] = useState(2);
+  const [checkInOpen, setCheckInOpen] = useState(false);
+  const [checkOutOpen, setCheckOutOpen] = useState(false);
+  const locationRef = useRef<HTMLDivElement>(null);
+
+  const filteredSuggestions = locationInput.trim().length > 0
+    ? ALL_SUGGESTIONS.filter(s => s.toLowerCase().includes(locationInput.toLowerCase()))
+    : [];
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (locationRef.current && !locationRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const handleCheckInSelect = (date: Date | undefined) => {
+    setCheckIn(date);
+    setCheckInOpen(false);
+    // Auto-open check-out picker after selecting check-in
+    if (date) {
+      setTimeout(() => setCheckOutOpen(true), 150);
+    }
+  };
+
+  const handleCheckOutSelect = (date: Date | undefined) => {
+    setCheckOut(date);
+    setCheckOutOpen(false);
+  };
 
   const handleSearch = () => {
     navigate('/search-results', {
-      state: { location, checkIn, checkOut, guests },
+      state: { location: locationInput, checkIn, checkOut, guests },
     });
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setLocationInput(suggestion);
+    setShowSuggestions(false);
+  };
+
+  const handleQuickDestination = (dest: string) => {
+    setLocationInput(dest);
+    navigate('/search-results', { state: { location: dest, checkIn, checkOut, guests } });
   };
 
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Main search bar */}
       <div className="bg-white rounded-2xl shadow-2xl p-3 flex flex-col md:flex-row gap-2 items-stretch md:items-center">
+
         {/* Location */}
-        <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-neutral-50 transition-colors border border-transparent hover:border-neutral-200">
-          <MapPin className="h-5 w-5 text-emerald-600 flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Where</p>
-            <Input
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Golf destination or course..."
-              className="border-0 p-0 h-auto text-sm font-medium text-neutral-800 placeholder:text-neutral-400 focus-visible:ring-0 bg-transparent"
-            />
+        <div className="flex-1 relative" ref={locationRef}>
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-neutral-50 transition-colors border border-transparent hover:border-neutral-200">
+            <MapPin className="h-5 w-5 text-emerald-600 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Where</p>
+              <input
+                value={locationInput}
+                onChange={(e) => {
+                  setLocationInput(e.target.value);
+                  setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setShowSuggestions(false);
+                    handleSearch();
+                  }
+                }}
+                placeholder="Golf destination or course..."
+                className="w-full border-0 p-0 h-auto text-sm font-medium text-neutral-800 placeholder:text-neutral-400 focus:outline-none bg-transparent"
+              />
+            </div>
           </div>
+
+          {/* Suggestions dropdown */}
+          {showSuggestions && filteredSuggestions.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-neutral-200 z-50 overflow-hidden">
+              {filteredSuggestions.slice(0, 6).map((suggestion) => (
+                <button
+                  key={suggestion}
+                  onMouseDown={() => handleSuggestionClick(suggestion)}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-emerald-50 transition-colors text-left"
+                >
+                  <MapPin className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                  <span className="text-sm text-neutral-700">{suggestion}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="hidden md:block w-px h-10 bg-neutral-200" />
 
         {/* Check In */}
-        <Popover>
+        <Popover open={checkInOpen} onOpenChange={setCheckInOpen}>
           <PopoverTrigger asChild>
             <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-neutral-50 transition-colors border border-transparent hover:border-neutral-200 text-left">
               <CalendarIcon className="h-5 w-5 text-emerald-600 flex-shrink-0" />
@@ -66,7 +158,7 @@ const SearchBar = () => {
             <Calendar
               mode="single"
               selected={checkIn}
-              onSelect={setCheckIn}
+              onSelect={handleCheckInSelect}
               disabled={(date) => date < new Date()}
               initialFocus
               className="pointer-events-auto"
@@ -77,7 +169,7 @@ const SearchBar = () => {
         <div className="hidden md:block w-px h-10 bg-neutral-200" />
 
         {/* Check Out */}
-        <Popover>
+        <Popover open={checkOutOpen} onOpenChange={setCheckOutOpen}>
           <PopoverTrigger asChild>
             <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-neutral-50 transition-colors border border-transparent hover:border-neutral-200 text-left">
               <CalendarIcon className="h-5 w-5 text-emerald-600 flex-shrink-0" />
@@ -93,7 +185,7 @@ const SearchBar = () => {
             <Calendar
               mode="single"
               selected={checkOut}
-              onSelect={setCheckOut}
+              onSelect={handleCheckOutSelect}
               disabled={(date) => date < (checkIn || new Date())}
               initialFocus
               className="pointer-events-auto"
@@ -142,10 +234,7 @@ const SearchBar = () => {
         {QUICK_DESTINATIONS.map((dest) => (
           <button
             key={dest}
-            onClick={() => {
-              setLocation(dest);
-              navigate('/search-results', { state: { location: dest, checkIn, checkOut, guests } });
-            }}
+            onClick={() => handleQuickDestination(dest)}
             className="px-4 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-sm font-medium rounded-full border border-white/30 transition-all hover:scale-105"
           >
             {dest}

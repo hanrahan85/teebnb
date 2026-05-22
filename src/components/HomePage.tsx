@@ -128,43 +128,59 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen golf-hero-bg overflow-hidden">
         <div className="absolute inset-0 luxury-pattern"></div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center pt-20 sm:pt-24 pb-12">
-          <div className="text-center max-w-4xl">
-            {/* TeeBnB Logo - Mobile Optimized */}
-            <div className="mb-2 sm:mb-4 fade-in">
-              <img 
-                src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
-                alt="TeeBnB" 
-                className="h-24 sm:h-32 md:h-40 lg:h-48 w-auto mx-auto mb-1 filter brightness-0 invert"
-              />
-            </div>
+        {/* Gradient overlay for better text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
 
-            <div className="mb-3 sm:mb-4 fade-in">
-              <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 sm:px-6 text-sm font-heading font-semibold">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-screen pt-24 pb-16">
+          <div className="text-center max-w-5xl w-full">
+
+            {/* Eyebrow badge */}
+            <div className="mb-5 fade-in">
+              <Badge className="bg-secondary/90 text-black border-0 px-5 py-2 text-sm font-heading font-bold uppercase tracking-wider shadow-lg">
                 <Trophy className="h-4 w-4 mr-2" />
-                Premium Golf Destinations
+                The Golf Travel Marketplace
               </Badge>
             </div>
-            
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-3 sm:mb-4 fade-in tracking-tight leading-tight">
-              Stay Where You Play
-            </h2>
-            
-            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 mb-6 sm:mb-8 font-body leading-relaxed fade-in max-w-3xl mx-auto px-4">
-              Book unique stays near top golf courses around the world
+
+            {/* Main headline */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-white mb-5 fade-in tracking-tight leading-[1.1]">
+              Stay Where<br className="hidden sm:block" /> You Play
+            </h1>
+
+            {/* Subheadline */}
+            <p className="text-lg sm:text-xl md:text-2xl text-white/85 mb-8 font-body leading-relaxed fade-in max-w-2xl mx-auto">
+              Find and book unique stays near the world's finest golf courses — from St Andrews to Pebble Beach
             </p>
-            
-            <div className="w-full mb-8 sm:mb-12 fade-in px-2">
+
+            {/* Search bar */}
+            <div className="w-full mb-10 fade-in">
               <SearchBar />
+            </div>
+
+            {/* Trust stats */}
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-white/80 fade-in">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-secondary" />
+                <span className="text-sm font-medium">500+ Golf Courses Nearby</span>
+              </div>
+              <div className="hidden sm:block w-px h-4 bg-white/30"></div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-secondary" />
+                <span className="text-sm font-medium">30+ Destinations</span>
+              </div>
+              <div className="hidden sm:block w-px h-4 bg-white/30"></div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-secondary" />
+                <span className="text-sm font-medium">Instant Book Available</span>
+              </div>
             </div>
           </div>
         </div>
-        
+
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/60 animate-bounce">
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white/50 animate-bounce">
           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/50 rounded-full mt-2"></div>
+            <div className="w-1 h-3 bg-white/40 rounded-full mt-2"></div>
           </div>
         </div>
       </section>
