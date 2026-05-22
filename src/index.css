@@ -129,8 +129,8 @@
 
   /* UNIVERSAL YELLOW/AMBER REMOVAL - ALL BROWSERS, ALL SCREEN SIZES */
   
-  /* Force neutral colors on all interactive elements */
-  input, select, textarea, button:not(.btn-primary):not(.bg-emerald-600):not(.bg-emerald-700) {
+  /* Force neutral colors on form inputs only (not buttons) */
+  input, select, textarea {
     background-color: rgb(248 250 252) !important;
     border-color: rgb(212 212 212) !important;
     color: rgb(64 64 64) !important;
@@ -216,7 +216,7 @@
     }
 
     /* Form elements */
-    input, select, textarea, button[type="button"], button[type="submit"] {
+    input, select, textarea {
       background-color: rgb(248 250 252) !important;
       border-color: rgb(212 212 212) !important;
       color: rgb(64 64 64) !important;
