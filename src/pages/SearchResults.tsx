@@ -10,16 +10,16 @@ import { format } from 'date-fns';
 
 interface Listing {
   id: string;
-  title: string;
+  property_title: string;
   full_address: string;
-  price_per_night: number;
+  nightly_price: number;
   bedrooms: number;
   bathrooms: number;
   max_guests: number;
   cover_image: string | null;
   distance_to_course: number | null;
   distance_unit: string | null;
-  nearby_courses: string[] | null;
+  nearby_golf_courses: string[] | null;
   amenities: unknown;
   host_name: string;
   instant_booking: boolean | null;
@@ -171,7 +171,7 @@ const SearchResults = () => {
                     {listing.cover_image ? (
                       <img
                         src={listing.cover_image}
-                        alt={listing.title}
+                        alt={listing.property_title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
@@ -190,10 +190,10 @@ const SearchResults = () => {
                     {/* Title + price */}
                     <div className="flex justify-between items-start gap-2 mb-2">
                       <h3 className="font-heading font-semibold text-neutral-900 leading-tight line-clamp-2">
-                        {listing.title}
+                        {listing.property_title}
                       </h3>
                       <div className="text-right shrink-0">
-                        <span className="text-lg font-bold text-emerald-600">€{listing.price_per_night}</span>
+                        <span className="text-lg font-bold text-emerald-600">€{listing.nightly_price}</span>
                         <span className="text-xs text-neutral-400 block">/ night</span>
                       </div>
                     </div>

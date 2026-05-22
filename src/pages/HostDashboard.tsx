@@ -42,7 +42,7 @@ interface Listing {
   id: string;
   title: string;
   full_address: string;
-  price_per_night: number;
+  nightly_price: number;
   status: string | null;
   cover_image: string | null;
   bedrooms: number;
@@ -76,12 +76,12 @@ const HostDashboard = () => {
       supabase
         .from('bookings')
         .select('*, listing:property_listings(title, full_address)')
-        .eq('property_listings.host_user_id', user!.id)
+        .eq('property_listings.user_id', user!.id)
         .order('created_at', { ascending: false }),
       supabase
         .from('property_listings')
         .select('id, title, full_address, price_per_night, status, cover_image, bedrooms')
-        .eq('host_user_id', user!.id)
+        .eq('user_id', user!.id)
         .order('created_at', { ascending: false }),
     ]);
 
@@ -242,7 +242,7 @@ const HostDashboard = () => {
                     </div>
                     <p className="text-xs text-neutral-500 mb-3">{listing.full_address}</p>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-bold text-emerald-600">€{listing.price_per_night}/night</span>
+                      <span className="text-sm font-bold text-emerald-600">€{listing.nightly_price}/night</span>
                       <Button size="sm" variant="outline" onClick={() => navigate(`/property/${listing.id}`)}>View</Button>
                     </div>
                   </div>

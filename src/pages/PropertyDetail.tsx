@@ -24,16 +24,16 @@ import { format, differenceInCalendarDays } from 'date-fns';
 
 interface Listing {
   id: string;
-  title: string;
+  property_title: string;
   full_address: string;
-  price_per_night: number;
+  nightly_price: number;
   bedrooms: number;
   bathrooms: number;
   max_guests: number;
   cover_image: string | null;
   distance_to_course: number | null;
   distance_unit: string | null;
-  nearby_courses: string[] | null;
+  nearby_golf_courses: string[] | null;
   amenities: unknown;
   host_name: string;
   host_bio: string | null;
@@ -92,7 +92,7 @@ const PropertyDetail = () => {
   }
 
   const nights = checkIn && checkOut ? differenceInCalendarDays(checkOut, checkIn) : 0;
-  const subtotal = nights * listing.price_per_night;
+  const subtotal = nights * listing.nightly_price;
   const cleaningFee = listing.cleaning_fee || 0;
   const serviceFee = Math.round(subtotal * 0.12);
   const total = subtotal + cleaningFee + serviceFee;
@@ -119,7 +119,7 @@ const PropertyDetail = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-heading font-bold text-foreground mb-2">{listing.title}</h1>
+          <h1 className="text-3xl font-heading font-bold text-foreground mb-2">{listing.property_title}</h1>
           <div className="flex flex-wrap items-center gap-4 text-muted-foreground font-body">
             <div className="flex items-center gap-1">
               <MapPin className="h-4 w-4" />
@@ -136,7 +136,7 @@ const PropertyDetail = () => {
 
         <div className="relative mb-8 rounded-xl overflow-hidden bg-neutral-100">
           <div className="relative h-72 sm:h-96 md:h-[480px]">
-            <img src={images[currentImageIndex]} alt={listing.title} className="w-full h-full object-cover" />
+            <img src={images[currentImageIndex]} alt={listing.property_title} className="w-full h-full object-cover" />
             {images.length > 1 && (
               <>
                 <Button variant="secondary" size="icon" className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
@@ -206,11 +206,11 @@ const PropertyDetail = () => {
               </div>
             )}
 
-            {listing.nearby_courses && listing.nearby_courses.length > 0 && (
+            {listing.nearby_golf_courses && listing.nearby_golf_courses.length > 0 && (
               <div className="border-t border-border pt-8">
                 <h3 className="text-xl font-heading font-semibold mb-4">Nearby Courses</h3>
                 <div className="space-y-2">
-                  {listing.nearby_courses.map((course, i) => (
+                  {listing.nearby_golf_courses.map((course, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Trophy className="h-4 w-4 text-emerald-500 flex-shrink-0" />
                       {course}
@@ -231,7 +231,7 @@ const PropertyDetail = () => {
           <div className="lg:col-span-1">
             <Card className="p-6 sticky top-28">
               <div className="mb-6">
-                <span className="text-3xl font-heading font-bold">€{listing.price_per_night}</span>
+                <span className="text-3xl font-heading font-bold">€{listing.nightly_price}</span>
                 <span className="text-muted-foreground font-body ml-1">/ night</span>
               </div>
 
@@ -276,7 +276,7 @@ const PropertyDetail = () => {
               {checkIn && checkOut && nights > 0 && (
                 <div className="border-t border-border pt-4 mb-4 space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">€{listing.price_per_night} × {nights} night{nights !== 1 ? 's' : ''}</span>
+                    <span className="text-muted-foreground">€{listing.nightly_price} × {nights} night{nights !== 1 ? 's' : ''}</span>
                     <span>€{subtotal}</span>
                   </div>
                   {cleaningFee > 0 && (

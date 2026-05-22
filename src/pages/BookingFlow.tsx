@@ -26,7 +26,7 @@ const BookingFlow = () => {
   const { user } = useAuth();
 
   const state = location.state as {
-    listing?: { id: string; title: string; full_address: string; cover_image?: string | null; host_name: string; price_per_night: number };
+    listing?: { id: string; property_title: string; full_address: string; cover_image?: string | null; host_name: string; nightly_price: number };
     checkIn?: Date | string;
     checkOut?: Date | string;
     guests?: number;
@@ -95,7 +95,7 @@ const BookingFlow = () => {
           check_out: checkOut.toISOString().split('T')[0],
           nights,
           guests,
-          price_per_night: listing.price_per_night,
+          price_per_night: listing.nightly_price,
           subtotal,
           cleaning_fee: cleaningFee,
           service_fee: serviceFee,
@@ -228,9 +228,9 @@ const BookingFlow = () => {
             <div className="lg:col-span-1">
               <Card className="p-5 sticky top-28">
                 {listing.cover_image && (
-                  <img src={listing.cover_image} alt={listing.title} className="w-full h-32 object-cover rounded-lg mb-4" />
+                  <img src={listing.cover_image} alt={listing.property_title} className="w-full h-32 object-cover rounded-lg mb-4" />
                 )}
-                <h3 className="font-heading font-semibold text-sm mb-1 leading-tight">{listing.title}</h3>
+                <h3 className="font-heading font-semibold text-sm mb-1 leading-tight">{listing.property_title}</h3>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground mb-4">
                   <MapPin className="h-3 w-3" />
                   <span>{listing.full_address}</span>
@@ -253,7 +253,7 @@ const BookingFlow = () => {
                 <Separator className="mb-4" />
                 <div className="space-y-2 text-sm mb-4">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">€{listing.price_per_night} × {nights} night{nights !== 1 ? 's' : ''}</span>
+                    <span className="text-muted-foreground">€{listing.nightly_price} × {nights} night{nights !== 1 ? 's' : ''}</span>
                     <span>€{subtotal}</span>
                   </div>
                   {cleaningFee > 0 && (
@@ -295,7 +295,7 @@ const BookingFlow = () => {
             <Card className="p-5 text-left mb-6 text-sm space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Property</span>
-                <span className="font-medium text-right max-w-[60%]">{listing.title}</span>
+                <span className="font-medium text-right max-w-[60%]">{listing.property_title}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Dates</span>
