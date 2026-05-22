@@ -35,7 +35,7 @@ const Navigation = () => {
           <div className="flex items-center">
             <a href="/" className="flex items-center" onClick={closeMobileMenu}>
               <img
-                src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png"
+                src="/teebnb-logo.svg"
                 alt="TeeBnB - Golf Accommodation Platform"
                 className="h-20 sm:h-24 md:h-28 w-auto transition-opacity duration-200 hover:opacity-90"
               />

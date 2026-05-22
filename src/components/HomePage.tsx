@@ -280,7 +280,7 @@ const HomePage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="col-span-1 sm:col-span-2 lg:col-span-2">
               <img 
-                src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
+                src="/teebnb-logo.svg" 
                 alt="TeeBnB" 
                 className="h-6 sm:h-8 w-auto mb-4"
               />
