@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  User, 
-  LogOut, 
+import {
+  LogOut,
   Menu,
-  X
+  X,
+  LayoutDashboard,
 } from 'lucide-react';
 
 const Navigation = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  console.log('Navigation component rendering with enlarged logo');
 
   const handleSignOut = async () => {
     await signOut();
@@ -43,33 +44,34 @@ const Navigation = () => {
           
           {/* Desktop Navigation Links - Right Aligned */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            <a 
-              href="/search-results" 
+            <button
+              onClick={() => navigate('/search-results', { state: {} })}
               className="text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
             >
               Browse Stays
-            </a>
-            <a 
-              href="/list-property" 
+            </button>
+            <button
+              onClick={() => navigate('/list-property')}
               className="text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
             >
               List Your Property
-            </a>
-            <a 
-              href="/about" 
-              className="text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
-            >
-              About
-            </a>
-            
+            </button>
+
             {user ? (
               <div className="flex items-center gap-3 lg:gap-4">
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="flex items-center gap-1 text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  Dashboard
+                </button>
                 <span className="text-white/80 text-xs lg:text-sm font-body max-w-24 lg:max-w-none truncate">
                   {user.user_metadata?.full_name || user.email}
                 </span>
-                <Button 
-                  onClick={handleSignOut} 
-                  variant="outline" 
+                <Button
+                  onClick={handleSignOut}
+                  variant="outline"
                   size="sm"
                   className="border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-200 text-xs lg:text-sm"
                 >
@@ -79,18 +81,18 @@ const Navigation = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2 lg:gap-3">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
-                  onClick={() => window.location.href = '/auth'}
+                  onClick={() => navigate('/auth')}
                   className="text-white hover:text-secondary hover:bg-white/10 transition-all duration-200 text-xs lg:text-sm"
                 >
                   Sign In
                 </Button>
-                <Button 
-                  variant="secondary" 
+                <Button
+                  variant="secondary"
                   size="sm"
-                  onClick={() => window.location.href = '/auth'}
+                  onClick={() => navigate('/auth')}
                   className="bg-secondary text-black hover:opacity-90 transition-opacity duration-200 font-heading font-semibold text-xs lg:text-sm"
                 >
                   Register
@@ -120,36 +122,33 @@ const Navigation = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-primary-foreground/10 bg-primary">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <a 
-                href="/search-results" 
-                className="block px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px] flex items-center"
-                onClick={closeMobileMenu}
+              <button
+                className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
+                onClick={() => { navigate('/search-results', { state: {} }); closeMobileMenu(); }}
               >
                 Browse Stays
-              </a>
-              <a 
-                href="/list-property" 
-                className="block px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px] flex items-center"
-                onClick={closeMobileMenu}
+              </button>
+              <button
+                className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
+                onClick={() => { navigate('/list-property'); closeMobileMenu(); }}
               >
                 List Your Property
-              </a>
-              <a 
-                href="/about" 
-                className="block px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px] flex items-center"
-                onClick={closeMobileMenu}
-              >
-                About
-              </a>
-              
+              </button>
+
               {user ? (
                 <div className="border-t border-primary-foreground/10 pt-3 mt-3 space-y-2">
+                  <button
+                    className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
+                    onClick={() => { navigate('/dashboard'); closeMobileMenu(); }}
+                  >
+                    Dashboard
+                  </button>
                   <div className="px-3 py-2 text-white/80 text-sm font-body">
                     {user.user_metadata?.full_name || user.email}
                   </div>
-                  <Button 
-                    onClick={handleSignOut} 
-                    variant="outline" 
+                  <Button
+                    onClick={handleSignOut}
+                    variant="outline"
                     size="sm"
                     className="mx-3 border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-200 w-auto min-h-[48px]"
                   >
@@ -159,24 +158,18 @@ const Navigation = () => {
                 </div>
               ) : (
                 <div className="border-t border-primary-foreground/10 pt-3 mt-3 space-y-2">
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
-                    onClick={() => {
-                      window.location.href = '/auth';
-                      closeMobileMenu();
-                    }}
+                    onClick={() => { navigate('/auth'); closeMobileMenu(); }}
                     className="mx-3 text-white hover:bg-white/10 transition-all duration-200 w-auto min-h-[48px] justify-start"
                   >
                     Sign In
                   </Button>
-                  <Button 
-                    variant="secondary" 
+                  <Button
+                    variant="secondary"
                     size="sm"
-                    onClick={() => {
-                      window.location.href = '/auth';
-                      closeMobileMenu();
-                    }}
+                    onClick={() => { navigate('/auth'); closeMobileMenu(); }}
                     className="mx-3 bg-secondary text-black hover:opacity-90 transition-opacity duration-200 font-heading font-semibold w-auto min-h-[48px]"
                   >
                     Register

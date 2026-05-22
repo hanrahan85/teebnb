@@ -1,487 +1,329 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { 
-  Calendar as CalendarIcon,
-  Users,
-  CreditCard,
-  Shield,
-  ChevronLeft,
+import {
   CheckCircle,
+  ChevronLeft,
+  CreditCard,
   MapPin,
-  Star,
+  Shield,
   Clock,
-  Phone,
-  Mail,
-  User,
-  CalendarPlus,
-  MessageCircle
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
-type BookingStep = 'dates' | 'details' | 'confirmation';
+type Step = 'details' | 'confirmation';
 
 const BookingFlow = () => {
-  const [currentStep, setCurrentStep] = useState<BookingStep>('dates');
-  const [checkIn, setCheckIn] = useState<Date>();
-  const [checkOut, setCheckOut] = useState<Date>();
-  const [guests, setGuests] = useState(2);
-  const [guestDetails, setGuestDetails] = useState({
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const state = location.state as {
+    listing?: { id: string; title: string; full_address: string; cover_image?: string | null; host_name: string; price_per_night: number };
+    checkIn?: Date | string;
+    checkOut?: Date | string;
+    guests?: number;
+    nights?: number;
+    subtotal?: number;
+    cleaningFee?: number;
+    serviceFee?: number;
+    total?: number;
+  } | null;
+
+  const listing = state?.listing;
+
+  const [step, setStep] = useState<Step>('details');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [bookingRef, setBookingRef] = useState<string | null>(null);
+
+  const [details, setDetails] = useState({
     firstName: '',
     lastName: '',
-    email: '',
+    email: user?.email || '',
     phone: '',
-    specialRequests: ''
+    specialRequests: '',
   });
 
-  const property = {
-    title: 'Luxury Golf Villa with Ocean Views',
-    location: 'St. Andrews, Scotland',
-    rating: 4.8,
-    reviewCount: 124,
-    pricePerNight: 450,
-    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop',
-    host: 'Michael'
-  };
+  if (!listing || !state?.checkIn || !state?.checkOut) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-heading font-semibold mb-4">Booking details not found</h2>
+          <Button onClick={() => navigate('/')}>Back to Search</Button>
+        </div>
+      </div>
+    );
+  }
 
-  const calculateNights = () => {
-    if (!checkIn || !checkOut) return 0;
-    return Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-  };
+  const checkIn = new Date(state.checkIn);
+  const checkOut = new Date(state.checkOut);
+  const nights = state.nights || 1;
+  const subtotal = state.subtotal || 0;
+  const cleaningFee = state.cleaningFee || 0;
+  const serviceFee = state.serviceFee || 0;
+  const total = state.total || 0;
+  const guests = state.guests || 1;
 
-  const calculateSubtotal = () => {
-    return calculateNights() * property.pricePerNight;
-  };
+  const isDetailsValid =
+    details.firstName.trim() &&
+    details.lastName.trim() &&
+    details.email.trim() &&
+    details.phone.trim();
 
-  const serviceFee = Math.round(calculateSubtotal() * 0.12);
-  const taxes = Math.round(calculateSubtotal() * 0.08);
-  const totalAmount = calculateSubtotal() + serviceFee + taxes;
+  const handleConfirm = async () => {
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert({
+          listing_id: listing.id,
+          guest_user_id: user?.id || null,
+          guest_name: `${details.firstName} ${details.lastName}`,
+          guest_email: details.email,
+          guest_phone: details.phone,
+          special_requests: details.specialRequests || null,
+          check_in: checkIn.toISOString().split('T')[0],
+          check_out: checkOut.toISOString().split('T')[0],
+          nights,
+          guests,
+          price_per_night: listing.price_per_night,
+          subtotal,
+          cleaning_fee: cleaningFee,
+          service_fee: serviceFee,
+          total,
+          status: 'pending',
+        })
+        .select('id')
+        .single();
 
-  const handleNextStep = () => {
-    if (currentStep === 'dates') {
-      setCurrentStep('details');
-    } else if (currentStep === 'details') {
-      setCurrentStep('confirmation');
-    }
-  };
-
-  const handlePreviousStep = () => {
-    if (currentStep === 'details') {
-      setCurrentStep('dates');
-    } else if (currentStep === 'confirmation') {
-      setCurrentStep('details');
-    }
-  };
-
-  const isStepValid = () => {
-    if (currentStep === 'dates') {
-      return checkIn && checkOut && guests > 0;
-    } else if (currentStep === 'details') {
-      return guestDetails.firstName && guestDetails.lastName && guestDetails.email && guestDetails.phone;
-    }
-    return true;
-  };
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 'dates':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-heading font-bold mb-2">Select your dates</h2>
-              <p className="text-muted-foreground font-body">Choose your check-in and check-out dates</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label className="text-base font-heading font-semibold mb-3 block">Check-in Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal h-12",
-                        !checkIn && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-3 h-5 w-5" />
-                      {checkIn ? format(checkIn, "PPPP") : "Select check-in date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={checkIn}
-                      onSelect={setCheckIn}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div>
-                <Label className="text-base font-heading font-semibold mb-3 block">Check-out Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal h-12",
-                        !checkOut && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-3 h-5 w-5" />
-                      {checkOut ? format(checkOut, "PPPP") : "Select check-out date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={checkOut}
-                      onSelect={setCheckOut}
-                      disabled={(date) => date < (checkIn || new Date())}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-base font-heading font-semibold mb-3 block">Number of Guests</Label>
-              <div className="flex items-center justify-between border border-border rounded-lg px-4 py-3 max-w-xs">
-                <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-muted-foreground" />
-                  <span className="font-body">Guests</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setGuests(Math.max(1, guests - 1))}
-                    disabled={guests <= 1}
-                  >
-                    -
-                  </Button>
-                  <span className="w-8 text-center font-heading font-semibold">{guests}</span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setGuests(Math.min(8, guests + 1))}
-                    disabled={guests >= 8}
-                  >
-                    +
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {checkIn && checkOut && (
-              <Card className="p-4 bg-primary/5 border-primary/20">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-heading font-semibold text-foreground">
-                      {calculateNights()} nights in {property.location}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(checkIn, "MMM d")} - {format(checkOut, "MMM d, yyyy")}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-heading font-bold text-primary">${calculateSubtotal()}</p>
-                    <p className="text-sm text-muted-foreground">Total before taxes</p>
-                  </div>
-                </div>
-              </Card>
-            )}
-          </div>
-        );
-
-      case 'details':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-heading font-bold mb-2">Your details</h2>
-              <p className="text-muted-foreground font-body">We'll use these details to confirm your booking</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="firstName" className="text-base font-heading font-semibold">First Name</Label>
-                <Input
-                  id="firstName"
-                  value={guestDetails.firstName}
-                  onChange={(e) => setGuestDetails(prev => ({ ...prev, firstName: e.target.value }))}
-                  className="mt-2 h-12"
-                  placeholder="Enter your first name"
-                />
-              </div>
-              <div>
-                <Label htmlFor="lastName" className="text-base font-heading font-semibold">Last Name</Label>
-                <Input
-                  id="lastName"
-                  value={guestDetails.lastName}
-                  onChange={(e) => setGuestDetails(prev => ({ ...prev, lastName: e.target.value }))}
-                  className="mt-2 h-12"
-                  placeholder="Enter your last name"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="email" className="text-base font-heading font-semibold">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                value={guestDetails.email}
-                onChange={(e) => setGuestDetails(prev => ({ ...prev, email: e.target.value }))}
-                className="mt-2 h-12"
-                placeholder="Enter your email address"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="phone" className="text-base font-heading font-semibold">Phone Number</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={guestDetails.phone}
-                onChange={(e) => setGuestDetails(prev => ({ ...prev, phone: e.target.value }))}
-                className="mt-2 h-12"
-                placeholder="Enter your phone number"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="specialRequests" className="text-base font-heading font-semibold">Special Requests (Optional)</Label>
-              <textarea
-                id="specialRequests"
-                value={guestDetails.specialRequests}
-                onChange={(e) => setGuestDetails(prev => ({ ...prev, specialRequests: e.target.value }))}
-                className="mt-2 w-full min-h-[100px] px-3 py-2 border border-border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder="Any special requests for your stay? (e.g., early breakfast, golf equipment needs)"
-              />
-            </div>
-
-            <Card className="p-4 bg-muted/50">
-              <div className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-primary mt-1" />
-                <div>
-                  <h4 className="font-heading font-semibold mb-1">Your payment is secure</h4>
-                  <p className="text-sm text-muted-foreground font-body">
-                    We use industry-standard encryption to protect your payment information. 
-                    You won't be charged until your booking is confirmed.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </div>
-        );
-
-      case 'confirmation':
-        return (
-          <div className="space-y-6 text-center">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle className="h-10 w-10 text-primary" />
-            </div>
-            
-            <div>
-              <h2 className="text-3xl font-heading font-bold mb-2 text-primary">You're all set, golfer!</h2>
-              <p className="text-lg text-muted-foreground font-body">Your booking has been confirmed</p>
-            </div>
-
-            <Card className="p-6 text-left max-w-md mx-auto">
-              <h3 className="font-heading font-semibold mb-4">Booking Summary</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Property:</span>
-                  <span className="font-semibold">{property.title}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Location:</span>
-                  <span>{property.location}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Dates:</span>
-                  <span>{checkIn && checkOut && `${format(checkIn, "MMM d")} - ${format(checkOut, "MMM d")}`}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Guests:</span>
-                  <span>{guests}</span>
-                </div>
-                <Separator />
-                <div className="flex justify-between font-heading font-semibold">
-                  <span>Total Paid:</span>
-                  <span>${totalAmount}</span>
-                </div>
-              </div>
-            </Card>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="premium" size="lg">
-                <CalendarPlus className="h-4 w-4 mr-2" />
-                Add to Calendar
-              </Button>
-              <Button variant="outline" size="lg">
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Contact {property.host}
-              </Button>
-            </div>
-
-            <Card className="p-4 bg-accent/5 border-accent/20 max-w-md mx-auto">
-              <div className="flex items-start gap-3">
-                <Clock className="h-5 w-5 text-accent mt-1" />
-                <div className="text-left">
-                  <h4 className="font-heading font-semibold mb-1 text-accent">What's Next?</h4>
-                  <p className="text-sm text-muted-foreground font-body">
-                    You'll receive a confirmation email with check-in instructions and your host's contact details.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </div>
-        );
-
-      default:
-        return null;
+      if (error) throw error;
+      setBookingRef((data.id as string).slice(0, 8).toUpperCase());
+      setStep('confirmation');
+    } catch (err: unknown) {
+      setSubmitError((err as Error).message || 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      {/* Navigation */}
-      <nav className="bg-background border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Button 
-              variant="ghost" 
-              onClick={handlePreviousStep}
-              disabled={currentStep === 'dates'}
-              className="font-heading font-semibold"
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Back
+
+      {/* Back bar */}
+      {step === 'details' && (
+        <div className="border-b border-border bg-background sticky top-[64px] sm:top-[80px] z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-12">
+            <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="flex items-center gap-1">
+              <ChevronLeft className="h-4 w-4" />
+              Back to property
             </Button>
-            
-            <div className="flex items-center gap-2">
-              <Badge variant={currentStep === 'dates' ? 'default' : 'secondary'}>1</Badge>
-              <Badge variant={currentStep === 'details' ? 'default' : 'secondary'}>2</Badge>
-              <Badge variant={currentStep === 'confirmation' ? 'default' : 'secondary'}>3</Badge>
-            </div>
           </div>
         </div>
-      </nav>
+      )}
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {renderStepContent()}
-          </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {step === 'details' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Form */}
+            <div className="lg:col-span-2 space-y-8">
+              <div>
+                <h1 className="text-2xl font-heading font-bold mb-1">Confirm your booking</h1>
+                <p className="text-muted-foreground font-body text-sm">Fill in your details to complete the reservation</p>
+              </div>
 
-          {/* Booking Summary Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-24">
-              {/* Property Info */}
-              <div className="flex gap-4 mb-6">
-                <img
-                  src={property.image}
-                  alt={property.title}
-                  className="w-20 h-20 object-cover rounded-lg"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <h3 className="font-heading font-semibold text-sm leading-tight mb-1">{property.title}</h3>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
-                    <MapPin className="h-3 w-3" />
-                    <span>{property.location}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs">
-                    <Star className="h-3 w-3 fill-current text-yellow-400" />
-                    <span className="font-semibold">{property.rating}</span>
-                    <span className="text-muted-foreground">({property.reviewCount})</span>
-                  </div>
+                  <Label htmlFor="firstName" className="font-heading font-semibold">First Name</Label>
+                  <Input
+                    id="firstName"
+                    className="mt-2"
+                    value={details.firstName}
+                    onChange={(e) => setDetails((p) => ({ ...p, firstName: e.target.value }))}
+                    placeholder="Your first name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="lastName" className="font-heading font-semibold">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    className="mt-2"
+                    value={details.lastName}
+                    onChange={(e) => setDetails((p) => ({ ...p, lastName: e.target.value }))}
+                    placeholder="Your last name"
+                  />
                 </div>
               </div>
 
-              {/* Booking Details */}
-              {checkIn && checkOut && (
-                <>
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Check-in</span>
-                      <span className="font-semibold">{format(checkIn, "MMM d, yyyy")}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Check-out</span>
-                      <span className="font-semibold">{format(checkOut, "MMM d, yyyy")}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Guests</span>
-                      <span className="font-semibold">{guests}</span>
-                    </div>
-                  </div>
+              <div>
+                <Label htmlFor="email" className="font-heading font-semibold">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  className="mt-2"
+                  value={details.email}
+                  onChange={(e) => setDetails((p) => ({ ...p, email: e.target.value }))}
+                  placeholder="your@email.com"
+                />
+              </div>
 
-                  <Separator className="mb-6" />
+              <div>
+                <Label htmlFor="phone" className="font-heading font-semibold">Phone Number</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  className="mt-2"
+                  value={details.phone}
+                  onChange={(e) => setDetails((p) => ({ ...p, phone: e.target.value }))}
+                  placeholder="+353 ..."
+                />
+              </div>
 
-                  {/* Price Breakdown */}
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">${property.pricePerNight} × {calculateNights()} nights</span>
-                      <span>${calculateSubtotal()}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Service fee</span>
-                      <span>${serviceFee}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Taxes</span>
-                      <span>${taxes}</span>
-                    </div>
-                  </div>
+              <div>
+                <Label htmlFor="requests" className="font-heading font-semibold">Special Requests <span className="font-normal text-muted-foreground">(optional)</span></Label>
+                <textarea
+                  id="requests"
+                  className="mt-2 w-full min-h-[80px] px-3 py-2 border border-border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                  value={details.specialRequests}
+                  onChange={(e) => setDetails((p) => ({ ...p, specialRequests: e.target.value }))}
+                  placeholder="Early breakfast, club storage, accessibility needs..."
+                />
+              </div>
 
-                  <Separator className="mb-6" />
+              <Card className="p-4 bg-muted/50">
+                <div className="flex items-start gap-3">
+                  <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground font-body">
+                    Your payment information is secure. You won't be charged until your booking is confirmed by the host.
+                  </p>
+                </div>
+              </Card>
 
-                  <div className="flex justify-between font-heading font-bold text-lg">
-                    <span>Total</span>
-                    <span>${totalAmount}</span>
-                  </div>
-                </>
+              {submitError && (
+                <p className="text-sm text-red-500">{submitError}</p>
               )}
 
-              {currentStep !== 'confirmation' && (
-                <Button 
-                  className="w-full mt-6" 
-                  size="lg"
-                  variant="premium"
-                  onClick={handleNextStep}
-                  disabled={!isStepValid()}
-                >
-                  {currentStep === 'dates' && 'Continue'}
-                  {currentStep === 'details' && (
-                    <>
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Confirm & Pay
-                    </>
+              <Button
+                size="lg"
+                variant="premium"
+                className="w-full"
+                disabled={!isDetailsValid || submitting}
+                onClick={handleConfirm}
+              >
+                <CreditCard className="h-4 w-4 mr-2" />
+                {submitting ? 'Confirming...' : `Confirm & Pay · €${total}`}
+              </Button>
+            </div>
+
+            {/* Summary sidebar */}
+            <div className="lg:col-span-1">
+              <Card className="p-5 sticky top-28">
+                {listing.cover_image && (
+                  <img src={listing.cover_image} alt={listing.title} className="w-full h-32 object-cover rounded-lg mb-4" />
+                )}
+                <h3 className="font-heading font-semibold text-sm mb-1 leading-tight">{listing.title}</h3>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mb-4">
+                  <MapPin className="h-3 w-3" />
+                  <span>{listing.full_address}</span>
+                </div>
+                <Separator className="mb-4" />
+                <div className="space-y-2 text-sm mb-4">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Check-in</span>
+                    <span className="font-medium">{format(checkIn, 'd MMM yyyy')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Check-out</span>
+                    <span className="font-medium">{format(checkOut, 'd MMM yyyy')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Guests</span>
+                    <span className="font-medium">{guests}</span>
+                  </div>
+                </div>
+                <Separator className="mb-4" />
+                <div className="space-y-2 text-sm mb-4">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">€{listing.price_per_night} × {nights} night{nights !== 1 ? 's' : ''}</span>
+                    <span>€{subtotal}</span>
+                  </div>
+                  {cleaningFee > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Cleaning fee</span>
+                      <span>€{cleaningFee}</span>
+                    </div>
                   )}
-                </Button>
-              )}
-            </Card>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Service fee</span>
+                    <span>€{serviceFee}</span>
+                  </div>
+                </div>
+                <Separator className="mb-4" />
+                <div className="flex justify-between font-heading font-bold">
+                  <span>Total</span>
+                  <span>€{total}</span>
+                </div>
+              </Card>
+            </div>
           </div>
-        </div>
+        )}
+
+        {step === 'confirmation' && (
+          <div className="max-w-lg mx-auto text-center py-12">
+            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="h-10 w-10 text-emerald-600" />
+            </div>
+            <h1 className="text-3xl font-heading font-bold text-primary mb-2">You're all set!</h1>
+            <p className="text-muted-foreground font-body mb-6">Your booking request has been sent to {listing.host_name}.</p>
+
+            {bookingRef && (
+              <Card className="p-4 mb-6 bg-neutral-50">
+                <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Booking Reference</p>
+                <p className="text-2xl font-heading font-bold tracking-wider">{bookingRef}</p>
+              </Card>
+            )}
+
+            <Card className="p-5 text-left mb-6 text-sm space-y-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Property</span>
+                <span className="font-medium text-right max-w-[60%]">{listing.title}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Dates</span>
+                <span className="font-medium">{format(checkIn, 'd MMM')} – {format(checkOut, 'd MMM yyyy')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Guests</span>
+                <span className="font-medium">{guests}</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between font-heading font-bold">
+                <span>Total</span>
+                <span>€{total}</span>
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-emerald-50 border-emerald-200 flex items-start gap-3 text-left mb-6">
+              <Clock className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-emerald-800 font-body">
+                You'll receive a confirmation email with check-in instructions once {listing.host_name} accepts your request.
+              </p>
+            </Card>
+
+            <Button variant="premium" size="lg" onClick={() => navigate('/')}>
+              Back to Home
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

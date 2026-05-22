@@ -1,5 +1,6 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
+import SearchBar from '@/components/SearchBar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -154,24 +155,8 @@ const HomePage = () => {
               Book unique stays near top golf courses around the world
             </p>
             
-            <div className="flex flex-col gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 fade-in px-4">
-              <Button 
-                variant="premium"
-                size="lg"
-                className="text-base sm:text-lg w-full sm:w-auto min-h-[50px] px-8"
-                onClick={() => window.location.href = '/search-results'}
-              >
-                Find a Stay
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="text-base sm:text-lg text-white border-white hover:bg-white hover:text-primary w-full sm:w-auto min-h-[50px] px-8"
-                onClick={() => window.location.href = '/list-property'}
-              >
-                List Your Property
-              </Button>
+            <div className="w-full mb-8 sm:mb-12 fade-in px-2">
+              <SearchBar />
             </div>
           </div>
         </div>

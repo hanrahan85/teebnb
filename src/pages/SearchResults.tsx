@@ -1,231 +1,261 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { MapPin, Star, Wifi, Car, Coffee, Trophy, ExternalLink, ArrowLeft, User, LogOut, LogIn } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { supabase } from '@/integrations/supabase/client';
+import Navigation from '@/components/Navigation';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { MapPin, Wifi, Car, Coffee, Trophy, BedDouble, Bath, Users, ArrowLeft } from 'lucide-react';
+import { format } from 'date-fns';
 
-interface Accommodation {
-  name: string;
-  type: string;
-  pricePerNight: string;
-  distanceToGolf: string;
-  rating: string;
-  amenities: string[];
-  golfFeatures: string[];
-  availability: string;
-  bookingInfo: string;
-}
-
-interface SearchResultsData {
-  accommodations: Accommodation[];
-  searchLocation: string;
-  searchDates: {
-    checkIn: string;
-    checkOut: string;
-  };
-  guests: number;
+interface Listing {
+  id: string;
+  title: string;
+  full_address: string;
+  price_per_night: number;
+  bedrooms: number;
+  bathrooms: number;
+  max_guests: number;
+  cover_image: string | null;
+  distance_to_course: number | null;
+  distance_unit: string | null;
+  nearby_courses: string[] | null;
+  amenities: unknown;
+  host_name: string;
+  instant_booking: boolean | null;
+  status: string | null;
 }
 
 const SearchResults = () => {
-  const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  
-  const results = location.state?.results as SearchResultsData;
+  const state = location.state as {
+    location?: string;
+    checkIn?: Date | string;
+    checkOut?: Date | string;
+    guests?: number;
+  } | null;
 
-  const handleSignOut = async () => {
-    await signOut();
-  };
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!results) {
-    return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-4">No search results found</h2>
-          <Button onClick={() => navigate('/')} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Search
-          </Button>
-        </div>
-      </div>
-    );
-  };
+  const searchLocation = state?.location || '';
+  const guests = state?.guests || 1;
+  const checkIn = state?.checkIn ? new Date(state.checkIn) : null;
+  const checkOut = state?.checkOut ? new Date(state.checkOut) : null;
 
-  const getAvailabilityColor = (availability: string) => {
-    switch (availability.toLowerCase()) {
-      case 'available':
-        return 'bg-green-100 text-green-800 border-green-300';
-      case 'limited':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'full':
-        return 'bg-red-100 text-red-800 border-red-300';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        let query = supabase
+          .from('property_listings')
+          .select('*')
+          .eq('status', 'active')
+          .gte('max_guests', guests);
+
+        if (searchLocation.trim()) {
+          query = query.ilike('full_address', `%${searchLocation.trim()}%`);
+        }
+
+        const { data, error: fetchError } = await query.order('created_at', { ascending: false });
+
+        if (fetchError) throw fetchError;
+        setListings((data as unknown as Listing[]) || []);
+      } catch (err: unknown) {
+        setError((err as Error).message || 'Something went wrong loading listings.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, [searchLocation, guests]);
+
+  const getAmenities = (amenities: unknown): string[] => {
+    if (Array.isArray(amenities)) return amenities as string[];
+    if (typeof amenities === 'string') {
+      try { return JSON.parse(amenities); } catch { return []; }
     }
+    return [];
   };
 
   const getAmenityIcon = (amenity: string) => {
-    const amenityLower = amenity.toLowerCase();
-    if (amenityLower.includes('wifi') || amenityLower.includes('internet')) return <Wifi className="h-4 w-4" />;
-    if (amenityLower.includes('parking') || amenityLower.includes('car')) return <Car className="h-4 w-4" />;
-    if (amenityLower.includes('coffee') || amenityLower.includes('breakfast')) return <Coffee className="h-4 w-4" />;
-    if (amenityLower.includes('golf')) return <Trophy className="h-4 w-4" />;
+    const a = amenity.toLowerCase();
+    if (a.includes('wifi') || a.includes('internet')) return <Wifi className="h-3 w-3" />;
+    if (a.includes('parking') || a.includes('car') || a.includes('garage')) return <Car className="h-3 w-3" />;
+    if (a.includes('breakfast') || a.includes('coffee')) return <Coffee className="h-3 w-3" />;
+    if (a.includes('golf')) return <Trophy className="h-3 w-3" />;
     return null;
-  };
-
-  const handleViewDetails = (accommodation: Accommodation, index: number) => {
-    navigate(`/accommodation/${index}`, {
-      state: {
-        accommodation,
-        searchData: {
-          location: results.searchLocation,
-          checkIn: results.searchDates.checkIn,
-          checkOut: results.searchDates.checkOut,
-          guests: results.guests
-        }
-      }
-    });
   };
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
-      <header className="bg-white border-b border-neutral-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-emerald-600">TeeBnB</h1>
-              <Badge variant="outline" className="ml-3 border-neutral-300 bg-neutral-50 text-neutral-700">Golf Course Accommodations</Badge>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/')}
-                className="flex items-center gap-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Search
-              </Button>
-              
-              {user ? (
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-neutral-600">
-                    {user.user_metadata?.full_name || user.email}
-                  </span>
-                  <Button onClick={handleSignOut} variant="outline" size="sm" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </Button>
-                </div>
-              ) : (
-                <Button onClick={() => navigate('/auth')} variant="outline" size="sm" className="border-neutral-300 text-neutral-700 hover:bg-neutral-50">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  List Your Property
-                </Button>
-              )}
-            </div>
+      <Navigation />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="ghost" onClick={() => navigate('/')} className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-2xl font-heading font-bold text-neutral-900">
+              {searchLocation ? `Stays near "${searchLocation}"` : 'All Golf Stays'}
+            </h1>
+            {!loading && (
+              <p className="text-neutral-500 text-sm mt-0.5">
+                {listings.length} {listings.length === 1 ? 'property' : 'properties'} found
+                {checkIn && checkOut && ` · ${format(checkIn, 'd MMM')} – ${format(checkOut, 'd MMM')}`}
+                {` · ${guests} guest${guests !== 1 ? 's' : ''}`}
+              </p>
+            )}
           </div>
         </div>
-      </header>
 
-      {/* Search Results Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">
-            Search Results for {results.searchLocation}
-          </h2>
-          <p className="text-neutral-600">
-            {results.accommodations.length} accommodations found for {results.guests} guests
-            {results.searchDates.checkIn && results.searchDates.checkOut && (
-              <span> • {results.searchDates.checkIn} to {results.searchDates.checkOut}</span>
-            )}
-          </p>
-        </div>
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center justify-center py-24">
+            <div className="text-center">
+              <div className="animate-spin h-10 w-10 border-4 border-emerald-600 border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-neutral-500">Finding golf stays...</p>
+            </div>
+          </div>
+        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.accommodations.map((accommodation, index) => (
-            <Card key={index} className="bg-white border-neutral-200 hover:shadow-lg transition-shadow">
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="text-lg font-semibold text-neutral-900 mb-1">
-                      {accommodation.name}
-                    </h3>
-                    <Badge variant="outline" className="text-xs border-neutral-300 text-neutral-700">
-                      {accommodation.type}
-                    </Badge>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className={cn("text-xs", getAvailabilityColor(accommodation.availability))}
-                  >
-                    {accommodation.availability}
-                  </Badge>
-                </div>
+        {/* Error */}
+        {error && (
+          <div className="flex items-center justify-center py-24">
+            <div className="text-center">
+              <p className="text-red-500 mb-4">{error}</p>
+              <Button onClick={() => navigate('/')}>Back to Search</Button>
+            </div>
+          </div>
+        )}
 
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-neutral-600">
-                    <MapPin className="h-4 w-4" />
-                    <span>{accommodation.distanceToGolf} from course</span>
-                  </div>
-                  
-                  {accommodation.rating !== 'N/A' && (
-                    <div className="flex items-center gap-2 text-sm text-neutral-600">
-                      <Star className="h-4 w-4 fill-current text-yellow-500" />
-                      <span>{accommodation.rating}</span>
-                    </div>
-                  )}
+        {/* Empty */}
+        {!loading && !error && listings.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <Trophy className="h-12 w-12 text-neutral-300 mb-4" />
+            <h2 className="text-xl font-heading font-semibold text-neutral-700 mb-2">No stays found</h2>
+            <p className="text-neutral-500 mb-6 max-w-sm">
+              {searchLocation
+                ? `We don't have any active listings near "${searchLocation}" yet. Try a different destination.`
+                : 'No active listings yet — check back soon!'}
+            </p>
+            <Button onClick={() => navigate('/')}>Try another search</Button>
+          </div>
+        )}
 
-                  <div className="text-lg font-semibold text-emerald-600">
-                    {accommodation.pricePerNight}
-                  </div>
-                </div>
-
-                {accommodation.golfFeatures.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-neutral-700 mb-2">Golf Features</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {accommodation.golfFeatures.slice(0, 3).map((feature, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs bg-emerald-50 border-emerald-300 text-emerald-800">
-                          <Trophy className="h-3 w-3 mr-1" />
-                          {feature}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {accommodation.amenities.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-neutral-700 mb-2">Amenities</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {accommodation.amenities.slice(0, 4).map((amenity, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs border-neutral-300 text-neutral-700">
-                          {getAmenityIcon(amenity)}
-                          <span className="ml-1">{amenity}</span>
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <Button 
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                  onClick={() => handleViewDetails(accommodation, index)}
+        {/* Results grid */}
+        {!loading && !error && listings.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {listings.map((listing) => {
+              const amenities = getAmenities(listing.amenities);
+              return (
+                <Card
+                  key={listing.id}
+                  className="bg-white border-neutral-200 hover:shadow-lg transition-all duration-200 cursor-pointer group overflow-hidden"
+                  onClick={() =>
+                    navigate(`/property/${listing.id}`, {
+                      state: { listing, checkIn, checkOut, guests },
+                    })
+                  }
                 >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  View Details
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
+                  {/* Cover image */}
+                  <div className="relative h-48 overflow-hidden bg-neutral-100">
+                    {listing.cover_image ? (
+                      <img
+                        src={listing.cover_image}
+                        alt={listing.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-emerald-50">
+                        <Trophy className="h-12 w-12 text-emerald-200" />
+                      </div>
+                    )}
+                    {listing.instant_booking && (
+                      <Badge className="absolute top-3 left-3 bg-emerald-600 text-white text-xs">
+                        Instant Book
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="p-5">
+                    {/* Title + price */}
+                    <div className="flex justify-between items-start gap-2 mb-2">
+                      <h3 className="font-heading font-semibold text-neutral-900 leading-tight line-clamp-2">
+                        {listing.title}
+                      </h3>
+                      <div className="text-right shrink-0">
+                        <span className="text-lg font-bold text-emerald-600">€{listing.price_per_night}</span>
+                        <span className="text-xs text-neutral-400 block">/ night</span>
+                      </div>
+                    </div>
+
+                    {/* Location */}
+                    <div className="flex items-center gap-1 text-sm text-neutral-500 mb-3">
+                      <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span className="truncate">{listing.full_address}</span>
+                    </div>
+
+                    {/* Distance to course */}
+                    {listing.distance_to_course != null && (
+                      <div className="flex items-center gap-1 text-sm text-emerald-600 font-medium mb-3">
+                        <Trophy className="h-3.5 w-3.5" />
+                        <span>
+                          {listing.distance_to_course} {listing.distance_unit || 'km'} to nearest course
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Stats row */}
+                    <div className="flex items-center gap-4 text-sm text-neutral-500 mb-3 border-t border-neutral-100 pt-3">
+                      <span className="flex items-center gap-1">
+                        <BedDouble className="h-3.5 w-3.5" />
+                        {listing.bedrooms} bed{listing.bedrooms !== 1 ? 's' : ''}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Bath className="h-3.5 w-3.5" />
+                        {listing.bathrooms} bath{listing.bathrooms !== 1 ? 's' : ''}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Users className="h-3.5 w-3.5" />
+                        Up to {listing.max_guests}
+                      </span>
+                    </div>
+
+                    {/* Amenities */}
+                    {amenities.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {amenities.slice(0, 4).map((amenity, idx) => (
+                          <Badge
+                            key={idx}
+                            variant="outline"
+                            className="text-xs border-neutral-200 text-neutral-600 flex items-center gap-1"
+                          >
+                            {getAmenityIcon(amenity)}
+                            {amenity}
+                          </Badge>
+                        ))}
+                        {amenities.length > 4 && (
+                          <Badge variant="outline" className="text-xs border-neutral-200 text-neutral-400">
+                            +{amenities.length - 4} more
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

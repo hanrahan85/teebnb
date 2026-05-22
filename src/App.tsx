@@ -12,12 +12,11 @@ import SearchResults from "./pages/SearchResults";
 import AccommodationDetails from "./pages/AccommodationDetails";
 import PropertyDetail from "./pages/PropertyDetail";
 import BookingFlow from "./pages/BookingFlow";
+import HostDashboard from "./pages/HostDashboard";
 
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
-  // Force redeployment - v2.5 - Reduced Logo Spacing
-  console.log('App component rendering with updated navigation...');
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -25,13 +24,14 @@ const App: React.FC = () => {
           <Toaster />
           <BrowserRouter>
             <Routes>
+              <Route path="/" element={<HomePage />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/list-property" element={<ListProperty />} />
               <Route path="/search-results" element={<SearchResults />} />
-              <Route path="/accommodation/:id" element={<AccommodationDetails />} />
               <Route path="/property/:id" element={<PropertyDetail />} />
               <Route path="/booking" element={<BookingFlow />} />
-              <Route path="/" element={<HomePage />} />
+              <Route path="/list-property" element={<ListProperty />} />
+              <Route path="/dashboard" element={<HostDashboard />} />
+              <Route path="/accommodation/:id" element={<AccommodationDetails />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
