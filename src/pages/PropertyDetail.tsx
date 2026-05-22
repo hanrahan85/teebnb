@@ -108,7 +108,7 @@ const PropertyDetail = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      <div className="border-b border-border bg-background sticky top-[80px] sm:top-[96px] z-40">
+      <div className="border-b border-border bg-background sticky top-[96px] sm:top-[112px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-12">
           <Button variant="ghost" size="sm" onClick={() => navigate('/search-results')} className="flex items-center gap-1">
             <ChevronLeft className="h-4 w-4" />

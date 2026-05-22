@@ -30,29 +30,29 @@ const Navigation = () => {
   return (
     <nav className="bg-primary border-b border-primary-foreground/10 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20 sm:h-24">
+        <div className="flex justify-between items-center h-24 sm:h-28">
           {/* Logo - Left Aligned */}
-          <div className="flex items-center py-2">
+          <div className="flex items-center">
             <a href="/" className="flex items-center" onClick={closeMobileMenu}>
               <img
                 src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png"
                 alt="TeeBnB - Golf Accommodation Platform"
-                className="h-16 sm:h-18 md:h-20 w-auto transition-opacity duration-200 hover:opacity-90"
+                className="h-20 sm:h-24 md:h-28 w-auto transition-opacity duration-200 hover:opacity-90"
               />
             </a>
           </div>
-          
+
           {/* Desktop Navigation Links - Right Aligned */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
             <button
               onClick={() => navigate('/search-results', { state: {} })}
-              className="text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
+              className="text-secondary font-body font-semibold hover:text-secondary/80 transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
             >
               Browse Stays
             </button>
             <button
               onClick={() => navigate('/list-property')}
-              className="text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
+              className="text-secondary font-body font-semibold hover:text-secondary/80 transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
             >
               List Your Property
             </button>
@@ -61,7 +61,7 @@ const Navigation = () => {
               <div className="flex items-center gap-3 lg:gap-4">
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="flex items-center gap-1 text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
+                  className="flex items-center gap-1 text-secondary font-body font-semibold hover:text-secondary/80 transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
                 >
                   <LayoutDashboard className="h-4 w-4" />
                   Dashboard
@@ -71,7 +71,7 @@ const Navigation = () => {
                 </span>
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center gap-1 text-white/80 font-body font-medium hover:text-white transition-colors duration-200 text-sm lg:text-base"
+                  className="flex items-center gap-1 text-white/70 font-body font-medium hover:text-white transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
                 >
                   <LogOut className="h-4 w-4" />
                   Sign Out
@@ -81,13 +81,13 @@ const Navigation = () => {
               <div className="flex items-center gap-4 lg:gap-6">
                 <button
                   onClick={() => navigate('/auth')}
-                  className="text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
+                  className="text-secondary font-body font-semibold hover:text-secondary/80 transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
                 >
                   Sign In
                 </button>
                 <button
                   onClick={() => navigate('/auth')}
-                  className="bg-secondary text-black font-heading font-semibold px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity duration-200 text-sm lg:text-base"
+                  className="bg-secondary text-black font-heading font-semibold px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity duration-200 text-sm lg:text-base border-none outline-none appearance-none cursor-pointer"
                 >
                   Register
                 </button>
