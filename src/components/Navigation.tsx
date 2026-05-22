@@ -30,14 +30,14 @@ const Navigation = () => {
   return (
     <nav className="bg-primary border-b border-primary-foreground/10 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 sm:h-20">
+        <div className="flex justify-between items-center h-20 sm:h-24">
           {/* Logo - Left Aligned */}
-          <div className="flex items-center py-3">
+          <div className="flex items-center py-2">
             <a href="/" className="flex items-center" onClick={closeMobileMenu}>
-              <img 
-                src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png" 
-                alt="TeeBnB - Golf Accommodation Platform" 
-                className="h-10 sm:h-12 md:h-14 w-auto transition-opacity duration-200 hover:opacity-90"
+              <img
+                src="/lovable-uploads/9fdc648b-0426-40d5-a6e3-26dca5d25b8d.png"
+                alt="TeeBnB - Golf Accommodation Platform"
+                className="h-16 sm:h-18 md:h-20 w-auto transition-opacity duration-200 hover:opacity-90"
               />
             </a>
           </div>
@@ -66,37 +66,31 @@ const Navigation = () => {
                   <LayoutDashboard className="h-4 w-4" />
                   Dashboard
                 </button>
-                <span className="text-white/80 text-xs lg:text-sm font-body max-w-24 lg:max-w-none truncate">
+                <span className="text-white/70 text-xs lg:text-sm font-body max-w-24 lg:max-w-none truncate">
                   {user.user_metadata?.full_name || user.email}
                 </span>
-                <Button
+                <button
                   onClick={handleSignOut}
-                  variant="outline"
-                  size="sm"
-                  className="border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-200 text-xs lg:text-sm"
+                  className="flex items-center gap-1 text-white/80 font-body font-medium hover:text-white transition-colors duration-200 text-sm lg:text-base"
                 >
-                  <LogOut className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+                  <LogOut className="h-4 w-4" />
                   Sign Out
-                </Button>
+                </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 lg:gap-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
+              <div className="flex items-center gap-4 lg:gap-6">
+                <button
                   onClick={() => navigate('/auth')}
-                  className="text-white hover:text-secondary hover:bg-white/10 transition-all duration-200 text-xs lg:text-sm"
+                  className="text-white font-body font-medium hover:text-secondary transition-colors duration-200 text-sm lg:text-base"
                 >
                   Sign In
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
+                </button>
+                <button
                   onClick={() => navigate('/auth')}
-                  className="bg-secondary text-black hover:opacity-90 transition-opacity duration-200 font-heading font-semibold text-xs lg:text-sm"
+                  className="bg-secondary text-black font-heading font-semibold px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity duration-200 text-sm lg:text-base"
                 >
                   Register
-                </Button>
+                </button>
               </div>
             )}
           </div>
@@ -136,44 +130,38 @@ const Navigation = () => {
               </button>
 
               {user ? (
-                <div className="border-t border-primary-foreground/10 pt-3 mt-3 space-y-2">
+                <div className="border-t border-primary-foreground/10 pt-3 mt-3 space-y-1">
                   <button
                     className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
                     onClick={() => { navigate('/dashboard'); closeMobileMenu(); }}
                   >
                     Dashboard
                   </button>
-                  <div className="px-3 py-2 text-white/80 text-sm font-body">
+                  <div className="px-3 py-2 text-white/70 text-sm font-body">
                     {user.user_metadata?.full_name || user.email}
                   </div>
-                  <Button
-                    onClick={handleSignOut}
-                    variant="outline"
-                    size="sm"
-                    className="mx-3 border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-200 w-auto min-h-[48px]"
+                  <button
+                    className="flex items-center gap-2 w-full px-3 py-3 text-white/80 font-body font-medium hover:text-white hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
+                    onClick={() => { handleSignOut(); }}
                   >
-                    <LogOut className="h-4 w-4 mr-2" />
+                    <LogOut className="h-4 w-4" />
                     Sign Out
-                  </Button>
+                  </button>
                 </div>
               ) : (
-                <div className="border-t border-primary-foreground/10 pt-3 mt-3 space-y-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                <div className="border-t border-primary-foreground/10 pt-3 mt-3 space-y-1">
+                  <button
+                    className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
                     onClick={() => { navigate('/auth'); closeMobileMenu(); }}
-                    className="mx-3 text-white hover:bg-white/10 transition-all duration-200 w-auto min-h-[48px] justify-start"
                   >
                     Sign In
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
+                  </button>
+                  <button
+                    className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
                     onClick={() => { navigate('/auth'); closeMobileMenu(); }}
-                    className="mx-3 bg-secondary text-black hover:opacity-90 transition-opacity duration-200 font-heading font-semibold w-auto min-h-[48px]"
                   >
                     Register
-                  </Button>
+                  </button>
                 </div>
               )}
             </div>
