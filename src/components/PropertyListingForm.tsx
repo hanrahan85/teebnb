@@ -154,30 +154,19 @@ const PropertyListingForm = () => {
     }
   }, [form]);
 
-  // Check section completion and errors
-  useEffect(() => {
-    const checkSectionStatus = async () => {
-      const completed: number[] = [];
-      const withErrors: number[] = [];
+  // Check section completion and errors (only runs when currentSection changes, not on every formState update)
+  const updateSectionStatus = async () => {
+    const errors = form.formState.errors;
+    const withErrors: number[] = [];
 
-      for (let i = 1; i <= totalSections; i++) {
-        const isValid = await validateSection(i);
-        if (isValid) {
-          completed.push(i);
-        } else {
-          const errors = form.formState.errors;
-          if (getSectionFields(i).some(field => getNestedError(errors, field))) {
-            withErrors.push(i);
-          }
-        }
+    for (let i = 1; i <= totalSections; i++) {
+      if (getSectionFields(i).some(field => getNestedError(errors, field))) {
+        withErrors.push(i);
       }
+    }
 
-      setCompletedSections(completed);
-      setSectionsWithErrors(withErrors);
-    };
-
-    checkSectionStatus();
-  }, [form.formState, form.watch()]);
+    setSectionsWithErrors(withErrors);
+  };
 
   const getNestedError = (errors: any, path: string) => {
     return path.split('.').reduce((current, key) => current?.[key], errors);
@@ -322,6 +311,9 @@ const PropertyListingForm = () => {
     }
     
     if (currentSection < totalSections) {
+      // Mark current section as completed
+      setCompletedSections(prev => prev.includes(currentSection) ? prev : [...prev, currentSection]);
+      await updateSectionStatus();
       setCurrentSection(currentSection + 1);
       toast.success(`✅ Section ${currentSection} completed!`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
