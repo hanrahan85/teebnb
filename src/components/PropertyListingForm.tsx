@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ import { Form } from '@/components/ui/form';
 import { FormSection } from '@/components/ui/form-section';
 import { ProgressIndicator } from '@/components/ui/progress-indicator';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
+import { Loader2, ArrowLeft, ArrowRight, CheckCircle, Eye, MapPin, BedDouble, Users, Star, ExternalLink } from 'lucide-react';
 
 import PropertyOverviewSection from './property-form/PropertyOverviewSection';
 import LocationSection from './property-form/LocationSection';
@@ -87,8 +88,13 @@ const propertyListingSchema = z.object({
 
 type PropertyListingFormData = z.infer<typeof propertyListingSchema>;
 
+type Stage = 'form' | 'review' | 'success';
+
 const PropertyListingForm = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [stage, setStage] = useState<Stage>('form');
+  const [publishedListingId, setPublishedListingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSection, setCurrentSection] = useState(1);
   const [completedSections, setCompletedSections] = useState<number[]>([]);
@@ -269,9 +275,10 @@ const PropertyListingForm = () => {
       }
 
       console.log('Successfully created listing:', insertData);
-      toast.success('🎉 Property listed successfully! Your listing is now live.');
-      form.reset();
-      setCurrentSection(1);
+      const newId = insertData?.[0]?.id ?? null;
+      setPublishedListingId(newId);
+      localStorage.removeItem('teebnb-property-form');
+      setStage('success');
     } catch (error: any) {
       console.error('Error creating listing:', error);
       
@@ -310,12 +317,17 @@ const PropertyListingForm = () => {
       return;
     }
     
+    // Mark current section as completed
+    setCompletedSections(prev => prev.includes(currentSection) ? prev : [...prev, currentSection]);
+    await updateSectionStatus();
+
     if (currentSection < totalSections) {
-      // Mark current section as completed
-      setCompletedSections(prev => prev.includes(currentSection) ? prev : [...prev, currentSection]);
-      await updateSectionStatus();
       setCurrentSection(currentSection + 1);
       toast.success(`✅ Section ${currentSection} completed!`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // All sections done — go to review
+      setStage('review');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -433,9 +445,202 @@ const PropertyListingForm = () => {
     setCurrentSection(1);
     setCompletedSections([]);
     setSectionsWithErrors([]);
+    setStage('form');
     toast.success('Form cleared');
   };
 
+  // ── SUCCESS SCREEN ────────────────────────────────────────────
+  if (stage === 'success') {
+    const data = form.getValues();
+    return (
+      <div className="max-w-2xl mx-auto text-center py-12 space-y-8">
+        {/* Big green tick */}
+        <div className="flex justify-center">
+          <div className="w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center">
+            <CheckCircle className="w-14 h-14 text-emerald-600" />
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-3xl font-bold text-emerald-900 mb-3">Your listing is live! 🎉</h2>
+          <p className="text-emerald-700 text-lg">
+            <span className="font-semibold">{data.propertyTitle}</span> is now published on TeeBnB and visible to golfers worldwide.
+          </p>
+        </div>
+
+        {/* Listing summary card */}
+        <div className="bg-white border border-emerald-200 rounded-2xl overflow-hidden shadow-md text-left">
+          {data.coverImage && (
+            <img src={data.coverImage} alt={data.propertyTitle} className="w-full h-48 object-cover" />
+          )}
+          <div className="p-6 space-y-3">
+            <div className="flex items-start justify-between gap-4">
+              <h3 className="font-bold text-xl text-emerald-900">{data.propertyTitle}</h3>
+              <span className="text-emerald-700 font-semibold whitespace-nowrap">€{data.nightlyPrice} / night</span>
+            </div>
+            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+              <span className="flex items-center gap-1"><MapPin className="w-4 h-4 text-emerald-500" />{data.fullAddress}</span>
+              <span className="flex items-center gap-1"><Users className="w-4 h-4 text-emerald-500" />Up to {data.maxGuests} guests</span>
+              <span className="flex items-center gap-1"><BedDouble className="w-4 h-4 text-emerald-500" />{data.bedrooms} bed · {data.bathrooms} bath</span>
+            </div>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <span className="bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1 rounded-full">{data.propertyType}</span>
+              <span className="bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1 rounded-full">{data.propertyPrivacy}</span>
+              {data.instantBooking && (
+                <span className="bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1 rounded-full">⚡ Instant booking</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* CTA buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {publishedListingId && (
+            <Button
+              onClick={() => navigate(`/property/${publishedListingId}`)}
+              className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2 text-base px-6 py-3"
+            >
+              <ExternalLink className="w-5 h-5" />
+              View your listing
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            onClick={() => navigate('/dashboard')}
+            className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 text-base px-6 py-3"
+          >
+            Go to dashboard
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              form.reset();
+              setCurrentSection(1);
+              setCompletedSections([]);
+              setSectionsWithErrors([]);
+              setPublishedListingId(null);
+              setStage('form');
+            }}
+            className="text-gray-500 hover:text-gray-700 text-base px-6 py-3"
+          >
+            List another property
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── REVIEW SCREEN ─────────────────────────────────────────────
+  if (stage === 'review') {
+    const data = form.getValues();
+    const amenityList = data.amenities
+      ? Object.entries(data.amenities).filter(([, v]) => v).map(([k]) =>
+          k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase())
+        )
+      : [];
+
+    return (
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <Eye className="w-6 h-6 text-emerald-600" />
+              <h2 className="text-2xl font-bold text-emerald-900">Review your listing</h2>
+            </div>
+            <p className="text-emerald-700">Everything look right? Hit Publish when you're ready to go live.</p>
+          </div>
+
+          {/* Cover photo */}
+          {data.coverImage && (
+            <div className="rounded-2xl overflow-hidden">
+              <img src={data.coverImage} alt={data.propertyTitle} className="w-full h-64 object-cover" />
+              {data.photos.length > 1 && (
+                <p className="text-sm text-gray-500 mt-2">{data.photos.length} photos uploaded</p>
+              )}
+            </div>
+          )}
+
+          {/* Key details grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              { label: 'Title', value: data.propertyTitle },
+              { label: 'Type', value: `${data.propertyType} · ${data.propertyPrivacy}` },
+              { label: 'Location', value: data.fullAddress },
+              { label: 'Distance to course', value: data.distanceToCourse ? `${data.distanceToCourse} ${data.distanceUnit}` : '—' },
+              { label: 'Guests / Beds / Baths', value: `${data.maxGuests} guests · ${data.bedrooms} bed · ${data.bathrooms} bath` },
+              { label: 'Nightly price', value: `€${data.nightlyPrice}${data.cleaningFee ? ` + €${data.cleaningFee} cleaning` : ''}` },
+              { label: 'Min stay', value: `${data.minimumStay} night${data.minimumStay > 1 ? 's' : ''}` },
+              { label: 'Cancellation', value: data.cancellationPolicy },
+              { label: 'Instant booking', value: data.instantBooking ? 'Yes' : 'No' },
+              { label: 'Host', value: data.hostName },
+            ].map(({ label, value }) => (
+              <div key={label} className="bg-gray-50 rounded-xl p-4">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+                <p className="text-gray-800 font-medium">{value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Amenities */}
+          {amenityList.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Amenities</p>
+              <div className="flex flex-wrap gap-2">
+                {amenityList.map(a => (
+                  <span key={a} className="bg-emerald-50 text-emerald-700 text-sm font-medium px-3 py-1 rounded-full">{a}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Nearby courses */}
+          {data.nearbyGolfCourses && data.nearbyGolfCourses.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Nearby golf courses</p>
+              <div className="flex flex-wrap gap-2">
+                {data.nearbyGolfCourses.map((c: string) => (
+                  <span key={c} className="bg-emerald-50 text-emerald-700 text-sm font-medium px-3 py-1 rounded-full">⛳ {c}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex flex-col sm:flex-row justify-between gap-4 pt-6 border-t border-gray-200">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => { setStage('form'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back and edit
+            </Button>
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2 min-w-[200px] text-base"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Publishing...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="h-4 w-4" />
+                  Publish listing
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    );
+  }
+
+  // ── FORM (sections 1–8) ────────────────────────────────────────
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -464,7 +669,7 @@ const PropertyListingForm = () => {
               <ArrowLeft className="h-4 w-4" />
               Previous
             </Button>
-            
+
             <Button
               type="button"
               variant="ghost"
@@ -474,36 +679,25 @@ const PropertyListingForm = () => {
               Clear Form
             </Button>
           </div>
-          
+
           <div className="flex gap-2">
-            {currentSection < totalSections ? (
-              <Button
-                type="button"
-                onClick={nextSection}
-                className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2"
-              >
-                Next Section
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                disabled={isSubmitting || sectionsWithErrors.length > 0}
-                className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2 min-w-[200px]"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Publishing...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="h-4 w-4" />
-                    Publish Listing
-                  </>
-                )}
-              </Button>
-            )}
+            <Button
+              type="button"
+              onClick={nextSection}
+              className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2"
+            >
+              {currentSection === totalSections ? (
+                <>
+                  <Eye className="h-4 w-4" />
+                  Review listing
+                </>
+              ) : (
+                <>
+                  Next Section
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
           </div>
         </div>
 
