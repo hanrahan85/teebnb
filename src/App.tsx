@@ -15,6 +15,7 @@ import BookingFlow from "./pages/BookingFlow";
 import HostDashboard from "./pages/HostDashboard";
 
 // Lazy load new pages
+const Destinations = lazy(() => import("./pages/Destinations"));
 const Trips = lazy(() => import("./pages/Trips"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Inbox = lazy(() => import("./pages/Inbox"));
@@ -61,6 +62,7 @@ const App: React.FC = () => {
               <Route path="/list-property" element={<ListProperty />} />
               <Route path="/dashboard" element={<HostDashboard />} />
               <Route path="/accommodation/:id" element={<AccommodationDetails />} />
+              <Route path="/destinations" element={<Suspense fallback={<LoadingFallback />}><Destinations /></Suspense>} />
               <Route
                 path="/trips"
                 element={

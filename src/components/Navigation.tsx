@@ -84,7 +84,7 @@ const Navigation = () => {
           {!isMobile && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
               <button style={NAV_BTN} onClick={() => handleNavigate('/search-results')}>Explore stays</button>
-              <button style={NAV_BTN} onClick={() => handleNavigate('/search-results')}>Destinations</button>
+              <button style={NAV_BTN} onClick={() => handleNavigate('/destinations')}>Destinations</button>
               {user && <button style={NAV_BTN} onClick={() => handleNavigate('/trips')}>Trips</button>}
               {user && <button style={NAV_BTN} onClick={() => handleNavigate('/profile')}>Profile</button>}
 
@@ -127,7 +127,7 @@ const Navigation = () => {
         {isMobile && isMobileMenuOpen && (
           <div style={{ borderTop: '1px solid #EDEBE1', background: 'rgba(246,245,239,1)', paddingBottom: '12px' }}>
             <button style={MOBILE_BTN} onClick={() => handleNavigate('/search-results')}>Explore stays</button>
-            <button style={MOBILE_BTN} onClick={() => handleNavigate('/search-results')}>Destinations</button>
+            <button style={MOBILE_BTN} onClick={() => handleNavigate('/destinations')}>Destinations</button>
             <button style={MOBILE_BTN} onClick={() => handleNavigate('/list-property')}>List your place</button>
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/trips')}>Trips</button>}
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/dashboard')}>Dashboard</button>}
