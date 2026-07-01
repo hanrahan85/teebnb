@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -17,7 +17,6 @@ interface Listing {
   cover_image: string | null;
   status: string | null;
   user_id?: string;
-  // Coordinates for map (optional — samples have them, DB listings may not)
   lat?: number;
   lng?: number;
 }
@@ -30,6 +29,18 @@ const SAMPLE: Listing[] = [
   { id: 's5', property_title: 'Loch Aria Cottage', full_address: 'County Kerry, Ireland', nightly_price: 300, max_guests: 5, nearby_golf_courses: 'Ballybunion Golf Club', description: '', photos: ['https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=700&h=500&fit=crop'], cover_image: null, status: 'active', lat: 52.1545, lng: -9.5669 },
   { id: 's6', property_title: 'Casa del Green', full_address: 'Los Cabos, Mexico', nightly_price: 520, max_guests: 8, nearby_golf_courses: 'Cabo del Sol Golf Club', description: '', photos: ['https://images.unsplash.com/photo-1592919505780-303950717480?w=700&h=500&fit=crop'], cover_image: null, status: 'active', lat: 22.8905, lng: -109.9167 },
 ];
+
+async function geocodeAddress(address: string): Promise<[number, number] | null> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
+      { headers: { 'Accept-Language': 'en' } }
+    );
+    const data = await res.json();
+    if (data[0]) return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+  } catch {}
+  return null;
+}
 
 const SearchResults = () => {
   const location = useLocation();
@@ -48,6 +59,10 @@ const SearchResults = () => {
   const [listings, setListings] = useState<Listing[]>(SAMPLE);
   const [loading, setLoading] = useState(true);
   const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
+
+  // Separate coords state so geocoding updates don't re-trigger geocoding effect
+  const [geocodedCoords, setGeocodedCoords] = useState<Record<string, [number, number]>>({});
+  const geocodingRef = useRef<Set<string>>(new Set()); // track in-flight requests
 
   const searchLocation = state?.location || '';
   const guests = state?.guests || 1;
@@ -68,20 +83,47 @@ const SearchResults = () => {
         }
 
         const { data, error: fetchError } = await query.order('created_at', { ascending: false });
-
         if (fetchError) throw fetchError;
         const dbListings = (data as unknown as Listing[]) || [];
         setListings(dbListings.length > 0 ? dbListings : SAMPLE);
-      } catch (err) {
-        console.error('Error fetching listings:', err);
+      } catch {
         setListings(SAMPLE);
       } finally {
         setLoading(false);
       }
     };
-
     fetchListings();
   }, [searchLocation]);
+
+  // Geocode any listing that doesn't already have lat/lng
+  // Runs whenever the set of listing IDs changes; uses a ref to avoid duplicate fetches
+  const listingIds = listings.map(l => l.id).join(',');
+  useEffect(() => {
+    let cancelled = false;
+    const toGeocode = listings.filter(
+      l => l.lat == null && l.lng == null && !geocodingRef.current.has(l.id)
+    );
+    if (toGeocode.length === 0) return;
+
+    (async () => {
+      for (let i = 0; i < toGeocode.length; i++) {
+        if (cancelled) break;
+        const listing = toGeocode[i];
+        geocodingRef.current.add(listing.id);
+        const coords = await geocodeAddress(listing.full_address);
+        if (coords && !cancelled) {
+          setGeocodedCoords(prev => ({ ...prev, [listing.id]: coords }));
+        }
+        // Nominatim rate limit: max 1 req/s
+        if (i < toGeocode.length - 1) {
+          await new Promise(r => setTimeout(r, 1100));
+        }
+      }
+    })();
+
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listingIds]);
 
   const filteredListings = listings.filter(listing => {
     if (activeFilters.size === 0) return true;
@@ -93,14 +135,18 @@ const SearchResults = () => {
   });
 
   const toggleFilter = (filterId: string) => {
-    const newFilters = new Set(activeFilters);
-    if (newFilters.has(filterId)) newFilters.delete(filterId);
-    else newFilters.add(filterId);
-    setActiveFilters(newFilters);
+    const n = new Set(activeFilters);
+    if (n.has(filterId)) n.delete(filterId); else n.add(filterId);
+    setActiveFilters(n);
   };
 
-  // Build list of map-ready listings (those with coordinates)
+  // Merge baked-in coordinates with geocoded ones
   const mapListings: MapListing[] = filteredListings
+    .map(l => {
+      const lat = l.lat ?? geocodedCoords[l.id]?.[0];
+      const lng = l.lng ?? geocodedCoords[l.id]?.[1];
+      return { ...l, lat, lng };
+    })
     .filter(l => l.lat != null && l.lng != null)
     .map(l => ({
       id: l.id,
@@ -123,8 +169,7 @@ const SearchResults = () => {
   ];
 
   const getCoverImage = (listing: Listing): string =>
-    listing.cover_image ||
-    listing.photos?.[0] ||
+    listing.cover_image || listing.photos?.[0] ||
     'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop';
 
   return (
@@ -132,13 +177,11 @@ const SearchResults = () => {
       {/* Header */}
       <div style={{ flexShrink: 0, borderBottom: '1px solid #EDEBE1', background: '#F6F5EF', padding: '12px 16px' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-          {/* Logo */}
           <button onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}>
             <div style={{ width: '32px', height: '32px', background: '#0B1F17', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#C7F04A', fontSize: '18px' }}>T</div>
             {!isMobile && <span style={{ color: '#15794C', fontSize: '16px', fontWeight: 700, fontFamily: 'Archivo' }}>TeeBnB</span>}
           </button>
 
-          {/* Search Bar */}
           <div style={{ flex: 1, maxWidth: isMobile ? '100%' : '400px', display: 'flex', gap: '8px', alignItems: 'center', background: 'white', border: '1px solid #EDEBE1', borderRadius: '8px', padding: '8px 12px' }}>
             <input
               type="text"
@@ -171,16 +214,11 @@ const SearchResults = () => {
               key={filter.id}
               onClick={() => toggleFilter(filter.id)}
               style={{
-                padding: '6px 12px',
-                borderRadius: '20px',
+                padding: '6px 12px', borderRadius: '20px',
                 border: `1px solid ${activeFilters.has(filter.id) ? '#15794C' : '#EDEBE1'}`,
                 background: activeFilters.has(filter.id) ? '#15794C' : 'white',
                 color: activeFilters.has(filter.id) ? 'white' : '#0B1F17',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontFamily: 'Hanken Grotesk',
-                fontWeight: 500,
-                whiteSpace: 'nowrap'
+                cursor: 'pointer', fontSize: '13px', fontFamily: 'Hanken Grotesk', fontWeight: 500, whiteSpace: 'nowrap'
               }}
             >
               {filter.label}
@@ -206,12 +244,10 @@ const SearchResults = () => {
         {/* Left panel - listings */}
         <div style={{
           flex: isMobile ? '1 1 100%' : '1 1 54%',
-          overflowY: 'auto',
-          borderRight: isMobile ? 'none' : '1px solid #EDEBE1',
+          overflowY: 'auto', borderRight: isMobile ? 'none' : '1px solid #EDEBE1',
           padding: '16px',
           display: isMobile && showMap ? 'none' : 'flex',
-          flexDirection: 'column',
-          gap: '12px'
+          flexDirection: 'column', gap: '12px'
         }}>
           {loading ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
@@ -222,74 +258,75 @@ const SearchResults = () => {
               <p style={{ color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>No listings found</p>
             </div>
           ) : (
-            filteredListings.map(listing => (
-              <div
-                key={listing.id}
-                onClick={() =>
-                  navigate(`/property/${listing.id}`, {
-                    state: { listing, checkIn, checkOut, guests },
-                  })
-                }
-                onMouseEnter={() => setHoveredId(listing.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                style={{
-                  display: 'flex',
-                  flexDirection: isMobile ? 'column' : 'row',
-                  gap: '12px',
-                  padding: '12px',
-                  background: 'white',
-                  border: `1px solid ${hoveredId === listing.id ? '#15794C' : '#EDEBE1'}`,
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  boxShadow: hoveredId === listing.id ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
-                }}
-              >
-                {/* Image */}
-                <img
-                  src={getCoverImage(listing)}
-                  alt={listing.property_title}
+            filteredListings.map(listing => {
+              const hasCoords = listing.lat != null || geocodedCoords[listing.id] != null;
+              return (
+                <div
+                  key={listing.id}
+                  onClick={() => navigate(`/property/${listing.id}`, { state: { listing, checkIn, checkOut, guests } })}
+                  onMouseEnter={() => setHoveredId(listing.id)}
+                  onMouseLeave={() => setHoveredId(null)}
                   style={{
-                    width: isMobile ? '100%' : '200px',
-                    height: isMobile ? '180px' : '140px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    flexShrink: 0
+                    display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px',
+                    padding: '12px', background: 'white',
+                    border: `1px solid ${hoveredId === listing.id ? '#15794C' : '#EDEBE1'}`,
+                    borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s',
+                    boxShadow: hoveredId === listing.id ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
                   }}
-                />
-
-                {/* Content */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <p style={{ color: '#8A968E', fontSize: '13px', fontFamily: 'Hanken Grotesk', margin: '0 0 4px 0' }}>
-                      {listing.full_address}
-                    </p>
-                    <h3 style={{ color: '#0B1F17', fontSize: '19px', fontWeight: 700, fontFamily: 'Archivo', margin: '0 0 8px 0' }}>
-                      {listing.property_title}
-                    </h3>
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      <span style={{ background: '#15794C', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontFamily: 'Hanken Grotesk' }}>
-                        Sleeps {listing.max_guests}
-                      </span>
-                      {listing.nearby_golf_courses && (
+                >
+                  <img
+                    src={getCoverImage(listing)}
+                    alt={listing.property_title}
+                    style={{ width: isMobile ? '100%' : '200px', height: isMobile ? '180px' : '140px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0 }}
+                  />
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      {/* Address — clicking opens OSM in new tab */}
+                      <a
+                        href={`https://www.openstreetmap.org/search?query=${encodeURIComponent(listing.full_address)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{
+                          color: '#15794C', fontSize: '13px', fontFamily: 'Hanken Grotesk',
+                          display: 'inline-flex', alignItems: 'center', gap: '4px',
+                          textDecoration: 'none', marginBottom: '4px',
+                        }}
+                        title="View on map"
+                      >
+                        📍 {listing.full_address}
+                        {!hasCoords && (
+                          <span style={{ fontSize: '10px', color: '#8A968E', marginLeft: '4px' }}>
+                            (locating…)
+                          </span>
+                        )}
+                      </a>
+                      <h3 style={{ color: '#0B1F17', fontSize: '19px', fontWeight: 700, fontFamily: 'Archivo', margin: '0 0 8px 0' }}>
+                        {listing.property_title}
+                      </h3>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                         <span style={{ background: '#15794C', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontFamily: 'Hanken Grotesk' }}>
-                          ⛳ {typeof listing.nearby_golf_courses === 'string'
-                            ? listing.nearby_golf_courses.substring(0, 22)
-                            : (listing.nearby_golf_courses as string[])?.[0]?.substring(0, 22)}
+                          Sleeps {listing.max_guests}
                         </span>
-                      )}
+                        {listing.nearby_golf_courses && (
+                          <span style={{ background: '#15794C', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontFamily: 'Hanken Grotesk' }}>
+                            ⛳ {typeof listing.nearby_golf_courses === 'string'
+                              ? listing.nearby_golf_courses.substring(0, 22)
+                              : (listing.nearby_golf_courses as string[])?.[0]?.substring(0, 22)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '13px', color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>per night</span>
+                      <span style={{ fontSize: '20px', fontWeight: 700, color: '#0B1F17', fontFamily: 'Archivo' }}>
+                        €{listing.nightly_price}
+                      </span>
                     </div>
                   </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '13px', color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>per night</span>
-                    <span style={{ fontSize: '20px', fontWeight: 700, color: '#0B1F17', fontFamily: 'Archivo' }}>
-                      €{listing.nightly_price}
-                    </span>
-                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 
@@ -297,17 +334,14 @@ const SearchResults = () => {
         <div style={{
           flex: isMobile ? '1 1 100%' : '1 1 46%',
           display: isMobile && !showMap ? 'none' : 'block',
-          position: 'relative',
-          overflow: 'hidden',
+          position: 'relative', overflow: 'hidden',
         }}>
           <InteractiveMap
             listings={mapListings}
             highlightedId={hoveredId}
             onMarkerClick={(id) => {
               const listing = filteredListings.find(l => l.id === id);
-              if (listing) {
-                navigate(`/property/${id}`, { state: { listing, checkIn, checkOut, guests } });
-              }
+              if (listing) navigate(`/property/${id}`, { state: { listing, checkIn, checkOut, guests } });
             }}
           />
         </div>

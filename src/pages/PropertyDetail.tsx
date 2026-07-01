@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
+import InteractiveMap from '@/components/InteractiveMap';
 
 interface Listing {
   id: string;
@@ -40,6 +41,7 @@ const PropertyDetail = () => {
   );
   const [guests, setGuests] = useState(state?.guests || 2);
   const [loading, setLoading] = useState(!state?.listing);
+  const [mapCoords, setMapCoords] = useState<[number, number] | null>(null);
 
   useEffect(() => {
     if (!listing && id) {
@@ -65,6 +67,24 @@ const PropertyDetail = () => {
       setLoading(false);
     }
   }, [id, listing]);
+
+  // Geocode the listing address so we can show it on the map
+  useEffect(() => {
+    if (!listing?.full_address) return;
+    let cancelled = false;
+    fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(listing.full_address)}&format=json&limit=1`,
+      { headers: { 'Accept-Language': 'en' } }
+    )
+      .then(r => r.json())
+      .then(data => {
+        if (data[0] && !cancelled) {
+          setMapCoords([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [listing?.full_address]);
 
   if (loading) {
     return (
@@ -348,6 +368,56 @@ const PropertyDetail = () => {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Where you'll be — map */}
+          <div>
+            <h3 style={{ color: '#0B1F17', fontSize: '18px', fontWeight: 700, fontFamily: 'Archivo', marginBottom: '8px' }}>
+              Where you'll be
+            </h3>
+            <a
+              href={`https://www.openstreetmap.org/search?query=${encodeURIComponent(listing.full_address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                color: '#15794C', fontSize: '14px', fontFamily: 'Hanken Grotesk',
+                fontWeight: 600, textDecoration: 'none', marginBottom: '12px',
+              }}
+            >
+              📍 {listing.full_address} ↗
+            </a>
+            {mapCoords ? (
+              <div style={{ height: '300px', borderRadius: '12px', overflow: 'hidden', border: '1px solid #EDEBE1' }}>
+                <InteractiveMap
+                  listings={[{
+                    id: listing.id,
+                    property_title: listing.property_title,
+                    full_address: listing.full_address,
+                    nightly_price: listing.nightly_price,
+                    lat: mapCoords[0],
+                    lng: mapCoords[1],
+                    cover_image: listing.cover_image || listing.photos?.[0] || null,
+                  }]}
+                />
+              </div>
+            ) : (
+              <div style={{
+                height: '300px', borderRadius: '12px', border: '1px solid #EDEBE1',
+                background: '#F6F5EF', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', flexDirection: 'column', gap: '8px',
+              }}>
+                <div style={{
+                  width: '24px', height: '24px', borderRadius: '50%',
+                  border: '3px solid #EDEBE1', borderTopColor: '#15794C',
+                  animation: 'spin 1s linear infinite',
+                }} />
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                <p style={{ color: '#8A968E', fontSize: '13px', fontFamily: 'Hanken Grotesk', margin: 0 }}>
+                  Locating property…
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Reviews */}
