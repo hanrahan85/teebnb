@@ -6,13 +6,15 @@ import PropertyListingForm from '@/components/PropertyListingForm';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Home, CheckCircle } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const ListProperty = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const isEditMode = Boolean((location.state as { editListingId?: string } | null)?.editListingId);
 
   useEffect(() => {
     if (searchParams.get('welcome') === 'true') {
@@ -33,15 +35,15 @@ const ListProperty = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate(isEditMode ? '/dashboard' : '/')}
                   className="flex items-center gap-2"
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  Back to TeeBnB
+                  {isEditMode ? 'Back to Dashboard' : 'Back to TeeBnB'}
                 </Button>
                 <div className="flex items-center gap-2">
                   <Home className="h-5 w-5 text-emerald-600" />
-                  <h1 className="text-xl font-semibold">List Your Property</h1>
+                  <h1 className="text-xl font-semibold">{isEditMode ? 'Edit Your Listing' : 'List Your Property'}</h1>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -84,10 +86,12 @@ const ListProperty = () => {
 
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Share Your Golf-Friendly Property
+              {isEditMode ? 'Edit Your Listing' : 'Share Your Golf-Friendly Property'}
             </h2>
             <p className="text-lg text-gray-600">
-              List your property near golf courses and connect with golf travelers from around the world.
+              {isEditMode
+                ? 'Update your property details below. Changes will go live as soon as you save.'
+                : 'List your property near golf courses and connect with golf travelers from around the world.'}
             </p>
           </div>
 

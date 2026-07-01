@@ -514,6 +514,22 @@ const HostDashboard = () => {
                           View
                         </button>
                         <button
+                          onClick={() => navigate('/list-property', { state: { editListingId: listing.id } })}
+                          style={{
+                            padding: '6px 12px',
+                            background: '#EFF6FF',
+                            color: '#1D4ED8',
+                            border: '1px solid #BFDBFE',
+                            borderRadius: '6px',
+                            fontFamily: "'Archivo', sans-serif",
+                            fontWeight: 600,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
                           onClick={() => deleteListing(listing.id, listing.property_title)}
                           style={{
                             padding: '6px 12px',

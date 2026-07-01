@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -93,12 +93,17 @@ type Stage = 'form' | 'review' | 'success';
 const PropertyListingForm = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const editListingId = (location.state as { editListingId?: string } | null)?.editListingId ?? null;
+  const isEditMode = Boolean(editListingId);
+
   const [stage, setStage] = useState<Stage>('form');
   const [publishedListingId, setPublishedListingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSection, setCurrentSection] = useState(1);
   const [completedSections, setCompletedSections] = useState<number[]>([]);
   const [sectionsWithErrors, setSectionsWithErrors] = useState<number[]>([]);
+  const [editLoading, setEditLoading] = useState(isEditMode);
   const totalSections = 8;
 
   const sectionTitles = [
@@ -146,8 +151,9 @@ const PropertyListingForm = () => {
     return () => subscription.unsubscribe();
   }, [form]);
 
-  // Load saved form data on mount
+  // Load saved form data on mount (only when NOT editing an existing listing)
   useEffect(() => {
+    if (isEditMode) return; // skip auto-restore when editing
     const savedData = localStorage.getItem('teebnb-property-form');
     if (savedData) {
       try {
@@ -158,7 +164,69 @@ const PropertyListingForm = () => {
         console.error('Failed to restore form data:', error);
       }
     }
-  }, [form]);
+  }, [form, isEditMode]);
+
+  // Fetch existing listing data when in edit mode
+  useEffect(() => {
+    if (!editListingId) return;
+    const fetchListing = async () => {
+      setEditLoading(true);
+      const { data, error } = await supabase
+        .from('property_listings')
+        .select('*')
+        .eq('id', editListingId)
+        .single();
+      if (error || !data) {
+        toast.error('Could not load listing for editing');
+        setEditLoading(false);
+        return;
+      }
+      const d = data as Record<string, unknown>;
+      form.reset({
+        propertyTitle: (d.property_title as string) || '',
+        propertyType: (d.property_type as PropertyListingFormData['propertyType']) || 'House',
+        maxGuests: (d.max_guests as number) || 1,
+        bedrooms: (d.bedrooms as number) || 1,
+        beds: (d.beds as number) || 1,
+        bathrooms: (d.bathrooms as number) || 1,
+        propertyPrivacy: (d.property_privacy as PropertyListingFormData['propertyPrivacy']) || 'Entire Place',
+        fullAddress: (d.full_address as string) || '',
+        distanceToCourse: (d.distance_to_course as number | undefined) ?? undefined,
+        distanceUnit: (d.distance_unit as PropertyListingFormData['distanceUnit']) ?? undefined,
+        nearbyGolfCourses: (d.nearby_golf_courses as string[]) || [],
+        parkingAvailability: (d.parking_availability as PropertyListingFormData['parkingAvailability']) ?? undefined,
+        amenities: (d.amenities as PropertyListingFormData['amenities']) || {
+          wifi: false, tv: false, kitchen: false, golfClubStorage: false, washerDryer: false,
+          heating: false, ac: false, golfCourseView: false, patioBalcony: false,
+          breakfastIncluded: false, shuttleService: false,
+        },
+        golfBagStorage: Boolean(d.golf_bag_storage),
+        partneredWithCourse: Boolean(d.partnered_with_course),
+        partnerCourseName: (d.partner_course_name as string | undefined) ?? undefined,
+        tournamentDiscounts: Boolean(d.tournament_discounts),
+        canHostGroups: Boolean(d.can_host_groups),
+        photos: (d.photos as string[]) || [],
+        coverImage: (d.cover_image as string) || '',
+        nightlyPrice: (d.nightly_price as number) || 0,
+        cleaningFee: (d.cleaning_fee as number | undefined) ?? undefined,
+        securityDeposit: (d.security_deposit as number | undefined) ?? undefined,
+        minimumStay: (d.minimum_stay as number) || 1,
+        maximumStay: (d.maximum_stay as number | undefined) ?? undefined,
+        instantBooking: Boolean(d.instant_booking),
+        cancellationPolicy: (d.cancellation_policy as PropertyListingFormData['cancellationPolicy']) || 'Moderate',
+        houseRules: (d.house_rules as string | undefined) ?? undefined,
+        checkinTime: (d.checkin_time as string | undefined) ?? undefined,
+        checkoutTime: (d.checkout_time as string | undefined) ?? undefined,
+        hostName: (d.host_name as string) || '',
+        hostBio: (d.host_bio as string | undefined) ?? undefined,
+        languagesSpoken: (d.languages_spoken as string[]) || [],
+        hostPhone: (d.host_phone as string | undefined) ?? undefined,
+      });
+      setEditLoading(false);
+      toast.success('Listing loaded — make your changes below');
+    };
+    fetchListing();
+  }, [editListingId, form]);
 
   // Check section completion and errors (only runs when currentSection changes, not on every formState update)
   const updateSectionStatus = async () => {
@@ -223,66 +291,72 @@ const PropertyListingForm = () => {
     }
     
     setIsSubmitting(true);
+    const payload = {
+      property_title: data.propertyTitle,
+      property_type: data.propertyType,
+      max_guests: data.maxGuests,
+      bedrooms: data.bedrooms,
+      beds: data.beds,
+      bathrooms: data.bathrooms,
+      property_privacy: data.propertyPrivacy,
+      full_address: data.fullAddress,
+      distance_to_course: data.distanceToCourse,
+      distance_unit: data.distanceUnit,
+      nearby_golf_courses: data.nearbyGolfCourses || [],
+      parking_availability: data.parkingAvailability,
+      amenities: data.amenities,
+      golf_bag_storage: data.golfBagStorage,
+      partnered_with_course: data.partneredWithCourse,
+      partner_course_name: data.partnerCourseName,
+      tournament_discounts: data.tournamentDiscounts,
+      can_host_groups: data.canHostGroups,
+      photos: data.photos,
+      cover_image: data.coverImage,
+      nightly_price: data.nightlyPrice,
+      cleaning_fee: data.cleaningFee,
+      security_deposit: data.securityDeposit,
+      minimum_stay: data.minimumStay,
+      maximum_stay: data.maximumStay,
+      instant_booking: data.instantBooking,
+      cancellation_policy: data.cancellationPolicy,
+      house_rules: data.houseRules,
+      checkin_time: data.checkinTime,
+      checkout_time: data.checkoutTime,
+      host_name: data.hostName,
+      host_bio: data.hostBio,
+      languages_spoken: data.languagesSpoken || [],
+      host_phone: data.hostPhone,
+      host_email: user.email,
+      status: 'active',
+    };
+
     try {
-      console.log('Submitting form data:', data);
-      
-      const { data: insertData, error } = await supabase
-        .from('property_listings')
-        .insert({
-          user_id: user.id,
-          property_title: data.propertyTitle,
-          property_type: data.propertyType,
-          max_guests: data.maxGuests,
-          bedrooms: data.bedrooms,
-          beds: data.beds,
-          bathrooms: data.bathrooms,
-          property_privacy: data.propertyPrivacy,
-          full_address: data.fullAddress,
-          distance_to_course: data.distanceToCourse,
-          distance_unit: data.distanceUnit,
-          nearby_golf_courses: data.nearbyGolfCourses || [],
-          parking_availability: data.parkingAvailability,
-          amenities: data.amenities,
-          golf_bag_storage: data.golfBagStorage,
-          partnered_with_course: data.partneredWithCourse,
-          partner_course_name: data.partnerCourseName,
-          tournament_discounts: data.tournamentDiscounts,
-          can_host_groups: data.canHostGroups,
-          photos: data.photos,
-          cover_image: data.coverImage,
-          nightly_price: data.nightlyPrice,
-          cleaning_fee: data.cleaningFee,
-          security_deposit: data.securityDeposit,
-          minimum_stay: data.minimumStay,
-          maximum_stay: data.maximumStay,
-          instant_booking: data.instantBooking,
-          cancellation_policy: data.cancellationPolicy,
-          house_rules: data.houseRules,
-          checkin_time: data.checkinTime,
-          checkout_time: data.checkoutTime,
-          host_name: data.hostName,
-          host_bio: data.hostBio,
-          languages_spoken: data.languagesSpoken || [],
-          host_phone: data.hostPhone,
-          host_email: user.email,
-          status: 'active',
-        })
-        .select();
+      if (isEditMode && editListingId) {
+        // UPDATE existing listing
+        const { error } = await supabase
+          .from('property_listings')
+          .update(payload)
+          .eq('id', editListingId)
+          .eq('user_id', user.id);
 
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
+        if (error) throw error;
+        setPublishedListingId(editListingId);
+        setStage('success');
+      } else {
+        // INSERT new listing
+        const { data: insertData, error } = await supabase
+          .from('property_listings')
+          .insert({ ...payload, user_id: user.id })
+          .select();
+
+        if (error) throw error;
+        const newId = insertData?.[0]?.id ?? null;
+        setPublishedListingId(newId);
+        localStorage.removeItem('teebnb-property-form');
+        setStage('success');
       }
-
-      console.log('Successfully created listing:', insertData);
-      const newId = insertData?.[0]?.id ?? null;
-      setPublishedListingId(newId);
-      localStorage.removeItem('teebnb-property-form');
-      setStage('success');
     } catch (error: any) {
-      console.error('Error creating listing:', error);
-      
-      // Provide specific error messages
+      console.error('Error saving listing:', error);
       if (error.message?.includes('photos')) {
         toast.error('Please upload at least 3 photos before publishing');
       } else if (error.message?.includes('required')) {
@@ -290,7 +364,7 @@ const PropertyListingForm = () => {
       } else if (error.code === '23505') {
         toast.error('A listing with this information already exists');
       } else {
-        toast.error(`Failed to create listing: ${error.message || 'Please try again'}`);
+        toast.error(`Failed to save listing: ${error.message || 'Please try again'}`);
       }
     } finally {
       setIsSubmitting(false);
@@ -449,6 +523,16 @@ const PropertyListingForm = () => {
     toast.success('Form cleared');
   };
 
+  // ── EDIT LOADING SCREEN ───────────────────────────────────────
+  if (editLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <Loader2 className="w-10 h-10 text-emerald-600 animate-spin" />
+        <p className="text-emerald-700 font-medium">Loading your listing…</p>
+      </div>
+    );
+  }
+
   // ── SUCCESS SCREEN ────────────────────────────────────────────
   if (stage === 'success') {
     const data = form.getValues();
@@ -462,9 +546,14 @@ const PropertyListingForm = () => {
         </div>
 
         <div>
-          <h2 className="text-3xl font-bold text-emerald-900 mb-3">Your listing is live! 🎉</h2>
+          <h2 className="text-3xl font-bold text-emerald-900 mb-3">
+            {isEditMode ? 'Changes saved! ✅' : 'Your listing is live! 🎉'}
+          </h2>
           <p className="text-emerald-700 text-lg">
-            <span className="font-semibold">{data.propertyTitle}</span> is now published on TeeBnB and visible to golfers worldwide.
+            <span className="font-semibold">{data.propertyTitle}</span>{' '}
+            {isEditMode
+              ? 'has been updated successfully.'
+              : 'is now published on TeeBnB and visible to golfers worldwide.'}
           </p>
         </div>
 
@@ -625,12 +714,12 @@ const PropertyListingForm = () => {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Publishing...
+                  {isEditMode ? 'Saving...' : 'Publishing...'}
                 </>
               ) : (
                 <>
                   <CheckCircle className="h-4 w-4" />
-                  Publish listing
+                  {isEditMode ? 'Save changes' : 'Publish listing'}
                 </>
               )}
             </Button>
