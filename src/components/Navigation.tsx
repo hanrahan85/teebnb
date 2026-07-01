@@ -1,166 +1,574 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import {
-  LogOut,
-  Menu,
-  X,
-  LayoutDashboard,
-} from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const Navigation = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleSignOut = async () => {
+  const handleSignOut = async (): Promise<void> => {
     await signOut();
     setIsMobileMenuOpen(false);
   };
 
-  const toggleMobileMenu = () => {
+  const toggleMobileMenu = (): void => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const closeMobileMenu = () => {
+  const closeMobileMenu = (): void => {
     setIsMobileMenuOpen(false);
   };
 
+  const handleNavigate = (path: string): void => {
+    navigate(path);
+    closeMobileMenu();
+  };
+
   return (
-    <nav className="bg-primary border-b border-primary-foreground/10 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24 sm:h-28">
-          {/* Logo - Left Aligned */}
-          <div className="flex items-center">
-            <a href="/" className="flex items-center" onClick={closeMobileMenu}>
-              <img
-                src="/teebnb-logo.svg"
-                alt="TeeBnB - Golf Accommodation Platform"
-                className="h-20 sm:h-24 md:h-28 w-auto transition-opacity duration-200 hover:opacity-90"
-              />
+    <nav
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: 'rgba(246, 245, 239, 0.88)',
+        backdropFilter: 'blur(14px)',
+        borderBottom: '1px solid #EDEBE1',
+      }}
+    >
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: '72px',
+          }}
+        >
+          {/* Logo */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <a
+              onClick={() => navigate('/')}
+              style={{
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                textDecoration: 'none',
+              }}
+            >
+              <span
+                style={{
+                  display: 'grid',
+                  placeItems: 'center',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  background: '#0B1F17',
+                  boxShadow:
+                    'inset 0 0 0 1.5px rgba(200,162,75,.9), 0 2px 9px -3px rgba(11,31,23,.45)',
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 700,
+                    fontSize: '17px',
+                    color: '#C8A24B',
+                    lineHeight: 1,
+                  }}
+                >
+                  T
+                </span>
+              </span>
+              <span
+                style={{
+                  fontFamily: "'Archivo', sans-serif",
+                  fontWeight: 800,
+                  fontSize: '22px',
+                  letterSpacing: '-.02em',
+                  color: '#15794C',
+                }}
+              >
+                TeeBnB
+              </span>
             </a>
           </div>
 
-          {/* Desktop Navigation Links - Right Aligned */}
-          <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            <button
-              onClick={() => navigate('/search-results', { state: {} })}
-              className="text-secondary font-body font-semibold hover:text-secondary/80 transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
+          {/* Desktop Navigation Links */}
+          <div
+            style={{
+              display: 'none',
+            }}
+            className="md:flex"
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '24px',
+              }}
+              className="md:flex"
             >
-              Browse Stays
-            </button>
-            <button
-              onClick={() => navigate('/list-property')}
-              className="text-secondary font-body font-semibold hover:text-secondary/80 transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
-            >
-              List Your Property
-            </button>
+              <button
+                onClick={() => handleNavigate('/search-results')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#3A4A41',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  padding: 0,
+                  outline: 'none',
+                }}
+              >
+                Explore stays
+              </button>
+              <button
+                onClick={() => handleNavigate('/search-results')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#3A4A41',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  padding: 0,
+                  outline: 'none',
+                }}
+              >
+                Destinations
+              </button>
+              <button
+                onClick={() => handleNavigate('/trips')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#3A4A41',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  padding: 0,
+                  outline: 'none',
+                }}
+              >
+                Trips
+              </button>
+              <button
+                onClick={() => handleNavigate('/profile')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#3A4A41',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  padding: 0,
+                  outline: 'none',
+                }}
+              >
+                Profile
+              </button>
+              <button
+                onClick={() => handleNavigate('/list-property')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#3A4A41',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  padding: 0,
+                  outline: 'none',
+                }}
+              >
+                List your place
+              </button>
 
-            {user ? (
-              <div className="flex items-center gap-3 lg:gap-4">
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className="flex items-center gap-1 text-secondary font-body font-semibold hover:text-secondary/80 transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
+              {/* Right side content */}
+              {user ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    marginLeft: '24px',
+                  }}
                 >
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </button>
-                <span className="text-white/70 text-xs lg:text-sm font-body max-w-24 lg:max-w-none truncate">
-                  {user.user_metadata?.full_name || user.email}
-                </span>
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center gap-1 text-white/70 font-body font-medium hover:text-white transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
+                  <button
+                    onClick={() => handleNavigate('/dashboard')}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#3A4A41',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      padding: 0,
+                      outline: 'none',
+                    }}
+                  >
+                    Dashboard
+                  </button>
+                  <span
+                    style={{
+                      color: '#5C6B62',
+                      fontSize: '13px',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      maxWidth: '150px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {user.user_metadata?.full_name || user.email}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#5C6B62',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      padding: 0,
+                      outline: 'none',
+                    }}
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    marginLeft: '24px',
+                  }}
                 >
-                  <LogOut className="h-4 w-4" />
-                  Sign Out
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-4 lg:gap-6">
-                <button
-                  onClick={() => navigate('/auth')}
-                  className="text-secondary font-body font-semibold hover:text-secondary/80 transition-colors duration-200 text-sm lg:text-base bg-transparent border-none outline-none appearance-none cursor-pointer"
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => navigate('/auth')}
-                  className="bg-secondary text-black font-heading font-semibold px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity duration-200 text-sm lg:text-base border-none outline-none appearance-none cursor-pointer"
-                >
-                  Register
-                </button>
-              </div>
-            )}
+                  <button
+                    onClick={() => handleNavigate('/list-property')}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#15794C',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      padding: 0,
+                      outline: 'none',
+                    }}
+                  >
+                    Become a host
+                  </button>
+                  <button
+                    onClick={() => handleNavigate('/auth')}
+                    style={{
+                      background: '#C7F04A',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#0B1F17',
+                      fontFamily: "'Archivo', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      padding: '8px 16px',
+                      borderRadius: '20px',
+                      outline: 'none',
+                    }}
+                  >
+                    Sign up
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="text-white hover:bg-white/10 w-10 h-10"
+          <div
+            style={{
+              display: 'flex',
+            }}
+            className="md:hidden"
+          >
+            <button
               onClick={toggleMobileMenu}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                color: '#0B1F17',
+                outline: 'none',
+              }}
             >
               {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X size={24} />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu size={24} />
               )}
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-primary-foreground/10 bg-primary">
-            <div className="px-2 pt-2 pb-3 space-y-1">
+          <div
+            style={{
+              borderTop: '1px solid #EDEBE1',
+              background: 'rgba(246, 245, 239, 1)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            className="md:hidden"
+          >
+            <div
+              style={{
+                padding: '12px 8px 12px 8px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+              }}
+            >
               <button
-                className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
-                onClick={() => { navigate('/search-results', { state: {} }); closeMobileMenu(); }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '12px',
+                  color: '#0B1F17',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  minHeight: '48px',
+                  outline: 'none',
+                }}
+                onClick={() => handleNavigate('/search-results')}
               >
-                Browse Stays
+                Explore stays
               </button>
               <button
-                className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
-                onClick={() => { navigate('/list-property'); closeMobileMenu(); }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '12px',
+                  color: '#0B1F17',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  minHeight: '48px',
+                  outline: 'none',
+                }}
+                onClick={() => handleNavigate('/search-results')}
               >
-                List Your Property
+                Destinations
+              </button>
+              <button
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '12px',
+                  color: '#0B1F17',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  minHeight: '48px',
+                  outline: 'none',
+                }}
+                onClick={() => handleNavigate('/trips')}
+              >
+                Trips
+              </button>
+              <button
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '12px',
+                  color: '#0B1F17',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  minHeight: '48px',
+                  outline: 'none',
+                }}
+                onClick={() => handleNavigate('/profile')}
+              >
+                Profile
+              </button>
+              <button
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '12px',
+                  color: '#0B1F17',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  minHeight: '48px',
+                  outline: 'none',
+                }}
+                onClick={() => handleNavigate('/list-property')}
+              >
+                List your place
               </button>
 
               {user ? (
-                <div className="border-t border-primary-foreground/10 pt-3 mt-3 space-y-1">
+                <div
+                  style={{
+                    borderTop: '1px solid #EDEBE1',
+                    paddingTop: '12px',
+                    marginTop: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  }}
+                >
                   <button
-                    className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
-                    onClick={() => { navigate('/dashboard'); closeMobileMenu(); }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '12px',
+                      color: '#0B1F17',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: '8px',
+                      minHeight: '48px',
+                      outline: 'none',
+                    }}
+                    onClick={() => handleNavigate('/dashboard')}
                   >
                     Dashboard
                   </button>
-                  <div className="px-3 py-2 text-white/70 text-sm font-body">
+                  <div
+                    style={{
+                      padding: '8px 12px',
+                      color: '#5C6B62',
+                      fontSize: '12px',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                    }}
+                  >
                     {user.user_metadata?.full_name || user.email}
                   </div>
                   <button
-                    className="flex items-center gap-2 w-full px-3 py-3 text-white/80 font-body font-medium hover:text-white hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
-                    onClick={() => { handleSignOut(); }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      width: '100%',
+                      padding: '12px',
+                      color: '#5C6B62',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: '8px',
+                      minHeight: '48px',
+                      outline: 'none',
+                    }}
+                    onClick={handleSignOut}
                   >
-                    <LogOut className="h-4 w-4" />
-                    Sign Out
+                    Sign out
                   </button>
                 </div>
               ) : (
-                <div className="border-t border-primary-foreground/10 pt-3 mt-3 space-y-1">
+                <div
+                  style={{
+                    borderTop: '1px solid #EDEBE1',
+                    paddingTop: '12px',
+                    marginTop: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  }}
+                >
                   <button
-                    className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
-                    onClick={() => { navigate('/auth'); closeMobileMenu(); }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '12px',
+                      color: '#0B1F17',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: '8px',
+                      minHeight: '48px',
+                      outline: 'none',
+                    }}
+                    onClick={() => handleNavigate('/list-property')}
                   >
-                    Sign In
+                    Become a host
                   </button>
                   <button
-                    className="block w-full text-left px-3 py-3 text-white font-body font-medium hover:bg-white/10 transition-colors duration-200 rounded-md min-h-[48px]"
-                    onClick={() => { navigate('/auth'); closeMobileMenu(); }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '12px',
+                      color: '#0B1F17',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: '8px',
+                      minHeight: '48px',
+                      outline: 'none',
+                    }}
+                    onClick={() => handleNavigate('/auth')}
                   >
-                    Register
+                    Sign up
                   </button>
                 </div>
               )}

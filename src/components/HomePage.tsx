@@ -1,337 +1,1118 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import SearchBar from '@/components/SearchBar';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { 
-  Search, 
-  Calendar, 
-  MapPin, 
-  Trophy, 
-  Shield, 
-  CheckCircle, 
-  Users,
-  Star,
-  Clock,
-  Wifi,
-  Car,
-  Coffee,
-  Phone,
-  Mail,
-  Facebook,
-  Twitter,
-  Instagram
-} from 'lucide-react';
+import { Heart } from 'lucide-react';
+
+interface Listing {
+  id: number;
+  name: string;
+  location: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  tag: string;
+  specs: string;
+}
 
 const HomePage = () => {
-  const howItWorksSteps = [
-    {
-      icon: Search,
-      title: "Search",
-      description: "Find the perfect stay near your favorite golf course"
-    },
-    {
-      icon: Calendar,
-      title: "Book", 
-      description: "Secure your accommodation with our easy booking process"
-    },
-    {
-      icon: Trophy,
-      title: "Stay & Play",
-      description: "Enjoy your golf vacation with premium amenities"
-    }
-  ];
+  const navigate = useNavigate();
 
-  const featuredDestinations = [
+  const listings: Listing[] = [
     {
       id: 1,
-      name: "Algarve, Portugal",
-      image: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop",
-      description: "World-class golf resorts with stunning ocean views",
-      courses: "25+ championship courses"
+      name: 'Fairway House',
+      location: 'Monterey, CA',
+      price: 640,
+      rating: 4.9,
+      reviews: 142,
+      tag: 'Featured',
+      specs: '4 bed • 2 bath',
     },
     {
       id: 2,
-      name: "Scotland Highlands",
-      image: "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=600&h=400&fit=crop",
-      description: "Home of golf with historic links courses",
-      courses: "50+ legendary courses"
+      name: 'Old Course Loft',
+      location: 'St Andrews, Scotland',
+      price: 310,
+      rating: 4.95,
+      reviews: 289,
+      tag: 'Best Rated',
+      specs: '2 bed • 1 bath',
     },
     {
       id: 3,
-      name: "Pebble Beach, California",
-      image: "https://images.unsplash.com/photo-1592919505780-303950717480?w=600&h=400&fit=crop",
-      description: "Iconic coastal golf with breathtaking Pacific views",
-      courses: "8 world-renowned courses"
+      name: 'Cedar Ridge Cabin',
+      location: 'Queenstown, NZ',
+      price: 280,
+      rating: 4.85,
+      reviews: 156,
+      tag: 'Great Value',
+      specs: '3 bed • 2 bath',
     },
     {
       id: 4,
-      name: "Costa del Sol, Spain",
-      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop",
-      description: "Mediterranean golf paradise with year-round sunshine",
-      courses: "30+ premium courses"
+      name: 'Casa del Green',
+      location: 'Los Cabos, Mexico',
+      price: 520,
+      rating: 4.88,
+      reviews: 203,
+      tag: 'Luxury',
+      specs: '5 bed • 3 bath',
     },
     {
       id: 5,
-      name: "Scottsdale, Arizona",
-      image: "https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=600&h=400&fit=crop",
-      description: "Desert golf at its finest with luxury resorts",
-      courses: "200+ desert courses"
+      name: 'Sakura Villa',
+      location: 'Hokkaido, Japan',
+      price: 340,
+      rating: 4.92,
+      reviews: 178,
+      tag: 'Exclusive',
+      specs: '4 bed • 2 bath',
     },
     {
       id: 6,
-      name: "Kiawah Island, South Carolina",
-      image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&h=400&fit=crop",
-      description: "Championship golf on pristine barrier island",
-      courses: "5 signature courses"
-    }
+      name: 'Cliffside Casita',
+      location: 'Faro, Portugal',
+      price: 210,
+      rating: 4.80,
+      reviews: 134,
+      tag: 'Budget',
+      specs: '2 bed • 1 bath',
+    },
+    {
+      id: 7,
+      name: 'Saguaro Retreat',
+      location: 'Phoenix, AZ',
+      price: 260,
+      rating: 4.87,
+      reviews: 167,
+      tag: 'Desert',
+      specs: '3 bed • 2 bath',
+    },
+    {
+      id: 8,
+      name: 'Loch Aria Cottage',
+      location: 'County Kerry, Ireland',
+      price: 300,
+      rating: 4.91,
+      reviews: 198,
+      tag: 'Lakeside',
+      specs: '3 bed • 2 bath',
+    },
   ];
 
-  const whyTeeBnBFeatures = [
-    {
-      icon: MapPin,
-      title: "Geo-Based Listings",
-      description: "Properties perfectly located near championship golf courses"
-    },
-    {
-      icon: CheckCircle,
-      title: "Golf-Ready Hosts",
-      description: "Hosts who understand golfers' unique needs and schedules"
-    },
-    {
-      icon: Trophy,
-      title: "Tailored Stays",
-      description: "Accommodations designed specifically for golf travelers"
-    },
-    {
-      icon: Shield,
-      title: "Secure Payments",
-      description: "Protected transactions with full booking guarantees"
-    },
-    {
-      icon: Users,
-      title: "Verified Hosts",
-      description: "Thoroughly vetted hosts committed to exceptional service"
-    },
-    {
-      icon: Star,
-      title: "Premium Experience",
-      description: "Luxury amenities that enhance your golf vacation"
-    }
-  ];
+  const [savedListings, setSavedListings] = React.useState<number[]>([]);
+
+  const toggleSave = (id: number): void => {
+    setSavedListings((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: '100vh', background: '#F6F5EF' }}>
       <Navigation />
-      
+
       {/* Hero Section */}
-      <section className="relative min-h-screen golf-hero-bg overflow-hidden">
-        <div className="absolute inset-0 luxury-pattern"></div>
-        {/* Gradient overlay for better text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
+      <section
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          backgroundImage: `url('https://commons.wikimedia.org/wiki/Special:FilePath/Aerial%20view%20of%2014th,%2015th%20and%2016th%20holes%20at%20Portmarnock%20Golf%20Club,%20Ireland.jpg?width=1600')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Dark gradient overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.3), rgba(0,0,0,0.6))',
+          }}
+        />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-screen pt-24 pb-16">
-          <div className="text-center max-w-5xl w-full">
-
-            {/* Eyebrow badge */}
-            <div className="mb-5 fade-in">
-              <Badge className="bg-secondary/90 text-black border-0 px-5 py-2 text-sm font-heading font-bold uppercase tracking-wider shadow-lg">
-                <Trophy className="h-4 w-4 mr-2" />
-                The Golf Travel Marketplace
-              </Badge>
+        <div
+          style={{
+            position: 'relative',
+            maxWidth: '1280px',
+            margin: '0 auto',
+            padding: '0 1rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            paddingTop: '96px',
+            paddingBottom: '64px',
+          }}
+        >
+          <div
+            style={{
+              textAlign: 'center',
+              maxWidth: '1280px',
+              width: '100%',
+            }}
+          >
+            {/* Badge */}
+            <div style={{ marginBottom: '20px' }}>
+              <span
+                style={{
+                  display: 'inline-block',
+                  borderRadius: '20px',
+                  border: '2px solid #C7F04A',
+                  color: '#C7F04A',
+                  padding: '8px 16px',
+                  fontSize: '12px',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontWeight: 600,
+                  backgroundColor: 'rgba(0,0,0,0.2)',
+                }}
+              >
+                Homes on the world's best fairways
+              </span>
             </div>
 
-            {/* Main headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-white mb-5 fade-in tracking-tight leading-[1.1]">
-              Stay Where<br className="hidden sm:block" /> You Play
+            {/* Main Headline */}
+            <h1
+              style={{
+                fontFamily: "'Archivo', sans-serif",
+                fontWeight: 900,
+                fontSize: 'clamp(42px, 8vw, 92px)',
+                color: 'white',
+                lineHeight: 0.96,
+                marginBottom: '20px',
+                letterSpacing: '-.02em',
+              }}
+            >
+              Stay steps from the tee.
             </h1>
 
-            {/* Subheadline */}
-            <p className="text-lg sm:text-xl md:text-2xl text-white/85 mb-8 font-body leading-relaxed fade-in max-w-2xl mx-auto">
-              Find and book unique stays near the world's finest golf courses — from St Andrews to Pebble Beach
+            {/* Subheading */}
+            <p
+              style={{
+                fontSize: '18px',
+                color: 'rgba(255, 255, 255, 0.85)',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+                lineHeight: 1.6,
+                marginBottom: '32px',
+                maxWidth: '600px',
+                margin: '0 auto 32px',
+              }}
+            >
+              Book privately-owned homes, villas, and condos right beside the
+              courses you came to play...
             </p>
 
-            {/* Search bar */}
-            <div className="w-full mb-10 fade-in">
+            {/* Search Bar */}
+            <div style={{ width: '100%', marginBottom: '40px' }}>
               <SearchBar />
-            </div>
-
-            {/* Trust stats */}
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-white/80 fade-in">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-secondary" />
-                <span className="text-sm font-medium">500+ Golf Courses Nearby</span>
-              </div>
-              <div className="hidden sm:block w-px h-4 bg-white/30"></div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-secondary" />
-                <span className="text-sm font-medium">30+ Destinations</span>
-              </div>
-              <div className="hidden sm:block w-px h-4 bg-white/30"></div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-secondary" />
-                <span className="text-sm font-medium">Instant Book Available</span>
-              </div>
             </div>
           </div>
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white/50 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/40 rounded-full mt-2"></div>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              width: '24px',
+              height: '40px',
+              border: '2px solid rgba(255, 255, 255, 0.3)',
+              borderRadius: '12px',
+              display: 'flex',
+              justifyContent: 'center',
+              paddingTop: '8px',
+              animation: 'bounce 2s infinite',
+            }}
+          >
+            <div
+              style={{
+                width: '4px',
+                height: '12px',
+                background: 'rgba(255, 255, 255, 0.5)',
+                borderRadius: '2px',
+              }}
+            />
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-foreground mb-4 sm:mb-6">How It Works</h2>
-            <p className="text-base sm:text-lg text-muted-foreground font-body max-w-2xl mx-auto px-4">
-              Three simple steps to your perfect golf vacation
-            </p>
+      {/* Stats Bar */}
+      <section
+        style={{
+          background: '#0B1F17',
+          padding: '40px 16px',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '40px',
+          }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                fontSize: '36px',
+                fontWeight: 700,
+                color: '#C7F04A',
+                fontFamily: "'Archivo', sans-serif",
+              }}
+            >
+              8,400+
+            </div>
+            <div
+              style={{
+                fontSize: '14px',
+                color: '#C7F04A',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+                marginTop: '4px',
+              }}
+            >
+              Homes near courses
+            </div>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
-            {howItWorksSteps.map((step, index) => (
-              <div key={index} className="text-center group px-4">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <step.icon className="h-8 w-8 sm:h-10 sm:w-10 text-primary-foreground" />
-                </div>
-                <h3 className="text-xl sm:text-2xl font-heading font-semibold text-foreground mb-3 sm:mb-4">{step.title}</h3>
-                <p className="text-muted-foreground font-body leading-relaxed text-sm sm:text-base">{step.description}</p>
-              </div>
-            ))}
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                fontSize: '36px',
+                fontWeight: 700,
+                color: '#C7F04A',
+                fontFamily: "'Archivo', sans-serif",
+              }}
+            >
+              60
+            </div>
+            <div
+              style={{
+                fontSize: '14px',
+                color: '#C7F04A',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+                marginTop: '4px',
+              }}
+            >
+              Countries
+            </div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                fontSize: '36px',
+                fontWeight: 700,
+                color: '#C7F04A',
+                fontFamily: "'Archivo', sans-serif",
+              }}
+            >
+              4.9★
+            </div>
+            <div
+              style={{
+                fontSize: '14px',
+                color: '#C7F04A',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+                marginTop: '4px',
+              }}
+            >
+              Avg. guest rating
+            </div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                fontSize: '36px',
+                fontWeight: 700,
+                color: '#C7F04A',
+                fontFamily: "'Archivo', sans-serif",
+              }}
+            >
+              $0
+            </div>
+            <div
+              style={{
+                fontSize: '14px',
+                color: '#C7F04A',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+                marginTop: '4px',
+              }}
+            >
+              Host listing fees
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Golf Destinations */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-foreground mb-4 sm:mb-6">Featured Golf Destinations</h2>
-            <p className="text-base sm:text-lg text-muted-foreground font-body max-w-2xl mx-auto px-4">
-              Discover the world's most prestigious golf destinations
-            </p>
+      {/* Featured Listings Section */}
+      <section
+        style={{
+          background: '#F6F5EF',
+          padding: '80px 16px',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+          }}
+        >
+          {/* Section Header */}
+          <div style={{ marginBottom: '48px' }}>
+            <h2
+              style={{
+                fontFamily: "'Archivo', sans-serif",
+                fontWeight: 800,
+                fontSize: '36px',
+                color: '#0B1F17',
+                marginBottom: '20px',
+                letterSpacing: '-.02em',
+              }}
+            >
+              Homes hosted by golfers
+            </h2>
+
+            {/* Region Filter Pills */}
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              {['All', 'North America', 'Europe', 'Asia-Pacific'].map((region) => (
+                <button
+                  key={region}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    border: '1px solid #15794C',
+                    background: 'transparent',
+                    color: '#15794C',
+                    fontFamily: "'Hanken Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    outline: 'none',
+                  }}
+                  onClick={(): void => {}}
+                >
+                  {region}
+                </button>
+              ))}
+            </div>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {featuredDestinations.map((destination) => (
-              <Card key={destination.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer">
-                <div className="relative h-48 sm:h-56 lg:h-64">
+
+          {/* Listings Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '24px',
+            }}
+          >
+            {listings.map((listing) => (
+              <div
+                key={listing.id}
+                style={{
+                  background: 'white',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                }}
+                onClick={(): void => navigate('/search-results')}
+                onMouseEnter={(e): void => {
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
+                  (e.currentTarget as HTMLElement).style.boxShadow =
+                    '0 12px 20px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e): void => {
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                  (e.currentTarget as HTMLElement).style.boxShadow =
+                    '0 1px 3px rgba(0,0,0,0.1)';
+                }}
+              >
+                {/* Image Container */}
+                <div
+                  style={{
+                    position: 'relative',
+                    paddingBottom: '75%',
+                    overflow: 'hidden',
+                    background: '#EDEBE1',
+                  }}
+                >
                   <img
-                    src={destination.image}
-                    alt={destination.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
+                    src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop"
+                    alt={listing.name}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 text-white">
-                    <h3 className="text-lg sm:text-xl font-heading font-bold mb-1">{destination.name}</h3>
-                    <p className="text-xs sm:text-sm text-white/80 flex items-center gap-1">
-                      <Trophy className="h-3 w-3" />
-                      {destination.courses}
-                    </p>
+
+                  {/* Tag Badge */}
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '12px',
+                      left: '12px',
+                      background: '#0B1F17',
+                      color: 'white',
+                      padding: '4px 12px',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {listing.tag}
+                  </span>
+
+                  {/* Save Button */}
+                  <button
+                    onClick={(e): void => {
+                      e.stopPropagation();
+                      toggleSave(listing.id);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: '12px',
+                      right: '12px',
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      border: 'none',
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      outline: 'none',
+                    }}
+                  >
+                    <Heart
+                      size={20}
+                      fill={savedListings.includes(listing.id) ? '#C7F04A' : 'none'}
+                      color={savedListings.includes(listing.id) ? '#C7F04A' : '#0B1F17'}
+                    />
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div style={{ padding: '16px' }}>
+                  <h3
+                    style={{
+                      fontFamily: "'Archivo', sans-serif",
+                      fontWeight: 700,
+                      fontSize: '16px',
+                      color: '#0B1F17',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {listing.name}
+                  </h3>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    <span style={{ color: '#C7F04A', fontSize: '14px' }}>★</span>
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        color: '#0B1F17',
+                        fontFamily: "'Hanken Grotesk', sans-serif",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {listing.rating}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        color: '#5C6B62',
+                        fontFamily: "'Hanken Grotesk', sans-serif",
+                      }}
+                    >
+                      ({listing.reviews} reviews)
+                    </span>
+                  </div>
+
+                  <p
+                    style={{
+                      fontSize: '13px',
+                      color: '#5C6B62',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {listing.location}
+                  </p>
+
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: '#8A968E',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      marginBottom: '12px',
+                    }}
+                  >
+                    {listing.specs}
+                  </p>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'baseline',
+                      gap: '4px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "'Archivo', sans-serif",
+                        fontWeight: 700,
+                        fontSize: '18px',
+                        color: '#0B1F17',
+                      }}
+                    >
+                      ${listing.price}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        color: '#5C6B62',
+                        fontFamily: "'Hanken Grotesk', sans-serif",
+                      }}
+                    >
+                      /night
+                    </span>
                   </div>
                 </div>
-                <div className="p-4 sm:p-6">
-                  <p className="text-muted-foreground font-body mb-4 leading-relaxed text-sm sm:text-base">{destination.description}</p>
-                  <Button variant="outline" className="w-full hover:bg-primary hover:text-primary-foreground min-h-[44px]">
-                    View Stays
-                  </Button>
-                </div>
-              </Card>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Why TeeBnB */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-foreground mb-4 sm:mb-6">Why TeeBnB?</h2>
-            <p className="text-base sm:text-lg text-muted-foreground font-body max-w-2xl mx-auto px-4">
-              The ultimate platform designed specifically for golf travelers
-            </p>
+      {/* How It Works Section */}
+      <section
+        style={{
+          background: '#EDEBE1',
+          padding: '80px 16px',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+          }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <h2
+              style={{
+                fontFamily: "'Archivo', sans-serif",
+                fontWeight: 800,
+                fontSize: '36px',
+                color: '#0B1F17',
+                marginBottom: '16px',
+                letterSpacing: '-.02em',
+              }}
+            >
+              Your home base for the whole trip.
+            </h2>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {whyTeeBnBFeatures.map((feature, index) => (
-              <div key={index} className="text-center p-4 sm:p-6 rounded-xl hover:bg-muted/50 transition-colors duration-300">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                  <feature.icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
+
+          {/* Steps */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '32px',
+            }}
+          >
+            {[
+              { number: '01', title: 'Find your spot', description: 'Browse homes near world-class golf courses' },
+              { number: '02', title: 'Book direct with owners', description: 'Secure your stay with verified hosts' },
+              { number: '03', title: 'Unpack & play', description: 'Enjoy your golf vacation from day one' },
+            ].map((step, i) => (
+              <div key={i} style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontFamily: "'Archivo', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '56px',
+                    color: '#C7F04A',
+                    textShadow: '2px 2px 0 #0B1F17',
+                    marginBottom: '16px',
+                    lineHeight: 1,
+                  }}
+                >
+                  {step.number}
                 </div>
-                <h3 className="text-lg sm:text-xl font-heading font-semibold text-foreground mb-2 sm:mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground font-body leading-relaxed text-sm sm:text-base">{feature.description}</p>
+                <h3
+                  style={{
+                    fontFamily: "'Archivo', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '20px',
+                    color: '#0B1F17',
+                    marginBottom: '12px',
+                  }}
+                >
+                  {step.title}
+                </h3>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    color: '#5C6B62',
+                    fontFamily: "'Hanken Grotesk', sans-serif",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Spotlight Property */}
+      <section
+        style={{
+          background: '#F6F5EF',
+          padding: '80px 16px',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '48px',
+            alignItems: 'center',
+          }}
+        >
+          {/* Image */}
+          <div
+            style={{
+              borderRadius: '12px',
+              overflow: 'hidden',
+              aspectRatio: '1',
+              background: '#EDEBE1',
+            }}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1672825952732-ecef34882416?w=1100&q=70&auto=format&fit=crop"
+              alt="The Fairway House"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          </div>
+
+          {/* Content */}
+          <div>
+            <span
+              style={{
+                display: 'inline-block',
+                background: '#15794C',
+                color: 'white',
+                padding: '4px 12px',
+                borderRadius: '4px',
+                fontSize: '11px',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+                fontWeight: 600,
+                marginBottom: '16px',
+              }}
+            >
+              Guest favorite
+            </span>
+
+            <h2
+              style={{
+                fontFamily: "'Archivo', sans-serif",
+                fontWeight: 800,
+                fontSize: '36px',
+                color: '#0B1F17',
+                marginBottom: '16px',
+                letterSpacing: '-.02em',
+              }}
+            >
+              The Fairway House
+            </h2>
+
+            <p
+              style={{
+                fontSize: '15px',
+                color: '#5C6B62',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+                lineHeight: 1.7,
+                marginBottom: '24px',
+              }}
+            >
+              A stunning oceanfront property with direct access to Pebble Beach Golf
+              Links. Featuring 4 spacious bedrooms, a gourmet kitchen, and a private
+              terrace overlooking the Pacific coast. Perfect for golf groups seeking
+              luxury and convenience.
+            </p>
+
+            {/* Feature Badges */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '32px' }}>
+              {['Private pool', 'Golf cart access', 'Chef services', 'Wine cellar'].map(
+                (feature) => (
+                  <span
+                    key={feature}
+                    style={{
+                      background: '#EDEBE1',
+                      color: '#0B1F17',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontFamily: "'Hanken Grotesk', sans-serif",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {feature}
+                  </span>
+                )
+              )}
+            </div>
+
+            {/* CTA */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <button
+                onClick={(): void => navigate('/search-results')}
+                style={{
+                  background: '#0B1F17',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: "'Archivo', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  outline: 'none',
+                }}
+              >
+                View home
+              </button>
+              <span
+                style={{
+                  fontFamily: "'Archivo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '20px',
+                  color: '#0B1F17',
+                }}
+              >
+                $640/night
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Host CTA Banner */}
+      <section
+        style={{
+          background: '#C7F04A',
+          padding: '60px 16px',
+          borderRadius: '16px',
+          margin: '0 16px 80px',
+          maxWidth: 'calc(100% - 32px)',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '600px',
+            margin: '0 auto',
+            textAlign: 'center',
+          }}
+        >
+          <h2
+            style={{
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 800,
+              fontSize: '32px',
+              color: '#0B1F17',
+              marginBottom: '12px',
+              letterSpacing: '-.02em',
+            }}
+          >
+            Live near a course? List it on TeeBnB.
+          </h2>
+
+          <p
+            style={{
+              fontSize: '15px',
+              color: '#0B1F17',
+              fontFamily: "'Hanken Grotesk', sans-serif",
+              lineHeight: 1.6,
+              marginBottom: '24px',
+            }}
+          >
+            Earn extra income by sharing your home with golfers from around the
+            world. Join thousands of successful hosts.
+          </p>
+
+          <button
+            onClick={(): void => navigate('/list-property')}
+            style={{
+              background: '#0B1F17',
+              color: '#C7F04A',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              border: 'none',
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+              outline: 'none',
+            }}
+          >
+            List your place →
+          </button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-muted py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="col-span-1 sm:col-span-2 lg:col-span-2">
-              <img 
-                src="/teebnb-logo.svg" 
-                alt="TeeBnB" 
-                className="h-6 sm:h-8 w-auto mb-4"
-              />
-              <p className="text-muted-foreground font-body mb-6 max-w-md text-sm sm:text-base">
-                The world's leading platform for golf accommodation. Stay where you play.
-              </p>
-              <div className="flex space-x-3 sm:space-x-4">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-accent w-10 h-10">
-                  <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-accent w-10 h-10">
-                  <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-accent w-10 h-10">
-                  <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-              </div>
-            </div>
-            
+      <footer
+        style={{
+          background: '#0B1F17',
+          color: 'white',
+          padding: '64px 16px 32px',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '32px',
+              marginBottom: '32px',
+            }}
+          >
+            {/* Brand Column */}
             <div>
-              <h4 className="font-heading font-semibold text-foreground mb-4 text-base sm:text-lg">Company</h4>
-              <ul className="space-y-2 font-body">
-                <li><a href="/about" className="text-muted-foreground hover:text-accent transition-colors text-sm sm:text-base min-h-[44px] block py-1">About</a></li>
-                <li><a href="/contact" className="text-muted-foreground hover:text-accent transition-colors text-sm sm:text-base min-h-[44px] block py-1">Contact</a></li>
-                <li><a href="/terms" className="text-muted-foreground hover:text-accent transition-colors text-sm sm:text-base min-h-[44px] block py-1">Terms</a></li>
-                <li><a href="/privacy" className="text-muted-foreground hover:text-accent transition-colors text-sm sm:text-base min-h-[44px] block py-1">Privacy</a></li>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                <span
+                  style={{
+                    display: 'grid',
+                    placeItems: 'center',
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: '#EDEBE1',
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontWeight: 700,
+                    fontSize: '15px',
+                    color: '#C8A24B',
+                    lineHeight: 1,
+                  }}
+                >
+                  T
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'Archivo', sans-serif",
+                    fontWeight: 800,
+                    fontSize: '18px',
+                    color: '#C7F04A',
+                    letterSpacing: '-.02em',
+                  }}
+                >
+                  TeeBnB
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: '13px',
+                  color: '#5C6B62',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  lineHeight: 1.6,
+                }}
+              >
+                The world's leading platform for golf accommodation. Stay where you
+                play.
+              </p>
+            </div>
+
+            {/* Explore Column */}
+            <div>
+              <h4
+                style={{
+                  fontFamily: "'Archivo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  color: '#C7F04A',
+                  marginBottom: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Explore
+              </h4>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {['Browse homes', 'Destinations', 'Become a host'].map((link) => (
+                  <li key={link} style={{ marginBottom: '8px' }}>
+                    <a
+                      href="/"
+                      style={{
+                        color: '#5C6B62',
+                        textDecoration: 'none',
+                        fontSize: '13px',
+                        fontFamily: "'Hanken Grotesk', sans-serif",
+                      }}
+                      onMouseEnter={(e): void => {
+                        (e.currentTarget as HTMLElement).style.color = '#C7F04A';
+                      }}
+                      onMouseLeave={(e): void => {
+                        (e.currentTarget as HTMLElement).style.color = '#5C6B62';
+                      }}
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
-            
+
+            {/* Hosting Column */}
             <div>
-              <h4 className="font-heading font-semibold text-foreground mb-4 text-base sm:text-lg">Contact</h4>
-              <ul className="space-y-3 font-body">
-                <li className="flex items-center gap-2 text-muted-foreground text-sm sm:text-base">
-                  <Mail className="h-4 w-4 flex-shrink-0" />
-                  <span className="break-all">hello@teebnb.com</span>
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground text-sm sm:text-base">
-                  <Phone className="h-4 w-4 flex-shrink-0" />
-                  <span>+1 (555) 123-4567</span>
-                </li>
+              <h4
+                style={{
+                  fontFamily: "'Archivo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  color: '#C7F04A',
+                  marginBottom: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Hosting
+              </h4>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {['How it works', 'FAQ', 'Support'].map((link) => (
+                  <li key={link} style={{ marginBottom: '8px' }}>
+                    <a
+                      href="/"
+                      style={{
+                        color: '#5C6B62',
+                        textDecoration: 'none',
+                        fontSize: '13px',
+                        fontFamily: "'Hanken Grotesk', sans-serif",
+                      }}
+                      onMouseEnter={(e): void => {
+                        (e.currentTarget as HTMLElement).style.color = '#C7F04A';
+                      }}
+                      onMouseLeave={(e): void => {
+                        (e.currentTarget as HTMLElement).style.color = '#5C6B62';
+                      }}
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Company Column */}
+            <div>
+              <h4
+                style={{
+                  fontFamily: "'Archivo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  color: '#C7F04A',
+                  marginBottom: '16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Company
+              </h4>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {['About us', 'Blog', 'Privacy', 'Terms'].map((link) => (
+                  <li key={link} style={{ marginBottom: '8px' }}>
+                    <a
+                      href="/"
+                      style={{
+                        color: '#5C6B62',
+                        textDecoration: 'none',
+                        fontSize: '13px',
+                        fontFamily: "'Hanken Grotesk', sans-serif",
+                      }}
+                      onMouseEnter={(e): void => {
+                        (e.currentTarget as HTMLElement).style.color = '#C7F04A';
+                      }}
+                      onMouseLeave={(e): void => {
+                        (e.currentTarget as HTMLElement).style.color = '#5C6B62';
+                      }}
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
-          
-          <div className="border-t border-border mt-8 sm:mt-12 pt-6 sm:pt-8 text-center">
-            <p className="text-muted-foreground font-body text-sm sm:text-base">
+
+          {/* Footer Bottom */}
+          <div
+            style={{
+              borderTop: '1px solid rgba(199, 240, 74, 0.1)',
+              paddingTop: '24px',
+              textAlign: 'center',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '12px',
+                color: '#5C6B62',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+              }}
+            >
               © 2024 TeeBnB. All rights reserved.
             </p>
           </div>
         </div>
       </footer>
+
+      <style>{`
+        @keyframes bounce {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+            transform: translateY(4px);
+          }
+        }
+      `}</style>
     </div>
   );
 };

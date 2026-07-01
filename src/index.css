@@ -3,488 +3,246 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Luxury Golf Resort Design System */
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 2% 31%;
+    /* TeeBnB Design System — cream/dark-green/lime */
+    --background: 60 20% 95%;          /* #F6F5EF cream */
+    --foreground: 158 56% 8%;          /* #0B1F17 dark green */
 
     --card: 0 0% 100%;
-    --card-foreground: 220 2% 31%;
+    --card-foreground: 158 56% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 2% 31%;
+    --popover-foreground: 158 56% 8%;
 
-    --primary: 158 64% 20%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 158 56% 8%;             /* #0B1F17 dark green */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 45 75% 52%;
-    --secondary-foreground: 158 64% 20%;
+    --secondary: 78 85% 62%;           /* #C7F04A lime */
+    --secondary-foreground: 158 56% 8%;
 
-    --muted: 210 40% 98%;
-    --muted-foreground: 215 8% 47%;
+    --muted: 50 25% 90%;               /* #EDEBE1 light cream */
+    --muted-foreground: 140 8% 39%;    /* #5C6B62 */
 
-    --accent: 45 75% 52%;
-    --accent-foreground: 158 64% 20%;
+    --accent: 154 70% 28%;             /* #15794C mid green */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 150 100% 20%;
+    --border: 60 12% 88%;
+    --input: 60 12% 88%;
+    --ring: 78 85% 62%;
 
     --radius: 0.75rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 220 2% 31%;
-    --sidebar-primary: 150 100% 20%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 210 40% 98%;
-    --sidebar-accent-foreground: 220 2% 31%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 150 100% 20%;
   }
 
-  .dark {
-    --background: 220 13% 9%;
-    --foreground: 210 40% 98%;
-    --card: 220 13% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 220 13% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 150 100% 30%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 45 55% 45%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 217 19% 15%;
-    --muted-foreground: 215 8% 65%;
-    --accent: 186 100% 35%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 217 19% 15%;
-    --input: 217 19% 15%;
-    --ring: 150 100% 30%;
-    --sidebar-background: 220 13% 9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 150 100% 30%;
-    --sidebar-primary-foreground: 0 0% 9%;
-    --sidebar-accent: 217 19% 15%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 19% 15%;
-    --sidebar-ring: 150 100% 30%;
-  }
-}
-
-@layer base {
   * {
-    @apply border-border;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
   }
 
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Lato', 'Open Sans', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F6F5EF;
+    color: #0B1F17;
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
     line-height: 1.6;
   }
-  
-  /* Fallback fonts while custom fonts load */
+
+  /* Selection highlight */
+  ::selection {
+    background: #C7F04A;
+    color: #0B1F17;
+  }
+
   .font-heading {
-    font-family: 'Montserrat', system-ui, sans-serif;
+    font-family: 'Archivo', system-ui, sans-serif;
   }
-  
+
   .font-body {
-    font-family: 'Lato', 'Open Sans', system-ui, sans-serif;
-  }
-  
-  .font-accent {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
   }
 
-  .golf-hero-bg {
-    background-image: 
-      linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.4) 100%),
-      url('https://images.unsplash.com/photo-1592919505780-303950717480?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-  }
-
-  /* Mobile-specific background fix for iOS Safari performance */
-  @media screen and (max-width: 1024px) {
-    .golf-hero-bg {
-      background-attachment: scroll;
-      min-height: 100vh;
-      min-height: 100svh; /* Use small viewport height for better mobile support */
-    }
-  }
-
-  .luxury-pattern {
-    background-image: 
-      radial-gradient(circle at 30px 30px, rgba(255,255,255,0.05) 2px, transparent 2px),
-      radial-gradient(circle at 80px 80px, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 120px 120px, 160px 160px;
-  }
-
-  /* UNIVERSAL YELLOW/AMBER REMOVAL - ALL BROWSERS, ALL SCREEN SIZES */
-  
-  /* Force neutral colors on form inputs only (not buttons) */
+  /* Form inputs — neutral styling only */
   input, select, textarea {
-    background-color: rgb(248 250 252) !important;
-    border-color: rgb(212 212 212) !important;
-    color: rgb(64 64 64) !important;
+    font-family: inherit;
+    color: #0B1F17;
   }
 
-  input:focus, select:focus, textarea:focus {
-    border-color: rgb(34 197 94) !important;
-    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
+  input::placeholder, textarea::placeholder {
+    color: #8A968E;
   }
 
-  /* AGGRESSIVE YELLOW/AMBER REMOVAL - WORKS ON ALL BROWSERS */
-  .bg-yellow-50, .bg-amber-50, .bg-yellow-100, .bg-amber-100, .bg-yellow-200, .bg-amber-200, .bg-yellow-300, .bg-amber-300, .bg-yellow-400, .bg-amber-400, .bg-yellow-500, .bg-amber-500, .bg-yellow-600, .bg-amber-600, .bg-yellow-700, .bg-amber-700, .bg-yellow-800, .bg-amber-800, .bg-yellow-900, .bg-amber-900 {
-    background-color: rgb(229 231 235) !important;
-  }
-
-  .text-yellow-50, .text-amber-50, .text-yellow-100, .text-amber-100, .text-yellow-200, .text-amber-200, .text-yellow-300, .text-amber-300, .text-yellow-400, .text-amber-400, .text-yellow-500, .text-amber-500, .text-yellow-600, .text-amber-600, .text-yellow-700, .text-amber-700, .text-yellow-800, .text-amber-800, .text-yellow-900, .text-amber-900 {
-    color: rgb(107 114 128) !important;
-  }
-
-  .border-yellow-50, .border-amber-50, .border-yellow-100, .border-amber-100, .border-yellow-200, .border-amber-200, .border-yellow-300, .border-amber-300, .border-yellow-400, .border-amber-400, .border-yellow-500, .border-amber-500, .border-yellow-600, .border-amber-600, .border-yellow-700, .border-amber-700, .border-yellow-800, .border-amber-800, .border-yellow-900, .border-amber-900 {
-    border-color: rgb(212 212 212) !important;
-  }
-
-  .fill-yellow-50, .fill-amber-50, .fill-yellow-100, .fill-amber-100, .fill-yellow-200, .fill-amber-200, .fill-yellow-300, .fill-amber-300, .fill-yellow-400, .fill-amber-400, .fill-yellow-500, .fill-amber-500, .fill-yellow-600, .fill-amber-600, .fill-yellow-700, .fill-amber-700, .fill-yellow-800, .fill-amber-800, .fill-yellow-900, .fill-amber-900 {
-    fill: rgb(107 114 128) !important;
-  }
-
-  /* Override any inline styles or computed styles */
-  *[style*="yellow"], *[style*="amber"], *[style*="#ffff"], *[style*="#ffc"], *[style*="#fd0"], *[style*="rgb(255, 255, 0)"], *[style*="rgb(255, 193"], *[style*="rgb(255, 221"], *[style*="hsl(60"], *[style*="hsl(45"] {
-    background-color: rgb(229 231 235) !important;
-    color: rgb(107 114 128) !important;
-    border-color: rgb(212 212 212) !important;
-  }
-
-  /* MOBILE-FIRST AGGRESSIVE OVERRIDES - TABLETS AND MOBILE */
-  @media screen and (max-width: 1024px) {
-    /* Only target specific yellow/amber elements instead of all elements */
-    [class*="yellow"], [class*="amber"] {
-      background-color: hsl(var(--background)) !important;
-      color: hsl(var(--foreground)) !important;
-      border-color: hsl(var(--border)) !important;
-    }
-
-    /* Specific yellow overrides for tablets */
-    .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
-    .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900 {
-      background-color: rgb(229 231 235) !important;
-    }
-
-    .text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400, .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
-    .text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400, .text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900 {
-      color: rgb(107 114 128) !important;
-    }
-
-    .fill-yellow-50, .fill-yellow-100, .fill-yellow-200, .fill-yellow-300, .fill-yellow-400, .fill-yellow-500, .fill-yellow-600, .fill-yellow-700, .fill-yellow-800, .fill-yellow-900,
-    .fill-amber-50, .fill-amber-100, .fill-amber-200, .fill-amber-300, .fill-amber-400, .fill-amber-500, .fill-amber-600, .fill-amber-700, .fill-amber-800, .fill-amber-900 {
-      fill: rgb(107 114 128) !important;
-    }
-
-    .border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300, .border-yellow-400, .border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
-    .border-amber-50, .border-amber-100, .border-amber-200, .border-amber-300, .border-amber-400, .border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900 {
-      border-color: rgb(212 212 212) !important;
-    }
-  }
-
-  /* MOBILE SPECIFIC - iOS SAFARI & CHROME FIXES */
-  @media screen and (max-width: 768px) {
-    /* Force body and html background */
-    html, body {
-      background-color: hsl(var(--background)) !important;
-    }
-
-    /* Only override elements that specifically contain yellow/amber classes */
-    [class*="yellow"], [class*="amber"] {
-      background-color: hsl(var(--background)) !important;
-      color: hsl(var(--foreground)) !important;
-    }
-
-    /* Specific overrides for common UI elements */
-    .card, .glass-card, [class*="card"] {
-      background-color: rgb(255 255 255) !important;
-      border-color: rgb(212 212 212) !important;
-    }
-
-    /* Form elements */
-    input, select, textarea {
-      background-color: rgb(248 250 252) !important;
-      border-color: rgb(212 212 212) !important;
-      color: rgb(64 64 64) !important;
-      -webkit-appearance: none !important;
-      appearance: none !important;
-    }
-
-    /* COMPREHENSIVE MOBILE YELLOW REMOVAL */
-    .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
-    .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900 {
-      background-color: rgb(229 231 235) !important;
-    }
-
-    .text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400, .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
-    .text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400, .text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900 {
-      color: rgb(107 114 128) !important;
-    }
-
-    .fill-yellow-50, .fill-yellow-100, .fill-yellow-200, .fill-yellow-300, .fill-yellow-400, .fill-yellow-500, .fill-yellow-600, .fill-yellow-700, .fill-yellow-800, .fill-yellow-900,
-    .fill-amber-50, .fill-amber-100, .fill-amber-200, .fill-amber-300, .fill-amber-400, .fill-amber-500, .fill-amber-600, .fill-amber-700, .fill-amber-800, .fill-amber-900 {
-      fill: rgb(107 114 128) !important;
-    }
-
-    .border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300, .border-yellow-400, .border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
-    .border-amber-50, .border-amber-100, .border-amber-200, .border-amber-300, .border-amber-400, .border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900 {
-      border-color: rgb(212 212 212) !important;
-    }
-
-    /* Star ratings and icons - force neutral colors */
-    .lucide-star, [class*="star"], svg[class*="star"] {
-      fill: rgb(107 114 128) !important;
-      color: rgb(107 114 128) !important;
-    }
-
-    /* Override any remaining yellow hex values */
-    *[style*="#ffff"], *[style*="#ffc"], *[style*="#fd0"], *[style*="#f59"], *[style*="rgb(255, 255"], *[style*="rgb(255, 193"], *[style*="rgb(255, 221"], *[style*="rgb(253, 224"], *[style*="hsl(60"], *[style*="hsl(45"] {
-      background-color: rgb(229 231 235) !important;
-      color: rgb(107 114 128) !important;
-      border-color: rgb(212 212 212) !important;
-      fill: rgb(107 114 128) !important;
-    }
-  }
-
-  /* EXTRA SMALL SCREENS - PHONES */
-  @media screen and (max-width: 480px) {
-    /* Target only yellow/amber elements, not all elements */
-    [class*="yellow"], [class*="amber"] {
-      background-color: hsl(var(--background)) !important;
-      color: hsl(var(--foreground)) !important;
-    }
-
-    /* Force all potential yellow elements to neutral */
-    .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
-    .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900,
-    [class*="yellow"], [class*="amber"] {
-      background-color: rgb(229 231 235) !important;
-    }
-
-    .text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400, .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
-    .text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400, .text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900,
-    [class*="text-yellow"], [class*="text-amber"] {
-      color: rgb(107 114 128) !important;
-    }
-  }
-
-  /* WEBKIT/SAFARI SPECIFIC OVERRIDES - iOS SAFARI */
-  @supports (-webkit-touch-callout: none) {
-    /* iOS Safari specific overrides */
-    .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
-    .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900 {
-      background-color: rgb(229 231 235) !important;
-    }
-
-    .text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400, .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
-    .text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400, .text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900 {
-      color: rgb(107 114 128) !important;
-    }
-
-    .fill-yellow-50, .fill-yellow-100, .fill-yellow-200, .fill-yellow-300, .fill-yellow-400, .fill-yellow-500, .fill-yellow-600, .fill-yellow-700, .fill-yellow-800, .fill-yellow-900,
-    .fill-amber-50, .fill-amber-100, .fill-amber-200, .fill-amber-300, .fill-amber-400, .fill-amber-500, .fill-amber-600, .fill-amber-700, .fill-amber-800, .fill-amber-900 {
-      fill: rgb(107 114 128) !important;
-    }
+  /* Remove default border on all elements from Tailwind preflight */
+  * {
+    border-color: hsl(var(--border));
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-xl;
+  /* ── Shared card style ── */
+  .tb-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid rgba(11,31,23,.08);
+    overflow: hidden;
+    transition: transform .22s ease, box-shadow .22s ease;
   }
-  
-  .golf-shadow {
-    box-shadow: 
-      0 25px 50px -12px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
-  }
-
-  .text-gradient-gold {
-    @apply text-transparent bg-clip-text;
-    background-image: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+  .tb-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 40px -22px rgba(11,31,23,.36);
   }
 
-  .btn-primary {
-    @apply bg-gradient-to-r from-secondary to-secondary hover:opacity-90;
-    @apply text-black font-heading font-bold px-8 py-4 rounded-xl shadow-lg;
-    @apply transform hover:scale-105 transition-all duration-300 uppercase tracking-wide;
-    background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(45, 65%, 45%) 100%);
-    box-shadow: 0 10px 30px hsla(45, 65%, 52%, 0.4);
+  /* ── Lime CTA button ── */
+  .btn-lime {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: #C7F04A;
+    color: #0B1F17;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .18s ease;
+  }
+  .btn-lime:hover { background: #b6e332; }
+
+  /* ── Dark pill button ── */
+  .btn-dark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: #0B1F17;
+    color: #fff;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .18s ease;
+  }
+  .btn-dark:hover { background: #15794C; }
+
+  /* ── Ghost pill button ── */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    background: transparent;
+    color: #0B1F17;
+    font-weight: 600;
+    font-size: 14px;
+    border: 1.5px solid rgba(11,31,23,.18);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color .18s ease;
+  }
+  .btn-ghost:hover { border-color: #0B1F17; }
+
+  /* ── Frosted nav ── */
+  .tb-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(246,245,239,.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(11,31,23,.09);
   }
 
-  .btn-secondary {
-    @apply bg-transparent border-2 border-accent text-accent;
-    @apply px-6 py-3 rounded-xl font-heading font-semibold hover:bg-accent hover:text-white transition-all duration-300;
+  /* ── Section label (uppercase eyebrow) ── */
+  .tb-label {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #15794C;
   }
 
-  .section-luxury {
-    @apply bg-gradient-to-br from-neutral-50 via-slate-50 to-stone-50;
+  /* ── Section heading ── */
+  .tb-h2 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1.02;
+    letter-spacing: -.025em;
+    color: #0B1F17;
+    margin: 10px 0 0;
+  }
+
+  /* ── Logo mark ── */
+  .tb-logo-mark {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #0B1F17;
+    box-shadow: inset 0 0 0 1.5px rgba(200,162,75,.9), 0 2px 9px -3px rgba(11,31,23,.45);
+    flex-shrink: 0;
+  }
+
+  .tb-logo-text {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -.02em;
+    color: #15794C;
+    text-decoration: none;
+  }
+
+  /* ── Amenity badge ── */
+  .tb-badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(11,31,23,.16);
+    font-size: 14px;
+    font-weight: 500;
+    color: #0B1F17;
+    background: transparent;
+  }
+
+  /* ── Green tag pill ── */
+  .tb-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: #15794C;
+    background: rgba(21,121,76,.1);
+    padding: 4px 10px;
+    border-radius: 999px;
   }
 }
 
-  .fade-in {
-  animation: fadeIn 0.8s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Mobile-first responsive improvements */
 @layer utilities {
-  /* Minimum touch target sizes for mobile accessibility */
-  .touch-target {
+  .fade-in {
+    animation: tb-rise .7s ease both;
+  }
+}
+
+@keyframes tb-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Touch target minimum sizes */
+@media (hover: none) and (pointer: coarse) {
+  button, a {
     min-height: 44px;
     min-width: 44px;
-  }
-  
-  /* Improved mobile spacing */
-  .mobile-px {
-    @apply px-4;
-  }
-  
-  @media (min-width: 640px) {
-    .mobile-px {
-      @apply px-6;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .mobile-px {
-      @apply px-8;
-    }
-  }
-  
-  /* Mobile text sizing */
-  .mobile-text {
-    @apply text-sm;
-  }
-  
-  @media (min-width: 640px) {
-    .mobile-text {
-      @apply text-base;
-    }
-  }
-  
-  /* Mobile button improvements */
-  .mobile-button {
-    @apply min-h-[48px] px-6 py-3 text-base;
-  }
-  
-  @media (min-width: 640px) {
-    .mobile-button {
-      @apply min-h-[44px] px-8 py-2;
-    }
-  }
-  
-  /* Responsive images */
-  .responsive-image {
-    @apply w-full h-auto object-cover;
-  }
-  
-  /* Mobile card spacing */
-  .mobile-card {
-    @apply p-4;
-  }
-  
-  @media (min-width: 640px) {
-    .mobile-card {
-      @apply p-6;
-    }
-  }
-  
-  /* Mobile grid improvements */
-  .mobile-grid {
-    @apply grid grid-cols-1 gap-4;
-  }
-  
-  @media (min-width: 640px) {
-    .mobile-grid {
-      @apply grid-cols-2 gap-6;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .mobile-grid {
-      @apply grid-cols-3 gap-8;
-    }
-  }
-}
-
-/* Form-specific enhancements */
-@layer components {
-  .form-section-completed {
-    @apply border-emerald-200 bg-emerald-50/30;
-  }
-  
-  .form-section-error {
-    @apply border-red-200 bg-red-50/30;
-  }
-  
-  .form-field-error {
-    @apply border-red-500 ring-red-500 focus-visible:ring-red-500;
-  }
-  
-  .progress-section {
-    @apply transition-all duration-300 ease-in-out;
-  }
-  
-  .progress-section-active {
-    @apply bg-emerald-100 border-emerald-300 shadow-sm;
-  }
-  
-  .progress-section-completed {
-    @apply bg-emerald-50 border-emerald-200;
-  }
-  
-  .progress-section-error {
-    @apply bg-red-50 border-red-200;
-  }
-}
-
-/* Mobile-first responsive design for forms */
-@media (max-width: 640px) {
-  .progress-section {
-    @apply p-1;
-  }
-  
-  .form-section {
-    @apply p-4;
-  }
-  
-  .form-navigation {
-    @apply flex-col space-y-3;
-  }
-}
-
-/* Touch-friendly buttons on mobile */
-@media (hover: none) and (pointer: coarse) {
-  button {
-    @apply min-h-[44px];
-  }
-  
-  input, textarea, select {
-    @apply min-h-[44px] text-base;
   }
 }

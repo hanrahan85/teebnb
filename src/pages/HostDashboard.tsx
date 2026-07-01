@@ -2,11 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import Navigation from '@/components/Navigation';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import {
   Home,
   Calendar,
@@ -110,49 +105,147 @@ const HostDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <Navigation />
+    <div style={{ minHeight: '100vh', background: '#F6F5EF' }}>
+      {/* Header */}
+      <div style={{
+        padding: '16px 24px',
+        background: '#FFFFFF',
+        borderBottom: '1px solid #EDEBE1',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{display:'grid',placeItems:'center',width:'36px',height:'36px',borderRadius:'50%',background:'#0B1F17',boxShadow:'inset 0 0 0 1.5px rgba(200,162,75,.9)'}}>
+            <span style={{fontFamily:"Georgia,'Times New Roman',serif",fontWeight:700,fontSize:'16px',color:'#C8A24B',lineHeight:1}}>T</span>
+          </span>
+          <h1 style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:'18px',color:'#0B1F17',margin:0}}>
+            Host Dashboard
+          </h1>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ fontSize: '14px', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 600 }}>
+            {user?.email}
+          </div>
+          <button
+            onClick={() => {
+              supabase.auth.signOut();
+              navigate('/');
+            }}
+            style={{
+              padding: '8px 16px',
+              background: 'transparent',
+              color: '#DC2626',
+              border: '1px solid #FECACA',
+              borderRadius: '6px',
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-heading font-bold text-neutral-900 mb-6">Host Dashboard</h1>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px' }}>
+        {/* Stats Row */}
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '20px',
+          marginBottom: '32px',
+        }}>
           {[
             { label: 'Active Listings', value: listings.filter((l) => l.status === 'active').length, icon: Home },
             { label: 'Pending Requests', value: pendingCount, icon: Clock },
             { label: 'Confirmed Stays', value: bookings.filter((b) => b.status === 'confirmed').length, icon: CheckCircle },
             { label: 'Total Revenue', value: `€${confirmedRevenue.toLocaleString()}`, icon: TrendingUp },
           ].map(({ label, value, icon: Icon }) => (
-            <Card key={label} className="p-4 bg-white">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Icon className="h-5 w-5 text-emerald-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-heading font-bold text-neutral-900">{value}</p>
-                  <p className="text-xs text-neutral-500">{label}</p>
-                </div>
+            <div
+              key={label}
+              style={{
+                padding: '20px',
+                background: '#FFFFFF',
+                borderRadius: '18px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+              }}
+            >
+              <div style={{
+                width: '48px',
+                height: '48px',
+                background: '#DBEAFE',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Icon size={24} color="#15794C" />
               </div>
-            </Card>
+              <div>
+                <p style={{
+                  fontSize: '24px',
+                  fontFamily: "'Archivo', sans-serif",
+                  fontWeight: 900,
+                  color: '#0B1F17',
+                  margin: '0 0 4px 0',
+                }}>
+                  {value}
+                </p>
+                <p style={{
+                  fontSize: '12px',
+                  color: '#5C6B62',
+                  margin: 0,
+                }}>
+                  {label}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-neutral-200">
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '32px',
+          borderBottom: '1px solid #EDEBE1',
+        }}>
           {tabs.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                tab === t.id
-                  ? 'border-emerald-600 text-emerald-600'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700'
-              }`}
+              style={{
+                padding: '12px 16px',
+                background: tab === t.id ? '#0B1F17' : 'transparent',
+                color: tab === t.id ? '#FFFFFF' : '#5C6B62',
+                border: 'none',
+                borderRadius: '20px',
+                fontFamily: "'Archivo', sans-serif",
+                fontWeight: 600,
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
             >
               {t.label}
               {t.badge != null && (
-                <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded-full">
+                <span style={{
+                  background: '#FCD34D',
+                  color: '#78350F',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  padding: '2px 6px',
+                  borderRadius: '12px',
+                }}>
                   {t.badge}
                 </span>
               )}
@@ -161,18 +254,37 @@ const HostDashboard = () => {
         </div>
 
         {loading && (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin h-8 w-8 border-4 border-emerald-600 border-t-transparent rounded-full" />
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: '60px',
+            paddingBottom: '60px',
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              border: '4px solid #EDEBE1',
+              borderTopColor: '#15794C',
+              animation: 'spin 1s linear infinite',
+            }} />
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>
         )}
 
         {/* Bookings tab */}
         {!loading && tab === 'bookings' && (
-          <div className="space-y-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             {bookings.length === 0 && (
-              <div className="text-center py-16 text-neutral-400">
-                <Calendar className="h-10 w-10 mx-auto mb-3 opacity-40" />
-                <p>No bookings yet. Share your listing to get your first guest!</p>
+              <div style={{
+                textAlign: 'center',
+                paddingTop: '60px',
+                paddingBottom: '60px',
+                color: '#D1D5DB',
+              }}>
+                <Calendar size={40} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
+                <p style={{ margin: 0, fontFamily: "'Hanken Grotesk', sans-serif" }}>No bookings yet. Share your listing to get your first guest!</p>
               </div>
             )}
             {['pending', 'confirmed', 'completed', 'cancelled'].map((status) => {
@@ -180,8 +292,18 @@ const HostDashboard = () => {
               if (filtered.length === 0) return null;
               return (
                 <div key={status}>
-                  <h3 className="text-sm font-heading font-semibold text-neutral-500 uppercase tracking-wide mb-3 capitalize">{status}</h3>
-                  <div className="space-y-3">
+                  <h3 style={{
+                    fontSize: '12px',
+                    fontFamily: "'Archivo', sans-serif",
+                    fontWeight: 700,
+                    color: '#5C6B62',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    marginBottom: '16px',
+                  }}>
+                    {status}
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {filtered.map((booking) => (
                       <BookingCard
                         key={booking.id}
@@ -200,11 +322,16 @@ const HostDashboard = () => {
 
         {/* Upcoming tab */}
         {!loading && tab === 'upcoming' && (
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {upcoming.length === 0 && (
-              <div className="text-center py-16 text-neutral-400">
-                <Trophy className="h-10 w-10 mx-auto mb-3 opacity-40" />
-                <p>No upcoming confirmed stays.</p>
+              <div style={{
+                textAlign: 'center',
+                paddingTop: '60px',
+                paddingBottom: '60px',
+                color: '#D1D5DB',
+              }}>
+                <Trophy size={40} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
+                <p style={{ margin: 0, fontFamily: "'Hanken Grotesk', sans-serif" }}>No upcoming confirmed stays.</p>
               </div>
             )}
             {upcoming.map((booking) => (
@@ -215,38 +342,128 @@ const HostDashboard = () => {
 
         {/* Listings tab */}
         {!loading && tab === 'listings' && (
-          <div className="space-y-4">
-            <div className="flex justify-end">
-              <Button variant="premium" onClick={() => navigate('/list-property')}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => navigate('/list-property')}
+                style={{
+                  padding: '12px 20px',
+                  background: '#C7F04A',
+                  color: '#0B1F17',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontFamily: "'Archivo', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                }}
+              >
                 + Add New Listing
-              </Button>
+              </button>
             </div>
             {listings.length === 0 && (
-              <div className="text-center py-16 text-neutral-400">
-                <Home className="h-10 w-10 mx-auto mb-3 opacity-40" />
-                <p>You haven't listed any properties yet.</p>
+              <div style={{
+                textAlign: 'center',
+                paddingTop: '60px',
+                paddingBottom: '60px',
+                color: '#D1D5DB',
+              }}>
+                <Home size={40} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
+                <p style={{ margin: 0, fontFamily: "'Hanken Grotesk', sans-serif" }}>You haven't listed any properties yet.</p>
               </div>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '20px',
+            }}>
               {listings.map((listing) => (
-                <Card key={listing.id} className="bg-white overflow-hidden">
+                <div
+                  key={listing.id}
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  }}
+                >
                   {listing.cover_image && (
-                    <img src={listing.cover_image} alt={listing.title} className="w-full h-36 object-cover" />
+                    <img
+                      src={listing.cover_image}
+                      alt={listing.title}
+                      style={{
+                        width: '100%',
+                        height: '160px',
+                        objectFit: 'cover',
+                      }}
+                    />
                   )}
-                  <div className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-heading font-semibold text-sm leading-tight">{listing.title}</h3>
-                      <Badge variant="outline" className={`text-xs ml-2 ${statusColor[listing.status || 'draft'] || 'bg-gray-100 text-gray-600'}`}>
+                  <div style={{ padding: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <h3 style={{
+                        fontSize: '14px',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontWeight: 700,
+                        color: '#0B1F17',
+                        margin: 0,
+                        lineHeight: '1.3',
+                      }}>
+                        {listing.title}
+                      </h3>
+                      <span style={{
+                        fontSize: '12px',
+                        padding: '4px 8px',
+                        background: '#F0FDF4',
+                        color: '#166534',
+                        borderRadius: '4px',
+                        marginLeft: '8px',
+                        whiteSpace: 'nowrap',
+                      }}>
                         {listing.status || 'draft'}
-                      </Badge>
+                      </span>
                     </div>
-                    <p className="text-xs text-neutral-500 mb-3">{listing.full_address}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-bold text-emerald-600">€{listing.nightly_price}/night</span>
-                      <Button size="sm" variant="outline" onClick={() => navigate(`/property/${listing.id}`)}>View</Button>
+                    <p style={{
+                      fontSize: '12px',
+                      color: '#5C6B62',
+                      marginBottom: '12px',
+                      margin: 0,
+                    }}>
+                      {listing.full_address}
+                    </p>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      paddingTop: '12px',
+                      borderTop: '1px solid #EDEBE1',
+                    }}>
+                      <span style={{
+                        fontSize: '14px',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontWeight: 700,
+                        color: '#15794C',
+                      }}>
+                        €{listing.nightly_price}/night
+                      </span>
+                      <button
+                        onClick={() => navigate(`/property/${listing.id}`)}
+                        style={{
+                          padding: '6px 12px',
+                          background: '#FFFFFF',
+                          color: '#15794C',
+                          border: '1px solid #EDEBE1',
+                          borderRadius: '6px',
+                          fontFamily: "'Archivo', sans-serif",
+                          fontWeight: 600,
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        View
+                      </button>
                     </div>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           </div>
@@ -271,81 +488,252 @@ const BookingCard = ({
     (new Date(booking.check_in).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
   );
 
+  const statusBgColor: Record<string, string> = {
+    pending: '#FEF3C7',
+    confirmed: '#D1FAE5',
+    completed: '#D1E7F0',
+    cancelled: '#FEE2E2',
+  };
+
+  const statusTextColor: Record<string, string> = {
+    pending: '#92400E',
+    confirmed: '#065F46',
+    completed: '#0C4A6E',
+    cancelled: '#991B1B',
+  };
+
   return (
-    <Card className="bg-white p-5">
-      <div className="flex flex-wrap justify-between gap-3 mb-3">
+    <div style={{
+      background: '#FFFFFF',
+      padding: '20px',
+      borderRadius: '12px',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+    }}>
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        gap: '12px',
+        marginBottom: '16px',
+      }}>
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-heading font-semibold">{booking.guest_name}</span>
-            <Badge variant="outline" className={`text-xs ${(statusColor[booking.status] || 'bg-gray-100 text-gray-600')}`}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '8px',
+            flexWrap: 'wrap',
+          }}>
+            <span style={{
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 700,
+              color: '#0B1F17',
+            }}>
+              {booking.guest_name}
+            </span>
+            <span style={{
+              fontSize: '12px',
+              padding: '4px 8px',
+              background: statusBgColor[booking.status] || '#F3F4F6',
+              color: statusTextColor[booking.status] || '#6B7280',
+              borderRadius: '4px',
+            }}>
               {booking.status}
-            </Badge>
+            </span>
             {booking.status === 'confirmed' && daysUntilCheckin > 0 && daysUntilCheckin <= 14 && (
-              <Badge className="text-xs bg-emerald-100 text-emerald-700 border-emerald-200">
+              <span style={{
+                fontSize: '12px',
+                padding: '4px 8px',
+                background: '#D1FAE5',
+                color: '#065F46',
+                borderRadius: '4px',
+              }}>
                 Check-in in {daysUntilCheckin} day{daysUntilCheckin !== 1 ? 's' : ''}
-              </Badge>
+              </span>
             )}
           </div>
           {booking.listing && (
-            <p className="text-xs text-neutral-500">{booking.listing.title}</p>
+            <p style={{
+              fontSize: '13px',
+              color: '#5C6B62',
+              margin: 0,
+              marginBottom: '4px',
+            }}>
+              {booking.listing.title}
+            </p>
           )}
-          <p className="text-xs text-neutral-400 mt-0.5">Ref: {booking.id.slice(0, 8).toUpperCase()}</p>
+          <p style={{
+            fontSize: '12px',
+            color: '#A1A9A8',
+            margin: 0,
+          }}>
+            Ref: {booking.id.slice(0, 8).toUpperCase()}
+          </p>
         </div>
-        <div className="text-right">
-          <p className="font-heading font-bold text-emerald-600">€{booking.total}</p>
-          <p className="text-xs text-neutral-500">{booking.nights} night{booking.nights !== 1 ? 's' : ''}</p>
+        <div style={{ textAlign: 'right' }}>
+          <p style={{
+            fontFamily: "'Archivo', sans-serif",
+            fontWeight: 700,
+            color: '#15794C',
+            margin: 0,
+            marginBottom: '4px',
+            fontSize: '16px',
+          }}>
+            €{booking.total}
+          </p>
+          <p style={{
+            fontSize: '12px',
+            color: '#5C6B62',
+            margin: 0,
+          }}>
+            {booking.nights} night{booking.nights !== 1 ? 's' : ''}
+          </p>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 text-sm text-neutral-600 mb-3">
-        <span className="flex items-center gap-1">
-          <Calendar className="h-3.5 w-3.5" />
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '16px',
+        fontSize: '13px',
+        color: '#5C6B62',
+        marginBottom: '12px',
+      }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Calendar size={14} />
           {format(new Date(booking.check_in), 'd MMM')} – {format(new Date(booking.check_out), 'd MMM yyyy')}
         </span>
-        <span className="flex items-center gap-1">
-          <Users className="h-3.5 w-3.5" />
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Users size={14} />
           {booking.guests} guest{booking.guests !== 1 ? 's' : ''}
         </span>
       </div>
 
-      <div className="flex flex-wrap gap-3 text-xs text-neutral-500 mb-3">
-        <a href={`mailto:${booking.guest_email}`} className="flex items-center gap-1 hover:text-neutral-700">
-          <Mail className="h-3.5 w-3.5" />{booking.guest_email}
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '12px',
+        fontSize: '12px',
+        color: '#5C6B62',
+        marginBottom: '12px',
+      }}>
+        <a
+          href={`mailto:${booking.guest_email}`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            color: '#5C6B62',
+            textDecoration: 'none',
+          }}
+        >
+          <Mail size={14} />
+          {booking.guest_email}
         </a>
         {booking.guest_phone && (
-          <a href={`tel:${booking.guest_phone}`} className="flex items-center gap-1 hover:text-neutral-700">
-            <Phone className="h-3.5 w-3.5" />{booking.guest_phone}
+          <a
+            href={`tel:${booking.guest_phone}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              color: '#5C6B62',
+              textDecoration: 'none',
+            }}
+          >
+            <Phone size={14} />
+            {booking.guest_phone}
           </a>
         )}
       </div>
 
       {booking.special_requests && (
-        <p className="text-xs italic text-neutral-400 mb-3">"{booking.special_requests}"</p>
+        <p style={{
+          fontSize: '12px',
+          fontStyle: 'italic',
+          color: '#A1A9A8',
+          marginBottom: '12px',
+          margin: 0,
+        }}>
+          "{booking.special_requests}"
+        </p>
       )}
 
       {booking.status === 'pending' && onAccept && onDecline && (
         <>
-          <Separator className="mb-3" />
-          <div className="flex gap-2">
-            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white flex-1" onClick={onAccept}>
-              <CheckCircle className="h-3.5 w-3.5 mr-1" /> Accept
-            </Button>
-            <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 flex-1" onClick={onDecline}>
-              <XCircle className="h-3.5 w-3.5 mr-1" /> Decline
-            </Button>
+          <div style={{ borderTop: '1px solid #EDEBE1', margin: '12px 0' }} />
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={onAccept}
+              style={{
+                padding: '8px 12px',
+                background: '#15794C',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '6px',
+                fontFamily: "'Archivo', sans-serif",
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: 'pointer',
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+              }}
+            >
+              <CheckCircle size={14} />
+              Accept
+            </button>
+            <button
+              onClick={onDecline}
+              style={{
+                padding: '8px 12px',
+                background: '#FEE2E2',
+                color: '#991B1B',
+                border: '1px solid #FECACA',
+                borderRadius: '6px',
+                fontFamily: "'Archivo', sans-serif",
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: 'pointer',
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+              }}
+            >
+              <XCircle size={14} />
+              Decline
+            </button>
           </div>
         </>
       )}
 
       {booking.status === 'confirmed' && onComplete && new Date(booking.check_out) < new Date() && (
         <>
-          <Separator className="mb-3" />
-          <Button size="sm" variant="outline" className="w-full" onClick={onComplete}>
+          <div style={{ borderTop: '1px solid #EDEBE1', margin: '12px 0' }} />
+          <button
+            onClick={onComplete}
+            style={{
+              width: '100%',
+              padding: '8px 12px',
+              background: '#FFFFFF',
+              color: '#15794C',
+              border: '1px solid #EDEBE1',
+              borderRadius: '6px',
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 600,
+              fontSize: '13px',
+              cursor: 'pointer',
+            }}
+          >
             Mark as Completed
-          </Button>
+          </button>
         </>
       )}
-    </Card>
+    </div>
   );
 };
 

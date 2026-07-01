@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import Navigation from '@/components/Navigation';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { MapPin, Wifi, Car, Coffee, Trophy, BedDouble, Bath, Users, ArrowLeft } from 'lucide-react';
-import { format } from 'date-fns';
+import { Menu } from 'lucide-react';
 
 interface Listing {
   id: string;
   property_title: string;
   full_address: string;
   nightly_price: number;
-  bedrooms: number;
-  bathrooms: number;
   max_guests: number;
-  cover_image: string | null;
-  distance_to_course: number | null;
-  distance_unit: string | null;
-  nearby_golf_courses: string[] | null;
-  amenities: unknown;
-  host_name: string;
-  instant_booking: boolean | null;
+  nearby_golf_courses: string | string[] | null;
+  description: string | null;
+  images: string[] | null;
   status: string | null;
+  user_id?: string;
 }
+
+const SAMPLE: Listing[] = [
+  { id: 's1', property_title: 'The Fairway House', full_address: 'Monterey, California', nightly_price: 640, max_guests: 8, nearby_golf_courses: 'Pebble Beach Golf Links', description: '', images: ['https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop'], status: 'active' },
+  { id: 's2', property_title: 'Old Course Loft', full_address: 'St Andrews, Scotland', nightly_price: 310, max_guests: 4, nearby_golf_courses: 'St Andrews Links', description: '', images: ['https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=700&h=500&fit=crop'], status: 'active' },
+  { id: 's3', property_title: 'Cliffside Casita', full_address: 'Faro, Portugal', nightly_price: 210, max_guests: 4, nearby_golf_courses: 'Algarve Golf Club', description: '', images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&h=500&fit=crop'], status: 'active' },
+  { id: 's4', property_title: 'Cedar Ridge Cabin', full_address: 'Queenstown, New Zealand', nightly_price: 280, max_guests: 6, nearby_golf_courses: 'Queenstown Golf Club', description: '', images: ['https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=700&h=500&fit=crop'], status: 'active' },
+  { id: 's5', property_title: 'Loch Aria Cottage', full_address: 'County Kerry, Ireland', nightly_price: 300, max_guests: 5, nearby_golf_courses: 'Ballybunion Golf Club', description: '', images: ['https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=700&h=500&fit=crop'], status: 'active' },
+  { id: 's6', property_title: 'Casa del Green', full_address: 'Los Cabos, Mexico', nightly_price: 520, max_guests: 8, nearby_golf_courses: 'Cabo del Sol Golf Club', description: '', images: ['https://images.unsplash.com/photo-1592919505780-303950717480?w=700&h=500&fit=crop'], status: 'active' },
+];
 
 const SearchResults = () => {
   const location = useLocation();
@@ -36,9 +35,9 @@ const SearchResults = () => {
     guests?: number;
   } | null;
 
-  const [listings, setListings] = useState<Listing[]>([]);
+  const [listings, setListings] = useState<Listing[]>(SAMPLE);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
 
   const searchLocation = state?.location || '';
   const guests = state?.guests || 1;
@@ -48,14 +47,11 @@ const SearchResults = () => {
   useEffect(() => {
     const fetchListings = async () => {
       setLoading(true);
-      setError(null);
-
       try {
         let query = supabase
           .from('property_listings')
           .select('*')
-          .eq('status', 'active')
-          .gte('max_guests', guests);
+          .eq('status', 'active');
 
         if (searchLocation.trim()) {
           query = query.ilike('full_address', `%${searchLocation.trim()}%`);
@@ -64,198 +60,398 @@ const SearchResults = () => {
         const { data, error: fetchError } = await query.order('created_at', { ascending: false });
 
         if (fetchError) throw fetchError;
-        setListings((data as unknown as Listing[]) || []);
-      } catch (err: unknown) {
-        setError((err as Error).message || 'Something went wrong loading listings.');
+        setListings((data as unknown as Listing[]) || SAMPLE);
+      } catch (err) {
+        console.error('Error fetching listings:', err);
+        setListings(SAMPLE);
       } finally {
         setLoading(false);
       }
     };
 
     fetchListings();
-  }, [searchLocation, guests]);
+  }, [searchLocation]);
 
-  const getAmenities = (amenities: unknown): string[] => {
-    if (Array.isArray(amenities)) return amenities as string[];
-    if (typeof amenities === 'string') {
-      try { return JSON.parse(amenities); } catch { return []; }
+  const filteredListings = listings.filter(listing => {
+    if (activeFilters.size === 0) return true;
+
+    let matches = true;
+    if (activeFilters.has('sleeps-4') && listing.max_guests < 4) matches = false;
+    if (activeFilters.has('sleeps-6') && listing.max_guests < 6) matches = false;
+    if (activeFilters.has('under-200') && listing.nightly_price >= 200) matches = false;
+
+    return matches;
+  });
+
+  const toggleFilter = (filterId: string) => {
+    const newFilters = new Set(activeFilters);
+    if (newFilters.has(filterId)) {
+      newFilters.delete(filterId);
+    } else {
+      newFilters.add(filterId);
     }
-    return [];
+    setActiveFilters(newFilters);
   };
 
-  const getAmenityIcon = (amenity: string) => {
-    const a = amenity.toLowerCase();
-    if (a.includes('wifi') || a.includes('internet')) return <Wifi className="h-3 w-3" />;
-    if (a.includes('parking') || a.includes('car') || a.includes('garage')) return <Car className="h-3 w-3" />;
-    if (a.includes('breakfast') || a.includes('coffee')) return <Coffee className="h-3 w-3" />;
-    if (a.includes('golf')) return <Trophy className="h-3 w-3" />;
-    return null;
-  };
+  const filterOptions = [
+    { id: 'any-type', label: 'Any type' },
+    { id: 'sleeps-4', label: 'Sleeps 4+' },
+    { id: 'sleeps-6', label: 'Sleeps 6+' },
+    { id: 'pet-friendly', label: 'Pet-friendly' },
+    { id: 'pool', label: 'Pool' },
+    { id: 'near-links', label: 'Near links' },
+    { id: 'under-200', label: 'Under $200' },
+  ];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <Navigation />
+    <div style={{ background: '#F6F5EF', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Header */}
+      <div style={{ flexShrink: 0, borderBottom: '1px solid #EDEBE1', background: '#F6F5EF', padding: '12px 24px' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          {/* Logo */}
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0
+            }}
+          >
+            <div style={{
+              width: '32px',
+              height: '32px',
+              background: '#0B1F17',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              color: '#C7F04A',
+              fontSize: '18px'
+            }}>
+              T
+            </div>
+            <span style={{ color: '#15794C', fontSize: '16px', fontWeight: 700, fontFamily: 'Archivo' }}>TeeBnB</span>
+          </button>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" onClick={() => navigate('/')} className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-          <div>
-            <h1 className="text-2xl font-heading font-bold text-neutral-900">
-              {searchLocation ? `Stays near "${searchLocation}"` : 'All Golf Stays'}
-            </h1>
-            {!loading && (
-              <p className="text-neutral-500 text-sm mt-0.5">
-                {listings.length} {listings.length === 1 ? 'property' : 'properties'} found
-                {checkIn && checkOut && ` · ${format(checkIn, 'd MMM')} – ${format(checkOut, 'd MMM')}`}
-                {` · ${guests} guest${guests !== 1 ? 's' : ''}`}
-              </p>
-            )}
+          {/* Search Bar */}
+          <div style={{
+            flex: 1,
+            maxWidth: '400px',
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            background: 'white',
+            border: '1px solid #EDEBE1',
+            borderRadius: '8px',
+            padding: '8px 12px'
+          }}>
+            <input
+              type="text"
+              placeholder={`${searchLocation || 'Location'} · ${checkIn ? checkIn.toLocaleDateString() : 'Dates'} · ${guests} guests`}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                fontSize: '14px',
+                color: '#0B1F17',
+                fontFamily: 'Hanken Grotesk'
+              }}
+              readOnly
+            />
+            <button
+              style={{
+                background: '#0B1F17',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 600,
+                fontFamily: 'Archivo'
+              }}
+            >
+              Search
+            </button>
           </div>
+
+          <button
+            onClick={() => navigate('/list-property')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#15794C',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 600,
+              fontFamily: 'Hanken Grotesk'
+            }}
+          >
+            List your place
+          </button>
+
+          <button
+            onClick={() => navigate('/profile')}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#0B1F17',
+              padding: 0
+            }}
+          >
+            <Menu size={24} />
+          </button>
+        </div>
+      </div>
+
+      {/* Filter pills */}
+      <div style={{
+        flexShrink: 0,
+        borderBottom: '1px solid #EDEBE1',
+        background: '#F6F5EF',
+        padding: '12px 24px',
+        overflowX: 'auto'
+      }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', gap: '8px' }}>
+          {filterOptions.map(filter => (
+            <button
+              key={filter.id}
+              onClick={() => toggleFilter(filter.id)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '20px',
+                border: `1px solid ${activeFilters.has(filter.id) ? '#15794C' : '#EDEBE1'}`,
+                background: activeFilters.has(filter.id) ? '#15794C' : 'white',
+                color: activeFilters.has(filter.id) ? 'white' : '#0B1F17',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontFamily: 'Hanken Grotesk',
+                fontWeight: 500,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
+        {/* Left panel - listings */}
+        <div style={{
+          flex: '1 1 54%',
+          overflowY: 'auto',
+          borderRight: '1px solid #EDEBE1',
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px'
+        }}>
+          {loading ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+              <p style={{ color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>Loading listings...</p>
+            </div>
+          ) : filteredListings.length === 0 ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+              <p style={{ color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>No listings found</p>
+            </div>
+          ) : (
+            filteredListings.map(listing => (
+              <div
+                key={listing.id}
+                onClick={() =>
+                  navigate(`/property/${listing.id}`, {
+                    state: { listing, checkIn, checkOut, guests },
+                  })
+                }
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  padding: '12px',
+                  background: 'white',
+                  border: '1px solid #EDEBE1',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                {/* Image */}
+                <img
+                  src={listing.images?.[0] || 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop'}
+                  alt={listing.property_title}
+                  style={{
+                    width: '200px',
+                    height: '140px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    flexShrink: 0
+                  }}
+                />
+
+                {/* Content */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ color: '#8A968E', fontSize: '13px', fontFamily: 'Hanken Grotesk', margin: '0 0 4px 0' }}>
+                      {listing.full_address}
+                    </p>
+                    <h3 style={{
+                      color: '#0B1F17',
+                      fontSize: '19px',
+                      fontWeight: 700,
+                      fontFamily: 'Archivo',
+                      margin: '0 0 8px 0'
+                    }}>
+                      {listing.property_title}
+                    </h3>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{
+                        background: '#15794C',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        fontFamily: 'Hanken Grotesk'
+                      }}>
+                        Sleeps {listing.max_guests}
+                      </span>
+                      {listing.nearby_golf_courses && (
+                        <span style={{
+                          background: '#15794C',
+                          color: 'white',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          fontFamily: 'Hanken Grotesk'
+                        }}>
+                          {typeof listing.nearby_golf_courses === 'string'
+                            ? listing.nearby_golf_courses.substring(0, 20) + '...'
+                            : (listing.nearby_golf_courses as string[])?.[0]?.substring(0, 20) + '...'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>
+                      per night
+                    </span>
+                    <span style={{
+                      fontSize: '20px',
+                      fontWeight: 700,
+                      color: '#0B1F17',
+                      fontFamily: 'Archivo'
+                    }}>
+                      ${listing.nightly_price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
-        {/* Loading */}
-        {loading && (
-          <div className="flex items-center justify-center py-24">
-            <div className="text-center">
-              <div className="animate-spin h-10 w-10 border-4 border-emerald-600 border-t-transparent rounded-full mx-auto mb-4" />
-              <p className="text-neutral-500">Finding golf stays...</p>
-            </div>
-          </div>
-        )}
+        {/* Right panel - map placeholder */}
+        <div style={{
+          flex: '1 1 46%',
+          background: 'linear-gradient(135deg, #DDE4DB 0%, #EDEBE1 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+          backgroundImage: `
+            linear-gradient(90deg, transparent 24%, rgba(107, 114, 107, .05) 25%, rgba(107, 114, 107, .05) 26%, transparent 27%, transparent 74%, rgba(107, 114, 107, .05) 75%, rgba(107, 114, 107, .05) 76%, transparent 77%, transparent),
+            linear-gradient(0deg, transparent 24%, rgba(107, 114, 107, .05) 25%, rgba(107, 114, 107, .05) 26%, transparent 27%, transparent 74%, rgba(107, 114, 107, .05) 75%, rgba(107, 114, 107, .05) 76%, transparent 77%, transparent)
+          `,
+          backgroundSize: '40px 40px'
+        }}>
+          {/* Golf course blobs */}
+          <div
+            style={{
+              position: 'absolute',
+              width: '200px',
+              height: '200px',
+              background: 'rgba(21, 121, 76, 0.1)',
+              borderRadius: '50%',
+              top: '10%',
+              left: '15%',
+              filter: 'blur(40px)'
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              width: '150px',
+              height: '150px',
+              background: 'rgba(21, 121, 76, 0.08)',
+              borderRadius: '50%',
+              top: '60%',
+              right: '20%',
+              filter: 'blur(35px)'
+            }}
+          />
 
-        {/* Error */}
-        {error && (
-          <div className="flex items-center justify-center py-24">
-            <div className="text-center">
-              <p className="text-red-500 mb-4">{error}</p>
-              <Button onClick={() => navigate('/')}>Back to Search</Button>
+          {/* Price pins */}
+          {filteredListings.slice(0, 3).map((listing, idx) => (
+            <div
+              key={listing.id}
+              style={{
+                position: 'absolute',
+                left: `${15 + idx * 30}%`,
+                top: `${25 + idx * 25}%`,
+                background: '#15794C',
+                color: 'white',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                fontWeight: 700,
+                fontFamily: 'Archivo',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              }}
+            >
+              ${listing.nightly_price}
             </div>
-          </div>
-        )}
+          ))}
 
-        {/* Empty */}
-        {!loading && !error && listings.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <Trophy className="h-12 w-12 text-neutral-300 mb-4" />
-            <h2 className="text-xl font-heading font-semibold text-neutral-700 mb-2">No stays found</h2>
-            <p className="text-neutral-500 mb-6 max-w-sm">
-              {searchLocation
-                ? `We don't have any active listings near "${searchLocation}" yet. Try a different destination.`
-                : 'No active listings yet — check back soon!'}
+          {/* Center banner */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: 'white',
+              padding: '24px 32px',
+              borderRadius: '12px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+              textAlign: 'center'
+            }}
+          >
+            <p style={{
+              color: '#0B1F17',
+              fontSize: '16px',
+              fontWeight: 600,
+              fontFamily: 'Archivo',
+              margin: 0
+            }}>
+              Interactive map coming soon
             </p>
-            <Button onClick={() => navigate('/')}>Try another search</Button>
           </div>
-        )}
-
-        {/* Results grid */}
-        {!loading && !error && listings.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map((listing) => {
-              const amenities = getAmenities(listing.amenities);
-              return (
-                <Card
-                  key={listing.id}
-                  className="bg-white border-neutral-200 hover:shadow-lg transition-all duration-200 cursor-pointer group overflow-hidden"
-                  onClick={() =>
-                    navigate(`/property/${listing.id}`, {
-                      state: { listing, checkIn, checkOut, guests },
-                    })
-                  }
-                >
-                  {/* Cover image */}
-                  <div className="relative h-48 overflow-hidden bg-neutral-100">
-                    {listing.cover_image ? (
-                      <img
-                        src={listing.cover_image}
-                        alt={listing.property_title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-emerald-50">
-                        <Trophy className="h-12 w-12 text-emerald-200" />
-                      </div>
-                    )}
-                    {listing.instant_booking && (
-                      <Badge className="absolute top-3 left-3 bg-emerald-600 text-white text-xs">
-                        Instant Book
-                      </Badge>
-                    )}
-                  </div>
-
-                  <div className="p-5">
-                    {/* Title + price */}
-                    <div className="flex justify-between items-start gap-2 mb-2">
-                      <h3 className="font-heading font-semibold text-neutral-900 leading-tight line-clamp-2">
-                        {listing.property_title}
-                      </h3>
-                      <div className="text-right shrink-0">
-                        <span className="text-lg font-bold text-emerald-600">€{listing.nightly_price}</span>
-                        <span className="text-xs text-neutral-400 block">/ night</span>
-                      </div>
-                    </div>
-
-                    {/* Location */}
-                    <div className="flex items-center gap-1 text-sm text-neutral-500 mb-3">
-                      <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                      <span className="truncate">{listing.full_address}</span>
-                    </div>
-
-                    {/* Distance to course */}
-                    {listing.distance_to_course != null && (
-                      <div className="flex items-center gap-1 text-sm text-emerald-600 font-medium mb-3">
-                        <Trophy className="h-3.5 w-3.5" />
-                        <span>
-                          {listing.distance_to_course} {listing.distance_unit || 'km'} to nearest course
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Stats row */}
-                    <div className="flex items-center gap-4 text-sm text-neutral-500 mb-3 border-t border-neutral-100 pt-3">
-                      <span className="flex items-center gap-1">
-                        <BedDouble className="h-3.5 w-3.5" />
-                        {listing.bedrooms} bed{listing.bedrooms !== 1 ? 's' : ''}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Bath className="h-3.5 w-3.5" />
-                        {listing.bathrooms} bath{listing.bathrooms !== 1 ? 's' : ''}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Users className="h-3.5 w-3.5" />
-                        Up to {listing.max_guests}
-                      </span>
-                    </div>
-
-                    {/* Amenities */}
-                    {amenities.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {amenities.slice(0, 4).map((amenity, idx) => (
-                          <Badge
-                            key={idx}
-                            variant="outline"
-                            className="text-xs border-neutral-200 text-neutral-600 flex items-center gap-1"
-                          >
-                            {getAmenityIcon(amenity)}
-                            {amenity}
-                          </Badge>
-                        ))}
-                        {amenities.length > 4 && (
-                          <Badge variant="outline" className="text-xs border-neutral-200 text-neutral-400">
-                            +{amenities.length - 4} more
-                          </Badge>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

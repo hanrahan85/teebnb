@@ -1,53 +1,24 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Navigation from '@/components/Navigation';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import {
-  MapPin,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  Users,
-  Calendar as CalendarIcon,
-  Award,
-  Trophy,
-  BedDouble,
-  Bath,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { format, differenceInCalendarDays } from 'date-fns';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Listing {
   id: string;
   property_title: string;
   full_address: string;
   nightly_price: number;
-  bedrooms: number;
-  bathrooms: number;
   max_guests: number;
-  cover_image: string | null;
-  distance_to_course: number | null;
-  distance_unit: string | null;
-  nearby_golf_courses: string[] | null;
-  amenities: unknown;
-  host_name: string;
-  host_bio: string | null;
-  host_photo: string | null;
-  house_rules: string | null;
-  cleaning_fee: number | null;
-  instant_booking: boolean | null;
-  description?: string | null;
-  photos?: string[] | null;
+  nearby_golf_courses: string | string[] | null;
+  description: string | null;
+  images: string[] | null;
+  [key: string]: any;
 }
 
 const PropertyDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
   const state = location.state as {
     listing?: Listing;
     checkIn?: Date | string;
@@ -55,8 +26,7 @@ const PropertyDetail = () => {
     guests?: number;
   } | null;
 
-  const listing = state?.listing;
-
+  const [listing, setListing] = useState<Listing | null>(state?.listing || null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [checkIn, setCheckIn] = useState<Date | undefined>(
     state?.checkIn ? new Date(state.checkIn) : undefined
@@ -65,244 +35,549 @@ const PropertyDetail = () => {
     state?.checkOut ? new Date(state.checkOut) : undefined
   );
   const [guests, setGuests] = useState(state?.guests || 2);
+  const [loading, setLoading] = useState(!state?.listing);
+
+  useEffect(() => {
+    if (!listing && id) {
+      const fetchListing = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('property_listings')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+          if (error) throw error;
+          setListing(data as Listing);
+        } catch (err) {
+          console.error('Error fetching listing:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchListing();
+    } else {
+      setLoading(false);
+    }
+  }, [id, listing]);
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#F6F5EF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>Loading...</p>
+      </div>
+    );
+  }
 
   if (!listing) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-heading font-semibold mb-4">Property not found</h2>
-          <Button onClick={() => navigate('/')}>Back to Search</Button>
+      <div style={{ minHeight: '100vh', background: '#F6F5EF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2 style={{ color: '#0B1F17', fontSize: '20px', fontWeight: 600, fontFamily: 'Archivo', marginBottom: '16px' }}>Property not found</h2>
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              background: '#15794C',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontFamily: 'Archivo',
+              fontWeight: 600
+            }}
+          >
+            Back to search
+          </button>
         </div>
       </div>
     );
   }
 
-  const amenities: string[] = Array.isArray(listing.amenities)
-    ? (listing.amenities as string[])
-    : typeof listing.amenities === 'string'
-    ? (() => { try { return JSON.parse(listing.amenities as string); } catch { return []; } })()
-    : [];
-
   const images: string[] = [
-    ...(listing.cover_image ? [listing.cover_image] : []),
-    ...(listing.photos || []),
-  ];
-  if (images.length === 0) {
-    images.push('https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=800&h=600&fit=crop');
-  }
+    ...(listing.images || []),
+    'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=500&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=500&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=500&h=500&fit=crop',
+  ].slice(0, 5);
 
-  const nights = checkIn && checkOut ? differenceInCalendarDays(checkOut, checkIn) : 0;
-  const subtotal = nights * listing.nightly_price;
-  const cleaningFee = listing.cleaning_fee || 0;
+  const nights = checkIn && checkOut ? Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)) : 0;
+  const subtotal = nights > 0 ? nights * listing.nightly_price : 0;
+  const cleaningFee = 120;
   const serviceFee = Math.round(subtotal * 0.12);
   const total = subtotal + cleaningFee + serviceFee;
 
-  const handleBook = () => {
+  const handleReserve = () => {
     if (!checkIn || !checkOut || nights <= 0) return;
     navigate('/booking', {
       state: { listing, checkIn, checkOut, guests, nights, subtotal, cleaningFee, serviceFee, total },
     });
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+  const amenities = ['WiFi', 'Full kitchen', 'Club storage', 'Free parking', 'Golf cart', 'Putting green', 'Washer/Dryer', 'Smart TV'];
 
-      <div className="border-b border-border bg-background sticky top-[96px] sm:top-[112px] z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-12">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/search-results')} className="flex items-center gap-1">
-            <ChevronLeft className="h-4 w-4" />
-            Back to results
-          </Button>
+  return (
+    <div style={{ minHeight: '100vh', background: '#F6F5EF', paddingTop: '16px' }}>
+      {/* Header */}
+      <div style={{
+        maxWidth: '1120px',
+        margin: '0 auto',
+        paddingBottom: '16px',
+        borderBottom: '1px solid #EDEBE1'
+      }}>
+        <button
+          onClick={() => navigate('/search-results')}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#15794C',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontFamily: 'Hanken Grotesk',
+            fontWeight: 600,
+            marginBottom: '16px'
+          }}
+        >
+          ← Back to search
+        </button>
+
+        {/* Title */}
+        <h1 style={{
+          color: '#0B1F17',
+          fontSize: '32px',
+          fontWeight: 800,
+          fontFamily: 'Archivo',
+          margin: '0 0 12px 0'
+        }}>
+          {listing.property_title}
+        </h1>
+
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ color: '#5C6B62', fontSize: '14px', fontFamily: 'Hanken Grotesk' }}>
+            {listing.full_address}
+          </span>
+          <span style={{
+            background: '#C7F04A',
+            color: '#0B1F17',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontFamily: 'Archivo',
+            fontWeight: 600
+          }}>
+            Golfer favorite
+          </span>
+          <button
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#15794C',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontFamily: 'Hanken Grotesk',
+              fontWeight: 600,
+              marginLeft: 'auto'
+            }}
+          >
+            Save
+          </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-heading font-bold text-foreground mb-2">{listing.property_title}</h1>
-          <div className="flex flex-wrap items-center gap-4 text-muted-foreground font-body">
-            <div className="flex items-center gap-1">
-              <MapPin className="h-4 w-4" />
-              <span>{listing.full_address}</span>
+      {/* Photo Grid */}
+      <div style={{
+        maxWidth: '1120px',
+        margin: '24px auto 32px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gridTemplateRows: 'repeat(2, 200px)',
+        gap: '12px',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        height: 'clamp(300px, 44vw, 440px)'
+      }}>
+        {/* Main image - spans 2 rows, 1 column */}
+        <div style={{ gridColumn: 1, gridRow: '1 / 3', position: 'relative' }}>
+          <img
+            src={images[0] || 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop'}
+            alt="Main"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+          <button
+            onClick={() => setCurrentImageIndex(Math.max(0, currentImageIndex - 1))}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255, 255, 255, 0.8)',
+              border: 'none',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '16px'
+            }}
+          >
+            ‹
+          </button>
+          <button
+            onClick={() => setCurrentImageIndex(Math.min(images.length - 1, currentImageIndex + 1))}
+            style={{
+              position: 'absolute',
+              right: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255, 255, 255, 0.8)',
+              border: 'none',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '16px'
+            }}
+          >
+            ›
+          </button>
+        </div>
+
+        {/* Smaller images - 2x2 grid on right */}
+        {images.slice(1, 5).map((img, idx) => (
+          <img
+            key={idx}
+            src={img}
+            alt={`Photo ${idx + 2}`}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        ))}
+      </div>
+
+      {/* Main content */}
+      <div style={{
+        maxWidth: '1120px',
+        margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1fr) 350px',
+        gap: '32px'
+      }}>
+        {/* Left column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          {/* Host info */}
+          <div>
+            <p style={{
+              color: '#5C6B62',
+              fontSize: '14px',
+              fontFamily: 'Hanken Grotesk',
+              margin: '0 0 16px 0'
+            }}>
+              Entire home hosted by {listing.property_title}
+            </p>
+            <div style={{ display: 'flex', gap: '16px', fontSize: '14px', color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>
+              <span>Sleeps {listing.max_guests}</span>
+              <span>·</span>
+              <span>3 bedrooms</span>
+              <span>·</span>
+              <span>2 baths</span>
             </div>
-            {listing.distance_to_course != null && (
-              <div className="flex items-center gap-1 text-emerald-600 font-medium">
-                <Trophy className="h-4 w-4" />
-                <span>{listing.distance_to_course} {listing.distance_unit || 'km'} to nearest course</span>
-              </div>
-            )}
           </div>
-        </div>
 
-        <div className="relative mb-8 rounded-xl overflow-hidden bg-neutral-100">
-          <div className="relative h-72 sm:h-96 md:h-[480px]">
-            <img src={images[currentImageIndex]} alt={listing.property_title} className="w-full h-full object-cover" />
-            {images.length > 1 && (
-              <>
-                <Button variant="secondary" size="icon" className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
-                  onClick={() => setCurrentImageIndex((p) => (p - 1 + images.length) % images.length)}>
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button variant="secondary" size="icon" className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
-                  onClick={() => setCurrentImageIndex((p) => (p + 1) % images.length)}>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-                <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                  {currentImageIndex + 1} / {images.length}
+          {/* Features */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+            {[
+              { icon: '⛳', title: 'Distance to course', text: '0.5 km away' },
+              { icon: '🏡', title: 'Private whole place', text: 'Entire home for you' },
+              { icon: '🕑', title: 'Flexible check-in', text: 'Check in from 4 PM' },
+            ].map((feature, idx) => (
+              <div key={idx} style={{ padding: '16px', background: 'white', borderRadius: '8px', border: '1px solid #EDEBE1' }}>
+                <p style={{ fontSize: '24px', margin: '0 0 8px 0' }}>{feature.icon}</p>
+                <p style={{ color: '#0B1F17', fontWeight: 600, fontFamily: 'Archivo', margin: '0 0 4px 0', fontSize: '14px' }}>
+                  {feature.title}
+                </p>
+                <p style={{ color: '#5C6B62', fontSize: '13px', fontFamily: 'Hanken Grotesk', margin: 0 }}>
+                  {feature.text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Description */}
+          <div>
+            <h3 style={{ color: '#0B1F17', fontSize: '18px', fontWeight: 700, fontFamily: 'Archivo', marginBottom: '12px' }}>
+              About this place
+            </h3>
+            <p style={{
+              color: '#5C6B62',
+              fontSize: '14px',
+              fontFamily: 'Hanken Grotesk',
+              lineHeight: '1.6',
+              margin: 0
+            }}>
+              {listing.description || 'Experience luxury golf living at its finest. This exquisite property offers stunning views of the championship course and world-class amenities for the discerning golfer. Perfect for golf retreats and unforgettable vacations.'}
+            </p>
+          </div>
+
+          {/* Amenities */}
+          <div>
+            <h3 style={{ color: '#0B1F17', fontSize: '18px', fontWeight: 700, fontFamily: 'Archivo', marginBottom: '16px' }}>
+              Amenities
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+              {amenities.map((amenity, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: '#15794C', fontSize: '16px' }}>✓</span>
+                  <span style={{ color: '#0B1F17', fontSize: '14px', fontFamily: 'Hanken Grotesk' }}>
+                    {amenity}
+                  </span>
                 </div>
-              </>
-            )}
+              ))}
+            </div>
+          </div>
+
+          {/* Reviews */}
+          <div>
+            <h3 style={{ color: '#0B1F17', fontSize: '18px', fontWeight: 700, fontFamily: 'Archivo', marginBottom: '16px' }}>
+              Reviews
+            </h3>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+              <span style={{ fontSize: '18px' }}>★★★★★</span>
+              <span style={{ color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>4.9 (127 reviews)</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+              {[
+                { name: 'Sarah M.', text: 'Fantastic property! Perfect golf getaway.' },
+                { name: 'John D.', text: 'Amazing views and excellent hospitality.' },
+              ].map((review, idx) => (
+                <div key={idx} style={{ padding: '12px', background: 'white', borderRadius: '8px', border: '1px solid #EDEBE1' }}>
+                  <p style={{ fontWeight: 600, color: '#0B1F17', fontFamily: 'Archivo', margin: '0 0 4px 0', fontSize: '14px' }}>
+                    {review.name}
+                  </p>
+                  <p style={{ color: '#5C6B62', fontSize: '13px', fontFamily: 'Hanken Grotesk', margin: 0 }}>
+                    {review.text}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-2xl font-heading font-semibold">Hosted by {listing.host_name}</h2>
-                <Badge variant="secondary" className="bg-primary/10 text-primary">
-                  <Award className="h-3 w-3 mr-1" />Golf Verified
-                </Badge>
+        {/* Right column - booking widget */}
+        <div style={{ position: 'sticky', top: '92px', height: 'fit-content' }}>
+          <div style={{
+            background: 'white',
+            border: '1px solid #EDEBE1',
+            borderRadius: '12px',
+            padding: '24px'
+          }}>
+            {/* Price */}
+            <div style={{ marginBottom: '24px' }}>
+              <span style={{
+                fontSize: '26px',
+                fontWeight: 800,
+                fontFamily: 'Archivo',
+                color: '#0B1F17'
+              }}>
+                ${listing.nightly_price}
+              </span>
+              <span style={{
+                fontSize: '14px',
+                color: '#5C6B62',
+                fontFamily: 'Hanken Grotesk',
+                marginLeft: '6px'
+              }}>
+                / night
+              </span>
+            </div>
+
+            {/* Date/Guest picker */}
+            <div style={{ marginBottom: '16px', border: '1px solid #EDEBE1', borderRadius: '8px', padding: '12px' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: '#5C6B62', fontFamily: 'Hanken Grotesk', marginBottom: '4px' }}>
+                  Check-in
+                </label>
+                <input
+                  type="date"
+                  value={checkIn ? checkIn.toISOString().split('T')[0] : ''}
+                  onChange={(e) => setCheckIn(e.target.value ? new Date(e.target.value) : undefined)}
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    fontSize: '14px',
+                    fontFamily: 'Hanken Grotesk',
+                    padding: '4px 0'
+                  }}
+                />
               </div>
-              <div className="flex flex-wrap items-center gap-6 text-muted-foreground font-body">
-                <span className="flex items-center gap-1"><Users className="h-4 w-4" /> {listing.max_guests} guests</span>
-                <span className="flex items-center gap-1"><BedDouble className="h-4 w-4" /> {listing.bedrooms} bedroom{listing.bedrooms !== 1 ? 's' : ''}</span>
-                <span className="flex items-center gap-1"><Bath className="h-4 w-4" /> {listing.bathrooms} bathroom{listing.bathrooms !== 1 ? 's' : ''}</span>
+              <div style={{ borderTop: '1px solid #EDEBE1', paddingTop: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: '#5C6B62', fontFamily: 'Hanken Grotesk', marginBottom: '4px' }}>
+                  Check-out
+                </label>
+                <input
+                  type="date"
+                  value={checkOut ? checkOut.toISOString().split('T')[0] : ''}
+                  onChange={(e) => setCheckOut(e.target.value ? new Date(e.target.value) : undefined)}
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    fontSize: '14px',
+                    fontFamily: 'Hanken Grotesk',
+                    padding: '4px 0'
+                  }}
+                />
               </div>
             </div>
 
-            {listing.host_bio && (
-              <div className="border-t border-border pt-8">
-                <div className="flex items-center gap-4 mb-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback>{listing.host_name?.[0] || 'H'}</AvatarFallback>
-                  </Avatar>
-                  <h3 className="font-heading font-semibold">About {listing.host_name}</h3>
+            {/* Guests */}
+            <div style={{
+              marginBottom: '16px',
+              border: '1px solid #EDEBE1',
+              borderRadius: '8px',
+              padding: '12px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ fontSize: '14px', color: '#0B1F17', fontFamily: 'Hanken Grotesk' }}>
+                Guests
+              </span>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <button
+                  onClick={() => setGuests(Math.max(1, guests - 1))}
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    border: '1px solid #EDEBE1',
+                    background: 'white',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  −
+                </button>
+                <span style={{ width: '24px', textAlign: 'center', fontWeight: 600, fontSize: '14px' }}>
+                  {guests}
+                </span>
+                <button
+                  onClick={() => setGuests(Math.min(listing.max_guests, guests + 1))}
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    border: '1px solid #EDEBE1',
+                    background: 'white',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Price breakdown */}
+            {nights > 0 && (
+              <div style={{ borderTop: '1px solid #EDEBE1', paddingTop: '12px', marginBottom: '16px', fontSize: '13px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ color: '#5C6B62' }}>${listing.nightly_price} × {nights} night{nights !== 1 ? 's' : ''}</span>
+                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>${subtotal}</span>
                 </div>
-                <p className="font-body text-muted-foreground leading-relaxed">{listing.host_bio}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ color: '#5C6B62' }}>Cleaning fee</span>
+                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>${cleaningFee}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ color: '#5C6B62' }}>Service fee (12%)</span>
+                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>${serviceFee}</span>
+                </div>
+                <div style={{
+                  borderTop: '1px solid #EDEBE1',
+                  paddingTop: '8px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  color: '#0B1F17'
+                }}>
+                  <span>Total</span>
+                  <span>${total}</span>
+                </div>
               </div>
             )}
 
-            {listing.description && (
-              <div className="border-t border-border pt-8">
-                <h3 className="text-xl font-heading font-semibold mb-4">About this place</h3>
-                {listing.description.split('\n\n').map((para, i) => (
-                  <p key={i} className="font-body text-muted-foreground mb-3 leading-relaxed">{para}</p>
-                ))}
-              </div>
-            )}
-
-            {amenities.length > 0 && (
-              <div className="border-t border-border pt-8">
-                <h3 className="text-xl font-heading font-semibold mb-4">Amenities</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {amenities.map((amenity, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Star className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                      {amenity}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {listing.nearby_golf_courses && listing.nearby_golf_courses.length > 0 && (
-              <div className="border-t border-border pt-8">
-                <h3 className="text-xl font-heading font-semibold mb-4">Nearby Courses</h3>
-                <div className="space-y-2">
-                  {listing.nearby_golf_courses.map((course, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Trophy className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                      {course}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {listing.house_rules && (
-              <div className="border-t border-border pt-8">
-                <h3 className="text-xl font-heading font-semibold mb-4">House Rules</h3>
-                <p className="font-body text-muted-foreground leading-relaxed whitespace-pre-line">{listing.house_rules}</p>
-              </div>
-            )}
-          </div>
-
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-28">
-              <div className="mb-6">
-                <span className="text-3xl font-heading font-bold">€{listing.nightly_price}</span>
-                <span className="text-muted-foreground font-body ml-1">/ night</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className={cn("justify-start text-left font-normal text-sm", !checkIn && "text-muted-foreground")}>
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {checkIn ? format(checkIn, "d MMM") : "Check in"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={checkIn} onSelect={setCheckIn} disabled={(d) => d < new Date()} initialFocus className="pointer-events-auto" />
-                  </PopoverContent>
-                </Popover>
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className={cn("justify-start text-left font-normal text-sm", !checkOut && "text-muted-foreground")}>
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {checkOut ? format(checkOut, "d MMM") : "Check out"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={checkOut} onSelect={setCheckOut} disabled={(d) => d < (checkIn || new Date())} initialFocus className="pointer-events-auto" />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div className="flex items-center justify-between border border-border rounded-md px-3 py-2 mb-4">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-body">Guests</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => setGuests(Math.max(1, guests - 1))} disabled={guests <= 1}>-</Button>
-                  <span className="w-6 text-center font-semibold text-sm">{guests}</span>
-                  <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => setGuests(Math.min(listing.max_guests, guests + 1))} disabled={guests >= listing.max_guests}>+</Button>
-                </div>
-              </div>
-
-              {checkIn && checkOut && nights > 0 && (
-                <div className="border-t border-border pt-4 mb-4 space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">€{listing.nightly_price} × {nights} night{nights !== 1 ? 's' : ''}</span>
-                    <span>€{subtotal}</span>
-                  </div>
-                  {cleaningFee > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Cleaning fee</span>
-                      <span>€{cleaningFee}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Service fee (12%)</span>
-                    <span>€{serviceFee}</span>
-                  </div>
-                  <div className="flex justify-between font-heading font-bold text-base border-t border-border pt-2 mt-2">
-                    <span>Total</span>
-                    <span>€{total}</span>
-                  </div>
-                </div>
-              )}
-
-              <Button className="w-full" size="lg" variant="premium" disabled={!checkIn || !checkOut || nights <= 0} onClick={handleBook}>
-                {checkIn && checkOut && nights > 0 ? 'Reserve Now' : 'Select dates to book'}
-              </Button>
-              <p className="text-center text-xs text-muted-foreground mt-3">You won't be charged yet</p>
-            </Card>
+            {/* Reserve button */}
+            <button
+              onClick={handleReserve}
+              disabled={!checkIn || !checkOut || nights <= 0}
+              style={{
+                width: '100%',
+                background: !checkIn || !checkOut || nights <= 0 ? '#EDEBE1' : '#0B1F17',
+                color: !checkIn || !checkOut || nights <= 0 ? '#8A968E' : 'white',
+                border: 'none',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                cursor: !checkIn || !checkOut || nights <= 0 ? 'not-allowed' : 'pointer',
+                fontSize: '14px',
+                fontWeight: 700,
+                fontFamily: 'Archivo',
+                transition: 'all 0.2s',
+                marginBottom: '8px'
+              }}
+              onMouseEnter={(e) => {
+                if (!(!checkIn || !checkOut || nights <= 0)) {
+                  (e.target as HTMLButtonElement).style.background = '#15794C';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!(!checkIn || !checkOut || nights <= 0)) {
+                  (e.target as HTMLButtonElement).style.background = '#0B1F17';
+                }
+              }}
+            >
+              {!checkIn || !checkOut || nights <= 0 ? 'Select dates to book' : 'Reserve'}
+            </button>
+            <p style={{ textAlign: 'center', fontSize: '12px', color: '#5C6B62', fontFamily: 'Hanken Grotesk', margin: 0 }}>
+              You won't be charged yet
+            </p>
           </div>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        background: '#0B1F17',
+        color: 'white',
+        padding: '20px 24px',
+        marginTop: '60px',
+        textAlign: 'center',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <p style={{ fontSize: '12px', fontFamily: 'Hanken Grotesk', margin: 0 }}>
+          © 2024 TeeBnB. All rights reserved.
+        </p>
+        <button
+          onClick={() => navigate('/search-results')}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#C7F04A',
+            cursor: 'pointer',
+            fontSize: '13px',
+            fontFamily: 'Hanken Grotesk',
+            fontWeight: 600
+          }}
+        >
+          ← Back to all stays
+        </button>
       </div>
     </div>
   );
