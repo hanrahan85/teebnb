@@ -30,12 +30,12 @@ interface Booking {
   status: string;
   special_requests: string | null;
   created_at: string;
-  listing?: { title: string; full_address: string };
+  listing?: { property_title: string; full_address: string };
 }
 
 interface Listing {
   id: string;
-  title: string;
+  property_title: string;
   full_address: string;
   nightly_price: number;
   status: string | null;
@@ -67,21 +67,30 @@ const HostDashboard = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const [bookingsRes, listingsRes] = await Promise.all([
-      supabase
-        .from('bookings')
-        .select('*, listing:property_listings(title, full_address)')
-        .eq('property_listings.user_id', user!.id)
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('property_listings')
-        .select('id, title, full_address, price_per_night, status, cover_image, bedrooms')
-        .eq('user_id', user!.id)
-        .order('created_at', { ascending: false }),
-    ]);
 
-    setBookings((bookingsRes.data as unknown as Booking[]) || []);
-    setListings((listingsRes.data as unknown as Listing[]) || []);
+    // Fetch this host's listings first
+    const listingsRes = await supabase
+      .from('property_listings')
+      .select('id, property_title, full_address, nightly_price, status, cover_image, bedrooms')
+      .eq('user_id', user!.id)
+      .order('created_at', { ascending: false });
+
+    const fetchedListings = (listingsRes.data as unknown as Listing[]) || [];
+    setListings(fetchedListings);
+
+    // Fetch bookings only for this host's listings
+    if (fetchedListings.length > 0) {
+      const listingIds = fetchedListings.map((l) => l.id);
+      const bookingsRes = await supabase
+        .from('bookings')
+        .select('*, listing:property_listings(property_title, full_address)')
+        .in('listing_id', listingIds)
+        .order('created_at', { ascending: false });
+      setBookings((bookingsRes.data as unknown as Booking[]) || []);
+    } else {
+      setBookings([]);
+    }
+
     setLoading(false);
   };
 
@@ -124,6 +133,38 @@ const HostDashboard = () => {
           </h1>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              padding: '8px 16px',
+              background: 'transparent',
+              color: '#0B1F17',
+              border: '1px solid #EDEBE1',
+              borderRadius: '6px',
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
+          >
+            ← Home
+          </button>
+          <button
+            onClick={() => navigate('/search-results')}
+            style={{
+              padding: '8px 16px',
+              background: 'transparent',
+              color: '#0B1F17',
+              border: '1px solid #EDEBE1',
+              borderRadius: '6px',
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
+          >
+            Browse
+          </button>
           <div style={{ fontSize: '14px', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 600 }}>
             {user?.email}
           </div>
@@ -390,7 +431,7 @@ const HostDashboard = () => {
                   {listing.cover_image && (
                     <img
                       src={listing.cover_image}
-                      alt={listing.title}
+                      alt={listing.property_title}
                       style={{
                         width: '100%',
                         height: '160px',
@@ -408,7 +449,7 @@ const HostDashboard = () => {
                         margin: 0,
                         lineHeight: '1.3',
                       }}>
-                        {listing.title}
+                        {listing.property_title}
                       </h3>
                       <span style={{
                         fontSize: '12px',
@@ -559,7 +600,7 @@ const BookingCard = ({
               margin: 0,
               marginBottom: '4px',
             }}>
-              {booking.listing.title}
+              {booking.listing.property_title}
             </p>
           )}
           <p style={{

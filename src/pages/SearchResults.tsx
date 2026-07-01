@@ -299,7 +299,7 @@ const SearchResults = () => {
                       color: '#0B1F17',
                       fontFamily: 'Archivo'
                     }}>
-                      ${listing.nightly_price}
+                      €{listing.nightly_price}
                     </span>
                   </div>
                 </div>
@@ -369,7 +369,7 @@ const SearchResults = () => {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
               }}
             >
-              ${listing.nightly_price}
+              €{listing.nightly_price}
             </div>
           ))}
 
