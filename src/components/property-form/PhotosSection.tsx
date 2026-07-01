@@ -1,6 +1,6 @@
 
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ interface PhotosSectionProps {
 const PhotosSection = ({ form }: PhotosSectionProps) => {
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const photos = form.watch('photos') || [];
   const coverImage = form.watch('coverImage');
 
@@ -158,21 +159,25 @@ const PhotosSection = ({ form }: PhotosSectionProps) => {
             <div className="text-center">
               <ImageIcon className="mx-auto h-12 w-12 text-emerald-600" />
               <div className="mt-4">
-                <label htmlFor="photo-upload" className="cursor-pointer">
-                  <Button type="button" variant="outline" disabled={uploading} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
-                    <Upload className="mr-2 h-4 w-4" />
-                    {uploading ? 'Uploading...' : 'Choose Photos'}
-                  </Button>
-                  <Input
-                    id="photo-upload"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                    disabled={uploading}
-                  />
-                </label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={uploading}
+                  className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  {uploading ? 'Uploading...' : 'Choose Photos'}
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                />
               </div>
               <p className="mt-2 text-sm text-emerald-600">
                 PNG, JPG, GIF up to 10MB each. Select multiple files.
