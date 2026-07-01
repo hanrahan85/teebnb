@@ -54,10 +54,7 @@ const Blog = () => {
                 borderRadius: '16px',
                 border: '1px solid #EDEBE1',
                 overflow: 'hidden',
-                cursor: 'pointer',
               }}
-              onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 8px 32px rgba(11,31,23,0.08)')}
-              onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
             >
               {/* Placeholder image area */}
               <div style={{ height: '180px', background: '#0B1F17', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -80,7 +77,12 @@ const Blog = () => {
                 </div>
                 <h2 style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 700, fontSize: '18px', color: '#0B1F17', marginBottom: '8px', lineHeight: 1.3 }}>{post.title}</h2>
                 <p style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '14px', color: '#5C6B62', lineHeight: 1.6, marginBottom: '16px' }}>{post.excerpt}</p>
-                <span style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '12px', color: '#8A9E93' }}>{post.date}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
+                  <span style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '12px', color: '#8A9E93' }}>{post.date}</span>
+                  <span style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', fontWeight: 600, color: '#8A9E93', background: '#F6F5EF', padding: '3px 10px', borderRadius: '12px' }}>
+                    Coming soon
+                  </span>
+                </div>
               </div>
             </div>
           ))}

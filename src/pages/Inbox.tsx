@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Message {
   id: string;
@@ -18,6 +19,7 @@ interface Conversation {
 }
 
 const Inbox = () => {
+  const navigate = useNavigate();
   const [selectedConversationId, setSelectedConversationId] = useState<string>('1');
   const [messageInput, setMessageInput] = useState('');
 
@@ -201,17 +203,22 @@ const Inbox = () => {
                   with {selectedConversation.hostName}
                 </p>
               </div>
-              <a
-                href={`/property/1`}
+              <button
+                onClick={() => navigate('/search-results', { state: { location: selectedConversation.propertyName } })}
                 style={{
                   fontSize: '13px',
                   color: '#15794C',
                   textDecoration: 'none',
                   fontWeight: 600,
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  fontFamily: "'Hanken Grotesk', sans-serif",
                 }}
               >
-                View listing
-              </a>
+                View listing →
+              </button>
             </div>
           )}
 

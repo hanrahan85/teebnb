@@ -13,6 +13,7 @@ import AccommodationDetails from "./pages/AccommodationDetails";
 import PropertyDetail from "./pages/PropertyDetail";
 import BookingFlow from "./pages/BookingFlow";
 import HostDashboard from "./pages/HostDashboard";
+import NotFound from "./pages/NotFound";
 
 // Lazy load new pages
 const Destinations = lazy(() => import("./pages/Destinations"));
@@ -94,6 +95,7 @@ const App: React.FC = () => {
               <Route path="/terms" element={<Suspense fallback={<LoadingFallback />}><Terms /></Suspense>} />
               <Route path="/blog" element={<Suspense fallback={<LoadingFallback />}><Blog /></Suspense>} />
               <Route path="/how-it-works" element={<Suspense fallback={<LoadingFallback />}><HowItWorks /></Suspense>} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

@@ -129,6 +129,7 @@ const Profile = () => {
         </div>
 
         <button
+          onClick={() => navigate('/dashboard')}
           style={{
             width: '100%',
             padding: '12px 20px',
@@ -143,7 +144,7 @@ const Profile = () => {
             marginBottom: '40px',
           }}
         >
-          Edit Profile
+          Go to Host Dashboard
         </button>
 
         {/* Quick Links */}

@@ -41,6 +41,7 @@ const PropertyDetail = () => {
   );
   const [guests, setGuests] = useState(state?.guests || 2);
   const [loading, setLoading] = useState(!state?.listing);
+  const [saved, setSaved] = useState(false);
   const [mapCoords, setMapCoords] = useState<[number, number] | null>(null);
 
   useEffect(() => {
@@ -141,7 +142,21 @@ const PropertyDetail = () => {
     });
   };
 
-  const amenities = ['WiFi', 'Full kitchen', 'Club storage', 'Free parking', 'Golf cart', 'Putting green', 'Washer/Dryer', 'Smart TV'];
+  // Build amenities from listing data (form stores them as a nested object)
+  const AMENITY_LABELS: Record<string, string> = {
+    wifi: 'WiFi', fullKitchen: 'Full kitchen', clubStorage: 'Club storage',
+    freeParking: 'Free parking', golfCart: 'Golf cart', puttingGreen: 'Putting green',
+    washerDryer: 'Washer/Dryer', smartTV: 'Smart TV', pool: 'Pool',
+    hotTub: 'Hot tub', airConditioning: 'Air conditioning',
+  };
+  const rawAmenities: Record<string, boolean> = listing.amenities || {};
+  const amenities: string[] = Object.entries(rawAmenities)
+    .filter(([, v]) => v)
+    .map(([k]) => AMENITY_LABELS[k] || k);
+  // Fall back to default set if listing has no amenity data
+  const displayAmenities = amenities.length > 0
+    ? amenities
+    : ['WiFi', 'Full kitchen', 'Club storage', 'Free parking'];
 
   return (
     <div style={{ minHeight: '100vh', background: '#F6F5EF', paddingTop: '16px' }}>
@@ -205,8 +220,9 @@ const PropertyDetail = () => {
               fontWeight: 600,
               marginLeft: 'auto'
             }}
+            onClick={() => setSaved(s => !s)}
           >
-            Save
+            {saved ? '❤️ Saved' : '🤍 Save'}
           </button>
         </div>
       </div>
@@ -359,7 +375,7 @@ const PropertyDetail = () => {
               Amenities
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '12px' }}>
-              {amenities.map((amenity, idx) => (
+              {displayAmenities.map((amenity, idx) => (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ color: '#15794C', fontSize: '16px' }}>✓</span>
                   <span style={{ color: '#0B1F17', fontSize: '14px', fontFamily: 'Hanken Grotesk' }}>
