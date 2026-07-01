@@ -99,6 +99,16 @@ const HostDashboard = () => {
     setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, status } : b)));
   };
 
+  const deleteListing = async (listingId: string, title: string) => {
+    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    const { error } = await supabase.from('property_listings').delete().eq('id', listingId);
+    if (!error) {
+      setListings((prev) => prev.filter((l) => l.id !== listingId));
+    } else {
+      alert('Failed to delete listing. Please try again.');
+    }
+  };
+
   const pendingCount = bookings.filter((b) => b.status === 'pending').length;
   const confirmedRevenue = bookings
     .filter((b) => b.status === 'confirmed' || b.status === 'completed')
@@ -486,22 +496,40 @@ const HostDashboard = () => {
                       }}>
                         €{listing.nightly_price}/night
                       </span>
-                      <button
-                        onClick={() => navigate(`/property/${listing.id}`)}
-                        style={{
-                          padding: '6px 12px',
-                          background: '#FFFFFF',
-                          color: '#15794C',
-                          border: '1px solid #EDEBE1',
-                          borderRadius: '6px',
-                          fontFamily: "'Archivo', sans-serif",
-                          fontWeight: 600,
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        View
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={() => navigate(`/property/${listing.id}`)}
+                          style={{
+                            padding: '6px 12px',
+                            background: '#FFFFFF',
+                            color: '#15794C',
+                            border: '1px solid #EDEBE1',
+                            borderRadius: '6px',
+                            fontFamily: "'Archivo', sans-serif",
+                            fontWeight: 600,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          View
+                        </button>
+                        <button
+                          onClick={() => deleteListing(listing.id, listing.property_title)}
+                          style={{
+                            padding: '6px 12px',
+                            background: '#FEE2E2',
+                            color: '#991B1B',
+                            border: '1px solid #FECACA',
+                            borderRadius: '6px',
+                            fontFamily: "'Archivo', sans-serif",
+                            fontWeight: 600,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

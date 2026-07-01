@@ -11,7 +11,9 @@ interface Listing {
   max_guests: number;
   nearby_golf_courses: string | string[] | null;
   description: string | null;
-  images: string[] | null;
+  photos: string[] | null;
+  cover_image: string | null;
+  bedrooms: number | null;
   [key: string]: any;
 }
 
@@ -97,13 +99,14 @@ const PropertyDetail = () => {
     );
   }
 
-  const images: string[] = [
-    ...(listing.images || []),
-    'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=500&h=500&fit=crop',
-  ].slice(0, 5);
+  // Use uploaded photos; cover_image goes first if not already in the array
+  const uploadedPhotos: string[] = listing.photos || [];
+  const allPhotos = listing.cover_image && !uploadedPhotos.includes(listing.cover_image)
+    ? [listing.cover_image, ...uploadedPhotos]
+    : uploadedPhotos.length > 0
+      ? uploadedPhotos
+      : ['https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop'];
+  const images: string[] = allPhotos.slice(0, 5);
 
   const nights = checkIn && checkOut ? Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)) : 0;
   const subtotal = nights > 0 ? nights * listing.nightly_price : 0;
@@ -286,10 +289,12 @@ const PropertyDetail = () => {
             </p>
             <div style={{ display: 'flex', gap: '16px', fontSize: '14px', color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>
               <span>Sleeps {listing.max_guests}</span>
-              <span>·</span>
-              <span>3 bedrooms</span>
-              <span>·</span>
-              <span>2 baths</span>
+              {listing.bedrooms && (
+                <>
+                  <span>·</span>
+                  <span>{listing.bedrooms} bedroom{listing.bedrooms !== 1 ? 's' : ''}</span>
+                </>
+              )}
             </div>
           </div>
 
@@ -388,7 +393,7 @@ const PropertyDetail = () => {
                 fontFamily: 'Archivo',
                 color: '#0B1F17'
               }}>
-                ${listing.nightly_price}
+                €{listing.nightly_price}
               </span>
               <span style={{
                 fontSize: '14px',
@@ -490,16 +495,16 @@ const PropertyDetail = () => {
             {nights > 0 && (
               <div style={{ borderTop: '1px solid #EDEBE1', paddingTop: '12px', marginBottom: '16px', fontSize: '13px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ color: '#5C6B62' }}>${listing.nightly_price} × {nights} night{nights !== 1 ? 's' : ''}</span>
-                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>${subtotal}</span>
+                  <span style={{ color: '#5C6B62' }}>€{listing.nightly_price} × {nights} night{nights !== 1 ? 's' : ''}</span>
+                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{subtotal}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ color: '#5C6B62' }}>Cleaning fee</span>
-                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>${cleaningFee}</span>
+                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{cleaningFee}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ color: '#5C6B62' }}>Service fee (12%)</span>
-                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>${serviceFee}</span>
+                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{serviceFee}</span>
                 </div>
                 <div style={{
                   borderTop: '1px solid #EDEBE1',
@@ -511,7 +516,7 @@ const PropertyDetail = () => {
                   color: '#0B1F17'
                 }}>
                   <span>Total</span>
-                  <span>${total}</span>
+                  <span>€{total}</span>
                 </div>
               </div>
             )}
