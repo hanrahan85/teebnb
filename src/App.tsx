@@ -18,6 +18,13 @@ import HostDashboard from "./pages/HostDashboard";
 const Trips = lazy(() => import("./pages/Trips"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Inbox = lazy(() => import("./pages/Inbox"));
+const About = lazy(() => import("./pages/About"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Support = lazy(() => import("./pages/Support"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Blog = lazy(() => import("./pages/Blog"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 
 const queryClient = new QueryClient();
 
@@ -78,6 +85,13 @@ const App: React.FC = () => {
                   </Suspense>
                 }
               />
+              <Route path="/about" element={<Suspense fallback={<LoadingFallback />}><About /></Suspense>} />
+              <Route path="/faq" element={<Suspense fallback={<LoadingFallback />}><FAQ /></Suspense>} />
+              <Route path="/support" element={<Suspense fallback={<LoadingFallback />}><Support /></Suspense>} />
+              <Route path="/privacy" element={<Suspense fallback={<LoadingFallback />}><Privacy /></Suspense>} />
+              <Route path="/terms" element={<Suspense fallback={<LoadingFallback />}><Terms /></Suspense>} />
+              <Route path="/blog" element={<Suspense fallback={<LoadingFallback />}><Blog /></Suspense>} />
+              <Route path="/how-it-works" element={<Suspense fallback={<LoadingFallback />}><HowItWorks /></Suspense>} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

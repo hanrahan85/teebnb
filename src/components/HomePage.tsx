@@ -976,10 +976,14 @@ const HomePage = () => {
                 Explore
               </h4>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {['Browse homes', 'Destinations', 'Become a host'].map((link) => (
-                  <li key={link} style={{ marginBottom: '8px' }}>
+                {[
+                  { label: 'Browse homes', href: '/search-results' },
+                  { label: 'Destinations', href: '/search-results' },
+                  { label: 'Become a host', href: '/list-property' },
+                ].map(({ label, href }) => (
+                  <li key={label} style={{ marginBottom: '8px' }}>
                     <a
-                      href="/"
+                      href={href}
                       style={{
                         color: '#5C6B62',
                         textDecoration: 'none',
@@ -993,7 +997,7 @@ const HomePage = () => {
                         (e.currentTarget as HTMLElement).style.color = '#5C6B62';
                       }}
                     >
-                      {link}
+                      {label}
                     </a>
                   </li>
                 ))}
@@ -1016,10 +1020,14 @@ const HomePage = () => {
                 Hosting
               </h4>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {['How it works', 'FAQ', 'Support'].map((link) => (
-                  <li key={link} style={{ marginBottom: '8px' }}>
+                {[
+                  { label: 'How it works', href: '/how-it-works' },
+                  { label: 'FAQ', href: '/faq' },
+                  { label: 'Support', href: '/support' },
+                ].map(({ label, href }) => (
+                  <li key={label} style={{ marginBottom: '8px' }}>
                     <a
-                      href="/"
+                      href={href}
                       style={{
                         color: '#5C6B62',
                         textDecoration: 'none',
@@ -1033,7 +1041,7 @@ const HomePage = () => {
                         (e.currentTarget as HTMLElement).style.color = '#5C6B62';
                       }}
                     >
-                      {link}
+                      {label}
                     </a>
                   </li>
                 ))}
@@ -1056,10 +1064,15 @@ const HomePage = () => {
                 Company
               </h4>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {['About us', 'Blog', 'Privacy', 'Terms'].map((link) => (
-                  <li key={link} style={{ marginBottom: '8px' }}>
+                {[
+                  { label: 'About us', href: '/about' },
+                  { label: 'Blog', href: '/blog' },
+                  { label: 'Privacy', href: '/privacy' },
+                  { label: 'Terms', href: '/terms' },
+                ].map(({ label, href }) => (
+                  <li key={label} style={{ marginBottom: '8px' }}>
                     <a
-                      href="/"
+                      href={href}
                       style={{
                         color: '#5C6B62',
                         textDecoration: 'none',
@@ -1073,7 +1086,7 @@ const HomePage = () => {
                         (e.currentTarget as HTMLElement).style.color = '#5C6B62';
                       }}
                     >
-                      {link}
+                      {label}
                     </a>
                   </li>
                 ))}
