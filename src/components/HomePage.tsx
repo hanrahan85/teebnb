@@ -522,7 +522,7 @@ const HomePage = () => {
                         color: '#0B1F17',
                       }}
                     >
-                      ${listing.price}
+                      €{listing.price}
                     </span>
                     <span
                       style={{
@@ -755,7 +755,7 @@ const HomePage = () => {
                   color: '#0B1F17',
                 }}
               >
-                $640/night
+                €640/night
               </span>
             </div>
           </div>
@@ -910,7 +910,7 @@ const HomePage = () => {
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {[
                   { label: 'Browse homes', href: '/search-results' },
-                  { label: 'Destinations', href: '/search-results' },
+                  { label: 'Destinations', href: '/destinations' },
                   { label: 'Become a host', href: '/list-property' },
                 ].map(({ label, href }) => (
                   <li key={label} style={{ marginBottom: '8px' }}>
