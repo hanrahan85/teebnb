@@ -58,6 +58,42 @@ const SearchResults = () => {
 
   const [listings, setListings] = useState<Listing[]>(SAMPLE);
   const [loading, setLoading] = useState(true);
+
+  // Search bar open/edit state
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [editLocation, setEditLocation] = useState(state?.location || '');
+  const [editCheckIn, setEditCheckIn] = useState(
+    state?.checkIn ? new Date(state.checkIn).toISOString().split('T')[0] : ''
+  );
+  const [editCheckOut, setEditCheckOut] = useState(
+    state?.checkOut ? new Date(state.checkOut).toISOString().split('T')[0] : ''
+  );
+  const [editGuests, setEditGuests] = useState(state?.guests || 1);
+  const searchPanelRef = useRef<HTMLDivElement>(null);
+
+  // Close search panel on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchPanelRef.current && !searchPanelRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    if (searchOpen) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [searchOpen]);
+
+  const handleSearch = () => {
+    setSearchOpen(false);
+    navigate('/search-results', {
+      state: {
+        location: editLocation,
+        checkIn: editCheckIn ? new Date(editCheckIn) : undefined,
+        checkOut: editCheckOut ? new Date(editCheckOut) : undefined,
+        guests: editGuests,
+      },
+      replace: true,
+    });
+  };
   const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
 
   // Separate coords state so geocoding updates don't re-trigger geocoding effect
@@ -182,16 +218,119 @@ const SearchResults = () => {
             {!isMobile && <span style={{ color: '#15794C', fontSize: '16px', fontWeight: 700, fontFamily: 'Archivo' }}>TeeBnB</span>}
           </button>
 
-          <div style={{ flex: 1, maxWidth: isMobile ? '100%' : '400px', display: 'flex', gap: '8px', alignItems: 'center', background: 'white', border: '1px solid #EDEBE1', borderRadius: '8px', padding: '8px 12px' }}>
-            <input
-              type="text"
-              placeholder={`${searchLocation || 'Location'} · ${checkIn ? checkIn.toLocaleDateString() : 'Dates'} · ${guests} guests`}
-              style={{ flex: 1, border: 'none', outline: 'none', fontSize: '14px', color: '#0B1F17', fontFamily: 'Hanken Grotesk', minWidth: 0 }}
-              readOnly
-            />
-            <button style={{ background: '#0B1F17', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer', fontSize: '12px', fontWeight: 600, fontFamily: 'Archivo', whiteSpace: 'nowrap' }}>
-              Search
+          {/* Search bar — click to expand */}
+          <div ref={searchPanelRef} style={{ flex: 1, maxWidth: isMobile ? '100%' : '480px', position: 'relative' }}>
+            {/* Collapsed pill */}
+            <button
+              onClick={() => setSearchOpen(o => !o)}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                background: 'white', border: `1px solid ${searchOpen ? '#15794C' : '#EDEBE1'}`,
+                borderRadius: '8px', padding: '8px 12px', cursor: 'pointer', gap: '8px',
+                boxShadow: searchOpen ? '0 0 0 2px rgba(21,121,76,0.15)' : 'none',
+              }}
+            >
+              <span style={{ fontSize: '14px', color: searchLocation || checkIn ? '#0B1F17' : '#8A968E', fontFamily: 'Hanken Grotesk', textAlign: 'left', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {[
+                  searchLocation || 'Anywhere',
+                  checkIn ? checkIn.toLocaleDateString('en-IE', { day: 'numeric', month: 'short' }) : null,
+                  checkOut ? '→ ' + checkOut.toLocaleDateString('en-IE', { day: 'numeric', month: 'short' }) : null,
+                  `${guests} guest${guests !== 1 ? 's' : ''}`,
+                ].filter(Boolean).join(' · ')}
+              </span>
+              <div style={{ background: '#0B1F17', color: 'white', borderRadius: '6px', padding: '5px 10px', fontSize: '12px', fontWeight: 700, fontFamily: 'Archivo', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                Search
+              </div>
             </button>
+
+            {/* Expanded panel */}
+            {searchOpen && (
+              <div style={{
+                position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
+                background: 'white', border: '1px solid #EDEBE1', borderRadius: '12px',
+                padding: '16px', zIndex: 100,
+                boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                display: 'flex', flexDirection: 'column', gap: '12px',
+              }}>
+                {/* Location */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#5C6B62', fontFamily: 'Archivo', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+                    Where
+                  </label>
+                  <input
+                    autoFocus
+                    type="text"
+                    value={editLocation}
+                    onChange={e => setEditLocation(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                    placeholder="Search destinations, courses, cities…"
+                    style={{
+                      width: '100%', border: '1px solid #EDEBE1', borderRadius: '6px',
+                      padding: '9px 12px', fontSize: '14px', fontFamily: 'Hanken Grotesk',
+                      color: '#0B1F17', outline: 'none', boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
+
+                {/* Dates */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#5C6B62', fontFamily: 'Archivo', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+                      Check-in
+                    </label>
+                    <input
+                      type="date"
+                      value={editCheckIn}
+                      min={new Date().toISOString().split('T')[0]}
+                      onChange={e => setEditCheckIn(e.target.value)}
+                      style={{ width: '100%', border: '1px solid #EDEBE1', borderRadius: '6px', padding: '9px 10px', fontSize: '14px', fontFamily: 'Hanken Grotesk', color: '#0B1F17', outline: 'none', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#5C6B62', fontFamily: 'Archivo', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+                      Check-out
+                    </label>
+                    <input
+                      type="date"
+                      value={editCheckOut}
+                      min={editCheckIn || new Date().toISOString().split('T')[0]}
+                      onChange={e => setEditCheckOut(e.target.value)}
+                      style={{ width: '100%', border: '1px solid #EDEBE1', borderRadius: '6px', padding: '9px 10px', fontSize: '14px', fontFamily: 'Hanken Grotesk', color: '#0B1F17', outline: 'none', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Guests */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#5C6B62', fontFamily: 'Archivo', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+                    Guests
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <button
+                      onClick={() => setEditGuests(g => Math.max(1, g - 1))}
+                      style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #EDEBE1', background: 'white', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0B1F17' }}
+                    >−</button>
+                    <span style={{ fontSize: '16px', fontWeight: 700, fontFamily: 'Archivo', color: '#0B1F17', minWidth: '24px', textAlign: 'center' }}>{editGuests}</span>
+                    <button
+                      onClick={() => setEditGuests(g => g + 1)}
+                      style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #EDEBE1', background: 'white', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0B1F17' }}
+                    >+</button>
+                  </div>
+                </div>
+
+                {/* Search button */}
+                <button
+                  onClick={handleSearch}
+                  style={{
+                    width: '100%', background: '#0B1F17', color: 'white', border: 'none',
+                    borderRadius: '8px', padding: '12px', fontSize: '15px',
+                    fontWeight: 700, fontFamily: 'Archivo', cursor: 'pointer',
+                  }}
+                >
+                  Search stays
+                </button>
+              </div>
+            )}
           </div>
 
           {!isMobile && (
