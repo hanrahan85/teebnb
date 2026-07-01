@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import SearchBar from '@/components/SearchBar';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Heart } from 'lucide-react';
 
 interface Listing {
@@ -13,92 +14,22 @@ interface Listing {
   reviews: number;
   tag: string;
   specs: string;
+  image: string;
 }
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const listings: Listing[] = [
-    {
-      id: 1,
-      name: 'Fairway House',
-      location: 'Monterey, CA',
-      price: 640,
-      rating: 4.9,
-      reviews: 142,
-      tag: 'Featured',
-      specs: '4 bed • 2 bath',
-    },
-    {
-      id: 2,
-      name: 'Old Course Loft',
-      location: 'St Andrews, Scotland',
-      price: 310,
-      rating: 4.95,
-      reviews: 289,
-      tag: 'Best Rated',
-      specs: '2 bed • 1 bath',
-    },
-    {
-      id: 3,
-      name: 'Cedar Ridge Cabin',
-      location: 'Queenstown, NZ',
-      price: 280,
-      rating: 4.85,
-      reviews: 156,
-      tag: 'Great Value',
-      specs: '3 bed • 2 bath',
-    },
-    {
-      id: 4,
-      name: 'Casa del Green',
-      location: 'Los Cabos, Mexico',
-      price: 520,
-      rating: 4.88,
-      reviews: 203,
-      tag: 'Luxury',
-      specs: '5 bed • 3 bath',
-    },
-    {
-      id: 5,
-      name: 'Sakura Villa',
-      location: 'Hokkaido, Japan',
-      price: 340,
-      rating: 4.92,
-      reviews: 178,
-      tag: 'Exclusive',
-      specs: '4 bed • 2 bath',
-    },
-    {
-      id: 6,
-      name: 'Cliffside Casita',
-      location: 'Faro, Portugal',
-      price: 210,
-      rating: 4.80,
-      reviews: 134,
-      tag: 'Budget',
-      specs: '2 bed • 1 bath',
-    },
-    {
-      id: 7,
-      name: 'Saguaro Retreat',
-      location: 'Phoenix, AZ',
-      price: 260,
-      rating: 4.87,
-      reviews: 167,
-      tag: 'Desert',
-      specs: '3 bed • 2 bath',
-    },
-    {
-      id: 8,
-      name: 'Loch Aria Cottage',
-      location: 'County Kerry, Ireland',
-      price: 300,
-      rating: 4.91,
-      reviews: 198,
-      tag: 'Lakeside',
-      specs: '3 bed • 2 bath',
-    },
+    { id: 1, name: 'Fairway House', location: 'Monterey, CA', price: 640, rating: 4.9, reviews: 142, tag: 'Featured', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop' },
+    { id: 2, name: 'Old Course Loft', location: 'St Andrews, Scotland', price: 310, rating: 4.95, reviews: 289, tag: 'Best Rated', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=600&h=400&fit=crop' },
+    { id: 3, name: 'Cedar Ridge Cabin', location: 'Queenstown, NZ', price: 280, rating: 4.85, reviews: 156, tag: 'Great Value', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop' },
+    { id: 4, name: 'Casa del Green', location: 'Los Cabos, Mexico', price: 520, rating: 4.88, reviews: 203, tag: 'Luxury', specs: '5 bed • 3 bath', image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&h=400&fit=crop' },
+    { id: 5, name: 'Sakura Villa', location: 'Hokkaido, Japan', price: 340, rating: 4.92, reviews: 178, tag: 'Exclusive', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=600&h=400&fit=crop' },
+    { id: 6, name: 'Cliffside Casita', location: 'Faro, Portugal', price: 210, rating: 4.80, reviews: 134, tag: 'Budget', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1592919505780-303950717480?w=600&h=400&fit=crop' },
+    { id: 7, name: 'Saguaro Retreat', location: 'Phoenix, AZ', price: 260, rating: 4.87, reviews: 167, tag: 'Desert', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600&h=400&fit=crop' },
+    { id: 8, name: 'Loch Aria Cottage', location: 'County Kerry, Ireland', price: 300, rating: 4.91, reviews: 198, tag: 'Lakeside', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1476357471311-43c0db9fb2b4?w=600&h=400&fit=crop' },
   ];
 
   const [savedListings, setSavedListings] = React.useState<number[]>([]);
@@ -145,8 +76,9 @@ const HomePage = () => {
             alignItems: 'center',
             justifyContent: 'center',
             minHeight: '100vh',
-            paddingTop: '96px',
-            paddingBottom: '64px',
+            paddingTop: isMobile ? '80px' : '96px',
+            paddingBottom: isMobile ? '40px' : '64px',
+            padding: isMobile ? '80px 16px 40px' : '96px 32px 64px',
           }}
         >
           <div
@@ -449,7 +381,7 @@ const HomePage = () => {
                   }}
                 >
                   <img
-                    src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop"
+                    src={listing.image}
                     alt={listing.name}
                     style={{
                       position: 'absolute',

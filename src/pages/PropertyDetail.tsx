@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Listing {
   id: string;
@@ -18,6 +19,7 @@ const PropertyDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const isMobile = useIsMobile();
 
   const state = location.state as {
     listing?: Listing;
@@ -190,13 +192,14 @@ const PropertyDetail = () => {
       <div style={{
         maxWidth: '1120px',
         margin: '24px auto 32px',
+        padding: isMobile ? '0 16px' : '0',
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gridTemplateRows: 'repeat(2, 200px)',
-        gap: '12px',
-        borderRadius: '20px',
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+        gridTemplateRows: isMobile ? 'auto' : 'repeat(2, 200px)',
+        gap: '8px',
+        borderRadius: '16px',
         overflow: 'hidden',
-        height: 'clamp(300px, 44vw, 440px)'
+        height: isMobile ? '260px' : 'clamp(300px, 44vw, 440px)'
       }}>
         {/* Main image - spans 2 rows, 1 column */}
         <div style={{ gridColumn: 1, gridRow: '1 / 3', position: 'relative' }}>
@@ -249,8 +252,8 @@ const PropertyDetail = () => {
           </button>
         </div>
 
-        {/* Smaller images - 2x2 grid on right */}
-        {images.slice(1, 5).map((img, idx) => (
+        {/* Smaller images - 2x2 grid on right (desktop only) */}
+        {!isMobile && images.slice(1, 5).map((img, idx) => (
           <img
             key={idx}
             src={img}
@@ -264,9 +267,10 @@ const PropertyDetail = () => {
       <div style={{
         maxWidth: '1120px',
         margin: '0 auto',
+        padding: isMobile ? '0 16px' : '0',
         display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1fr) 350px',
-        gap: '32px'
+        gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1fr) 350px',
+        gap: isMobile ? '24px' : '32px'
       }}>
         {/* Left column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -329,7 +333,7 @@ const PropertyDetail = () => {
             <h3 style={{ color: '#0B1F17', fontSize: '18px', fontWeight: 700, fontFamily: 'Archivo', marginBottom: '16px' }}>
               Amenities
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '12px' }}>
               {amenities.map((amenity, idx) => (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ color: '#15794C', fontSize: '16px' }}>✓</span>
@@ -350,7 +354,7 @@ const PropertyDetail = () => {
               <span style={{ fontSize: '18px' }}>★★★★★</span>
               <span style={{ color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>4.9 (127 reviews)</span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '12px' }}>
               {[
                 { name: 'Sarah M.', text: 'Fantastic property! Perfect golf getaway.' },
                 { name: 'John D.', text: 'Amazing views and excellent hospitality.' },
@@ -369,7 +373,7 @@ const PropertyDetail = () => {
         </div>
 
         {/* Right column - booking widget */}
-        <div style={{ position: 'sticky', top: '92px', height: 'fit-content' }}>
+        <div style={{ position: isMobile ? 'static' : 'sticky', top: isMobile ? 'auto' : '92px', height: 'fit-content' }}>
           <div style={{
             background: 'white',
             border: '1px solid #EDEBE1',

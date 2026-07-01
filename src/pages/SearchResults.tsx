@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
 
 interface Listing {
@@ -28,6 +29,8 @@ const SAMPLE: Listing[] = [
 const SearchResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const [showMap, setShowMap] = useState(false);
   const state = location.state as {
     location?: string;
     checkIn?: Date | string;
@@ -106,105 +109,34 @@ const SearchResults = () => {
   return (
     <div style={{ background: '#F6F5EF', height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <div style={{ flexShrink: 0, borderBottom: '1px solid #EDEBE1', background: '#F6F5EF', padding: '12px 24px' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+      <div style={{ flexShrink: 0, borderBottom: '1px solid #EDEBE1', background: '#F6F5EF', padding: '12px 16px' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
           {/* Logo */}
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0
-            }}
-          >
-            <div style={{
-              width: '32px',
-              height: '32px',
-              background: '#0B1F17',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              color: '#C7F04A',
-              fontSize: '18px'
-            }}>
-              T
-            </div>
-            <span style={{ color: '#15794C', fontSize: '16px', fontWeight: 700, fontFamily: 'Archivo' }}>TeeBnB</span>
+          <button onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}>
+            <div style={{ width: '32px', height: '32px', background: '#0B1F17', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#C7F04A', fontSize: '18px' }}>T</div>
+            {!isMobile && <span style={{ color: '#15794C', fontSize: '16px', fontWeight: 700, fontFamily: 'Archivo' }}>TeeBnB</span>}
           </button>
 
           {/* Search Bar */}
-          <div style={{
-            flex: 1,
-            maxWidth: '400px',
-            display: 'flex',
-            gap: '8px',
-            alignItems: 'center',
-            background: 'white',
-            border: '1px solid #EDEBE1',
-            borderRadius: '8px',
-            padding: '8px 12px'
-          }}>
+          <div style={{ flex: 1, maxWidth: isMobile ? '100%' : '400px', display: 'flex', gap: '8px', alignItems: 'center', background: 'white', border: '1px solid #EDEBE1', borderRadius: '8px', padding: '8px 12px' }}>
             <input
               type="text"
               placeholder={`${searchLocation || 'Location'} · ${checkIn ? checkIn.toLocaleDateString() : 'Dates'} · ${guests} guests`}
-              style={{
-                flex: 1,
-                border: 'none',
-                outline: 'none',
-                fontSize: '14px',
-                color: '#0B1F17',
-                fontFamily: 'Hanken Grotesk'
-              }}
+              style={{ flex: 1, border: 'none', outline: 'none', fontSize: '14px', color: '#0B1F17', fontFamily: 'Hanken Grotesk', minWidth: 0 }}
               readOnly
             />
-            <button
-              style={{
-                background: '#0B1F17',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '6px 12px',
-                cursor: 'pointer',
-                fontSize: '12px',
-                fontWeight: 600,
-                fontFamily: 'Archivo'
-              }}
-            >
+            <button style={{ background: '#0B1F17', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer', fontSize: '12px', fontWeight: 600, fontFamily: 'Archivo', whiteSpace: 'nowrap' }}>
               Search
             </button>
           </div>
 
-          <button
-            onClick={() => navigate('/list-property')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#15794C',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 600,
-              fontFamily: 'Hanken Grotesk'
-            }}
-          >
-            List your place
-          </button>
+          {!isMobile && (
+            <button onClick={() => navigate('/list-property')} style={{ background: 'none', border: 'none', color: '#15794C', cursor: 'pointer', fontSize: '14px', fontWeight: 600, fontFamily: 'Hanken Grotesk', whiteSpace: 'nowrap' }}>
+              List your place
+            </button>
+          )}
 
-          <button
-            onClick={() => navigate('/profile')}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: '#0B1F17',
-              padding: 0
-            }}
-          >
+          <button onClick={() => navigate('/profile')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#0B1F17', padding: 0, flexShrink: 0 }}>
             <Menu size={24} />
           </button>
         </div>
@@ -242,15 +174,27 @@ const SearchResults = () => {
         </div>
       </div>
 
+      {/* Mobile map toggle */}
+      {isMobile && (
+        <div style={{ flexShrink: 0, padding: '8px 16px', background: '#F6F5EF', borderBottom: '1px solid #EDEBE1', display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            onClick={() => setShowMap(m => !m)}
+            style={{ background: '#0B1F17', color: 'white', border: 'none', borderRadius: '20px', padding: '8px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, fontFamily: 'Archivo' }}
+          >
+            {showMap ? '← List view' : 'Show map'}
+          </button>
+        </div>
+      )}
+
       {/* Main content */}
       <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
-        {/* Left panel - listings */}
+        {/* Left panel - listings (hidden on mobile when map is shown) */}
         <div style={{
-          flex: '1 1 54%',
+          flex: isMobile ? '1 1 100%' : '1 1 54%',
           overflowY: 'auto',
-          borderRight: '1px solid #EDEBE1',
+          borderRight: isMobile ? 'none' : '1px solid #EDEBE1',
           padding: '16px',
-          display: 'flex',
+          display: isMobile && showMap ? 'none' : 'flex',
           flexDirection: 'column',
           gap: '12px'
         }}>
@@ -273,6 +217,7 @@ const SearchResults = () => {
                 }
                 style={{
                   display: 'flex',
+                  flexDirection: isMobile ? 'column' : 'row',
                   gap: '12px',
                   padding: '12px',
                   background: 'white',
@@ -293,8 +238,8 @@ const SearchResults = () => {
                   src={listing.images?.[0] || 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop'}
                   alt={listing.property_title}
                   style={{
-                    width: '200px',
-                    height: '140px',
+                    width: isMobile ? '100%' : '200px',
+                    height: isMobile ? '180px' : '140px',
                     objectFit: 'cover',
                     borderRadius: '8px',
                     flexShrink: 0
@@ -363,9 +308,10 @@ const SearchResults = () => {
           )}
         </div>
 
-        {/* Right panel - map placeholder */}
+        {/* Right panel - map placeholder (hidden on mobile unless toggled) */}
         <div style={{
-          flex: '1 1 46%',
+          flex: isMobile ? '1 1 100%' : '1 1 46%',
+          display: isMobile && !showMap ? 'none' : 'block',
           background: 'linear-gradient(135deg, #DDE4DB 0%, #EDEBE1 100%)',
           position: 'relative',
           overflow: 'hidden',
