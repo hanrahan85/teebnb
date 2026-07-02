@@ -271,7 +271,7 @@ const HomePage = () => {
                 fontFamily: "'Archivo', sans-serif",
               }}
             >
-              $0
+              €0
             </div>
             <div
               style={{
