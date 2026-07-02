@@ -16,24 +16,93 @@ const QUICK_DESTINATIONS = [
 ];
 
 const ALL_SUGGESTIONS = [
-  'St Andrews, Scotland',
-  'Gleneagles, Scotland',
-  'Carnoustie, Scotland',
-  'Turnberry, Scotland',
+  // Ireland
+  'Portmarnock, Dublin, Ireland',
+  'The K Club, Kildare, Ireland',
+  'Druids Glen, Wicklow, Ireland',
+  'Ballybunion, Kerry, Ireland',
+  'Lahinch, Clare, Ireland',
+  'Waterville, Kerry, Ireland',
+  'Old Head of Kinsale, Cork, Ireland',
+  'Adare Manor, Limerick, Ireland',
+  'Killarney, Kerry, Ireland',
+  'Doonbeg, Clare, Ireland',
+  'Tralee, Kerry, Ireland',
+  'Powerscourt, Wicklow, Ireland',
+  'Mount Juliet, Kilkenny, Ireland',
+  'Carton House, Kildare, Ireland',
+  'Fota Island, Cork, Ireland',
+  'Rathsallagh, Wicklow, Ireland',
+  'Rosses Point, Sligo, Ireland',
+  'Enniscrone, Sligo, Ireland',
+  'Carne, Mayo, Ireland',
+  'Connemara, Galway, Ireland',
+  'Donegal, Ireland',
+  'Dublin, Ireland',
+  // Northern Ireland
+  'Royal Portrush, Antrim, Northern Ireland',
+  'Royal County Down, Down, Northern Ireland',
+  'Portstewart, Londonderry, Northern Ireland',
+  // Scotland
+  'St Andrews, Fife, Scotland',
+  'Gleneagles, Perthshire, Scotland',
+  'Carnoustie, Angus, Scotland',
+  'Turnberry, Ayrshire, Scotland',
+  'Muirfield, East Lothian, Scotland',
+  'Troon, Ayrshire, Scotland',
+  'Kingsbarns, Fife, Scotland',
+  'Castle Stuart, Inverness, Scotland',
+  'Trump International, Aberdeenshire, Scotland',
+  'Loch Lomond, Scotland',
+  'Edinburgh, Scotland',
+  // England
+  'Royal Birkdale, Southport, England',
+  'Royal Liverpool (Hoylake), England',
+  'Wentworth, Surrey, England',
+  'The Belfry, Warwickshire, England',
+  'Sunningdale, Berkshire, England',
+  'Swinley Forest, Berkshire, England',
+  'Rye, East Sussex, England',
+  'Sandwich (Royal St George\'s), Kent, England',
+  'Woburn, Buckinghamshire, England',
+  // Wales
+  'Celtic Manor, Newport, Wales',
+  'Royal Porthcawl, Glamorgan, Wales',
+  // Portugal
   'Algarve, Portugal',
-  'Quinta do Lago, Portugal',
-  'Vilamoura, Portugal',
-  'Marbella, Spain',
+  'Quinta do Lago, Algarve, Portugal',
+  'Vale do Lobo, Algarve, Portugal',
+  'Vilamoura, Algarve, Portugal',
+  'Penha Longa, Sintra, Portugal',
+  'Troia, Setubal, Portugal',
+  'Oitavos, Cascais, Portugal',
+  // Spain
+  'Marbella, Andalucia, Spain',
   'Costa del Sol, Spain',
-  'Valderrama, Spain',
-  'Pebble Beach, California',
-  'Scottsdale, Arizona',
-  'Kiawah Island, South Carolina',
-  'Augusta, Georgia',
-  'Pinehurst, North Carolina',
+  'Valderrama, Sotogrande, Spain',
+  'La Manga Club, Murcia, Spain',
+  'PGA Catalunya, Girona, Spain',
+  'Mallorca, Spain',
+  'Madrid, Spain',
+  // USA
+  'Pebble Beach, California, USA',
+  'Scottsdale, Arizona, USA',
+  'Kiawah Island, South Carolina, USA',
+  'Augusta, Georgia, USA',
+  'Pinehurst, North Carolina, USA',
+  'Bandon Dunes, Oregon, USA',
+  'Whistling Straits, Wisconsin, USA',
+  'Bethpage Black, New York, USA',
+  'Torrey Pines, San Diego, USA',
+  'TPC Sawgrass, Ponte Vedra, Florida, USA',
+  'Hilton Head, South Carolina, USA',
+  // Rest of world
   'Dubai, UAE',
   'Cape Town, South Africa',
   'Mauritius',
+  'Queenstown, New Zealand',
+  'Singapore',
+  'Tokyo, Japan',
 ];
 
 const SearchBar = () => {
@@ -47,9 +116,16 @@ const SearchBar = () => {
   const [checkOutOpen, setCheckOutOpen] = useState(false);
   const locationRef = useRef<HTMLDivElement>(null);
 
-  const filteredSuggestions = locationInput.trim().length > 0
-    ? ALL_SUGGESTIONS.filter(s => s.toLowerCase().includes(locationInput.toLowerCase()))
+  const trimmed = locationInput.trim();
+  const matched = trimmed.length > 0
+    ? ALL_SUGGESTIONS.filter(s => s.toLowerCase().includes(trimmed.toLowerCase()))
     : [];
+  // Always show something: matched results + a free-text fallback if no exact match
+  const filteredSuggestions = trimmed.length === 0
+    ? [] // will show "popular" panel instead
+    : matched.length > 0
+      ? matched
+      : [`Search near "${trimmed}"`]; // fallback so user is never stuck
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -123,18 +199,45 @@ const SearchBar = () => {
           </div>
 
           {/* Suggestions dropdown */}
-          {showSuggestions && filteredSuggestions.length > 0 && (
+          {showSuggestions && (filteredSuggestions.length > 0 || locationInput.trim().length === 0) && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-neutral-200 z-50 overflow-hidden">
-              {filteredSuggestions.slice(0, 6).map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onMouseDown={() => handleSuggestionClick(suggestion)}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-emerald-50 transition-colors text-left"
-                >
-                  <MapPin className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                  <span className="text-sm text-neutral-700">{suggestion}</span>
-                </button>
-              ))}
+              {/* Empty input: show popular destinations */}
+              {locationInput.trim().length === 0 ? (
+                <>
+                  <p className="px-4 pt-3 pb-1 text-xs font-semibold text-neutral-400 uppercase tracking-wide">Popular destinations</p>
+                  {QUICK_DESTINATIONS.map((dest) => (
+                    <button
+                      key={dest}
+                      onMouseDown={() => handleSuggestionClick(dest)}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-emerald-50 transition-colors text-left"
+                    >
+                      <MapPin className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                      <span className="text-sm text-neutral-700">{dest}</span>
+                    </button>
+                  ))}
+                </>
+              ) : (
+                /* Typing: show matches or free-text fallback */
+                filteredSuggestions.slice(0, 8).map((suggestion) => {
+                  const isFallback = suggestion.startsWith('Search near');
+                  return (
+                    <button
+                      key={suggestion}
+                      onMouseDown={() => {
+                        // For free-text fallback, store just what the user typed
+                        const value = isFallback ? locationInput.trim() : suggestion;
+                        handleSuggestionClick(value);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-emerald-50 transition-colors text-left"
+                    >
+                      <MapPin className={`h-4 w-4 flex-shrink-0 ${isFallback ? 'text-neutral-400' : 'text-emerald-500'}`} />
+                      <span className={`text-sm ${isFallback ? 'text-neutral-500 italic' : 'text-neutral-700'}`}>
+                        {suggestion}
+                      </span>
+                    </button>
+                  );
+                })
+              )}
             </div>
           )}
         </div>
