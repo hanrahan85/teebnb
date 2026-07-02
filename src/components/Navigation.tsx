@@ -101,6 +101,12 @@ const Navigation = () => {
                 <>
                   <button style={{ ...NAV_BTN, color: '#15794C' }} onClick={() => handleNavigate('/list-property')}>Become a host</button>
                   <button
+                    onClick={() => handleNavigate('/auth?mode=signin')}
+                    style={{ background: 'transparent', border: '1px solid #CCCCCC', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 600, fontSize: '14px', padding: '8px 18px', borderRadius: '20px', outline: 'none', whiteSpace: 'nowrap' }}
+                  >
+                    Sign in
+                  </button>
+                  <button
                     onClick={() => handleNavigate('/auth')}
                     style={{ background: '#C7F04A', border: 'none', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 700, fontSize: '14px', padding: '8px 18px', borderRadius: '20px', outline: 'none', whiteSpace: 'nowrap' }}
                   >
@@ -142,12 +148,20 @@ const Navigation = () => {
                   <button style={{ ...MOBILE_BTN, color: '#5C6B62' }} onClick={handleSignOut}>Sign out</button>
                 </>
               ) : (
-                <button
-                  style={{ margin: '8px 12px', background: '#C7F04A', border: 'none', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 700, fontSize: '15px', padding: '12px 24px', borderRadius: '8px', width: 'calc(100% - 24px)' }}
-                  onClick={() => handleNavigate('/auth')}
-                >
-                  Sign up / Log in
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', margin: '8px 12px' }}>
+                  <button
+                    style={{ background: 'transparent', border: '1px solid #CCCCCC', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 600, fontSize: '15px', padding: '12px 24px', borderRadius: '8px', width: '100%' }}
+                    onClick={() => handleNavigate('/auth?mode=signin')}
+                  >
+                    Sign in
+                  </button>
+                  <button
+                    style={{ background: '#C7F04A', border: 'none', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 700, fontSize: '15px', padding: '12px 24px', borderRadius: '8px', width: '100%' }}
+                    onClick={() => handleNavigate('/auth')}
+                  >
+                    Sign up
+                  </button>
+                </div>
               )}
             </div>
           </div>

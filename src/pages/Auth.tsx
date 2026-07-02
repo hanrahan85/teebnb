@@ -21,6 +21,13 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // Pre-select tab based on ?mode=signin param
+  useEffect(() => {
+    if (searchParams.get('mode') === 'signin') {
+      setActiveTab('signin');
+    }
+  }, [searchParams]);
+
   // Check if user is already authenticated
   useEffect(() => {
     if (user) {
