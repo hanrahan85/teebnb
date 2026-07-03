@@ -141,7 +141,7 @@ const Destinations = () => {
                 (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
                 (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
               }}
-              onClick={() => navigate('/search-results')}
+              onClick={() => navigate('/search-results', { state: { location: dest.country } })}
             >
               {/* Image */}
               <div style={{ position: 'relative', height: '200px' }}>
@@ -238,7 +238,7 @@ const Destinations = () => {
                 </div>
 
                 <button
-                  onClick={(e) => { e.stopPropagation(); navigate('/search-results'); }}
+                  onClick={(e) => { e.stopPropagation(); navigate('/search-results', { state: { location: dest.country } }); }}
                   style={{
                     width: '100%',
                     background: '#0B1F17',

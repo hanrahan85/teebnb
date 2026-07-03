@@ -5,6 +5,32 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import InteractiveMap from '@/components/InteractiveMap';
 
+const DESTINATION_COUNTRIES: Record<string, { flag: string; search: string }> = {
+  'Northern Ireland': { flag: '🇬🇧', search: 'Northern Ireland' },
+  'Ireland':          { flag: '🇮🇪', search: 'Ireland' },
+  'Scotland':         { flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', search: 'Scotland' },
+  'England':          { flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', search: 'England' },
+  'Wales':            { flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿', search: 'Wales' },
+  'Portugal':         { flag: '🇵🇹', search: 'Portugal' },
+  'Spain':            { flag: '🇪🇸', search: 'Spain' },
+  'USA':              { flag: '🇺🇸', search: 'USA' },
+  'New Zealand':      { flag: '🇳🇿', search: 'New Zealand' },
+  'Australia':        { flag: '🇦🇺', search: 'Australia' },
+  'South Africa':     { flag: '🇿🇦', search: 'South Africa' },
+  'UAE':              { flag: '🇦🇪', search: 'UAE' },
+  'Japan':            { flag: '🇯🇵', search: 'Japan' },
+  'Mexico':           { flag: '🇲🇽', search: 'Mexico' },
+};
+
+function detectCountry(address: string) {
+  for (const [country, meta] of Object.entries(DESTINATION_COUNTRIES)) {
+    if (address.toLowerCase().includes(country.toLowerCase())) {
+      return { name: country, ...meta };
+    }
+  }
+  return null;
+}
+
 interface Listing {
   id: string;
   property_title: string;
@@ -226,6 +252,25 @@ const PropertyDetail = () => {
           <span style={{ color: '#5C6B62', fontSize: '14px', fontFamily: 'Hanken Grotesk' }}>
             {listing.full_address}
           </span>
+          {(() => {
+            const country = detectCountry(listing.full_address);
+            if (!country) return null;
+            return (
+              <button
+                onClick={() => navigate('/search-results', { state: { location: country.search } })}
+                title={`More stays in ${country.name}`}
+                style={{
+                  background: '#F0FAF5', color: '#15794C',
+                  border: '1px solid #C7F04A',
+                  padding: '4px 10px', borderRadius: '12px',
+                  fontSize: '12px', fontFamily: 'Hanken Grotesk', fontWeight: 600,
+                  cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px',
+                }}
+              >
+                {country.flag} More stays in {country.name}
+              </button>
+            );
+          })()}
           <span style={{
             background: '#C7F04A',
             color: '#0B1F17',

@@ -5,6 +5,35 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
 import InteractiveMap, { type MapListing } from '@/components/InteractiveMap';
 
+// Maps country name → flag emoji + search keyword
+const DESTINATION_COUNTRIES: Record<string, { flag: string; search: string }> = {
+  'Ireland':          { flag: '🇮🇪', search: 'Ireland' },
+  'Northern Ireland': { flag: '🇬🇧', search: 'Northern Ireland' },
+  'Scotland':         { flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', search: 'Scotland' },
+  'England':          { flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', search: 'England' },
+  'Wales':            { flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿', search: 'Wales' },
+  'Portugal':         { flag: '🇵🇹', search: 'Portugal' },
+  'Spain':            { flag: '🇪🇸', search: 'Spain' },
+  'USA':              { flag: '🇺🇸', search: 'USA' },
+  'New Zealand':      { flag: '🇳🇿', search: 'New Zealand' },
+  'Australia':        { flag: '🇦🇺', search: 'Australia' },
+  'South Africa':     { flag: '🇿🇦', search: 'South Africa' },
+  'UAE':              { flag: '🇦🇪', search: 'UAE' },
+  'Japan':            { flag: '🇯🇵', search: 'Japan' },
+  'Mexico':           { flag: '🇲🇽', search: 'Mexico' },
+};
+
+function detectCountry(address: string): { name: string; flag: string; search: string } | null {
+  // Check "Northern Ireland" before "Ireland" to avoid false match
+  const ordered = ['Northern Ireland', ...Object.keys(DESTINATION_COUNTRIES).filter(k => k !== 'Northern Ireland')];
+  for (const country of ordered) {
+    if (address.toLowerCase().includes(country.toLowerCase())) {
+      return { name: country, ...DESTINATION_COUNTRIES[country] };
+    }
+  }
+  return null;
+}
+
 interface Listing {
   id: string;
   property_title: string;
@@ -526,7 +555,7 @@ const SearchResults = () => {
                       <h3 style={{ color: '#0B1F17', fontSize: '19px', fontWeight: 700, fontFamily: 'Archivo', margin: '0 0 8px 0' }}>
                         {listing.property_title}
                       </h3>
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
                         <span style={{ background: '#15794C', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontFamily: 'Hanken Grotesk' }}>
                           Sleeps {listing.max_guests}
                         </span>
@@ -537,6 +566,27 @@ const SearchResults = () => {
                               : (listing.nearby_golf_courses as string[])?.[0]?.substring(0, 22)}
                           </span>
                         )}
+                        {(() => {
+                          const country = detectCountry(listing.full_address);
+                          if (!country) return null;
+                          return (
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                navigate('/search-results', { state: { location: country.search } });
+                              }}
+                              title={`More stays in ${country.name}`}
+                              style={{
+                                background: '#F0FAF5', color: '#15794C', border: '1px solid #C7F04A',
+                                padding: '3px 8px', borderRadius: '10px',
+                                fontSize: '11px', fontFamily: 'Hanken Grotesk', fontWeight: 600,
+                                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px',
+                              }}
+                            >
+                              {country.flag} {country.name}
+                            </button>
+                          );
+                        })()}
                       </div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
