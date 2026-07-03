@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Dark green circle background -->
+  <circle cx="32" cy="32" r="32" fill="#0B1F17"/>
+  <!-- Gold border ring -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#C8A24B" stroke-width="2.5"/>
+  <!-- Serif "T" letterform in gold -->
+  <!-- Top horizontal bar -->
+  <rect x="14" y="17" width="36" height="5" rx="1" fill="#C8A24B"/>
+  <!-- Stem -->
+  <rect x="29.5" y="22" width="5" height="26" fill="#C8A24B"/>
+  <!-- Bottom serif -->
+  <rect x="24" y="45" width="16" height="3" rx="1" fill="#C8A24B"/>
+</svg>
