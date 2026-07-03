@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
 import InteractiveMap from '@/components/InteractiveMap';
 
 interface Listing {
@@ -23,6 +24,7 @@ const PropertyDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isMobile = useIsMobile();
+  const { user } = useAuth();
 
   const state = location.state as {
     listing?: Listing;
@@ -183,16 +185,42 @@ const PropertyDetail = () => {
           ← Back to search
         </button>
 
-        {/* Title */}
-        <h1 style={{
-          color: '#0B1F17',
-          fontSize: '32px',
-          fontWeight: 800,
-          fontFamily: 'Archivo',
-          margin: '0 0 12px 0'
-        }}>
-          {listing.property_title}
-        </h1>
+        {/* Title row */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+          <h1 style={{
+            color: '#0B1F17',
+            fontSize: '32px',
+            fontWeight: 800,
+            fontFamily: 'Archivo',
+            margin: '0 0 12px 0',
+            flex: 1,
+          }}>
+            {listing.property_title}
+          </h1>
+          {user && listing.user_id && user.id === listing.user_id && (
+            <button
+              onClick={() => navigate('/list-property', { state: { editListingId: listing.id } })}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                background: '#EFF6FF',
+                color: '#1D4ED8',
+                border: '1px solid #BFDBFE',
+                borderRadius: '8px',
+                fontFamily: 'Archivo',
+                fontWeight: 600,
+                fontSize: '14px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+            >
+              ✏️ Edit listing
+            </button>
+          )}
+        </div>
 
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
           <span style={{ color: '#5C6B62', fontSize: '14px', fontFamily: 'Hanken Grotesk' }}>
