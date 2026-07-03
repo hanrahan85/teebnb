@@ -31,8 +31,7 @@ const Auth = () => {
   // Check if user is already authenticated
   useEffect(() => {
     if (user) {
-      console.log('User is authenticated, redirecting to list-property');
-      navigate("/list-property");
+      navigate("/dashboard");
     }
   }, [user, navigate]);
 
@@ -70,7 +69,7 @@ const Auth = () => {
           color: 'white',
         }
       });
-      navigate("/list-property");
+      navigate("/dashboard");
     }
     setLoading(false);
   };
