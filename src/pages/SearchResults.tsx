@@ -11,6 +11,7 @@ interface Listing {
   full_address: string;
   nightly_price: number;
   max_guests: number;
+  bedrooms: number | null;
   nearby_golf_courses: string | string[] | null;
   description: string | null;
   photos: string[] | null;
@@ -19,6 +20,28 @@ interface Listing {
   user_id?: string;
   lat?: number;
   lng?: number;
+  // Golf-specific fields
+  golf_bag_storage?: boolean;
+  partnered_with_course?: boolean;
+  tournament_discounts?: boolean;
+  can_host_groups?: boolean;
+  instant_booking?: boolean;
+  parking_availability?: string | null;
+  distance_to_course?: number | null;
+  distance_unit?: string | null;
+  amenities?: {
+    wifi?: boolean;
+    tv?: boolean;
+    kitchen?: boolean;
+    golfClubStorage?: boolean;
+    washerDryer?: boolean;
+    heating?: boolean;
+    ac?: boolean;
+    golfCourseView?: boolean;
+    patioBalcony?: boolean;
+    breakfastIncluded?: boolean;
+    shuttleService?: boolean;
+  } | null;
 }
 
 const SAMPLE: Listing[] = [
@@ -163,11 +186,28 @@ const SearchResults = () => {
 
   const filteredListings = listings.filter(listing => {
     if (activeFilters.size === 0) return true;
-    let matches = true;
-    if (activeFilters.has('sleeps-4') && listing.max_guests < 4) matches = false;
-    if (activeFilters.has('sleeps-6') && listing.max_guests < 6) matches = false;
-    if (activeFilters.has('under-200') && listing.nightly_price >= 200) matches = false;
-    return matches;
+    // Capacity
+    if (activeFilters.has('sleeps-4') && listing.max_guests < 4) return false;
+    if (activeFilters.has('sleeps-6') && listing.max_guests < 6) return false;
+    if (activeFilters.has('sleeps-8') && listing.max_guests < 8) return false;
+    // Price
+    if (activeFilters.has('under-150') && listing.nightly_price >= 150) return false;
+    if (activeFilters.has('under-200') && listing.nightly_price >= 200) return false;
+    if (activeFilters.has('under-300') && listing.nightly_price >= 300) return false;
+    // Golf features
+    if (activeFilters.has('golf-bag-storage') && !listing.golf_bag_storage) return false;
+    if (activeFilters.has('club-storage') && !listing.amenities?.golfClubStorage) return false;
+    if (activeFilters.has('course-view') && !listing.amenities?.golfCourseView) return false;
+    if (activeFilters.has('partnered-course') && !listing.partnered_with_course) return false;
+    if (activeFilters.has('group-friendly') && !listing.can_host_groups) return false;
+    if (activeFilters.has('tournament-deals') && !listing.tournament_discounts) return false;
+    if (activeFilters.has('shuttle') && !listing.amenities?.shuttleService) return false;
+    // Amenities
+    if (activeFilters.has('wifi') && !listing.amenities?.wifi) return false;
+    if (activeFilters.has('breakfast') && !listing.amenities?.breakfastIncluded) return false;
+    if (activeFilters.has('parking') && (!listing.parking_availability || listing.parking_availability === 'None')) return false;
+    if (activeFilters.has('instant-book') && !listing.instant_booking) return false;
+    return true;
   });
 
   const toggleFilter = (filterId: string) => {
@@ -195,13 +235,27 @@ const SearchResults = () => {
     }));
 
   const filterOptions = [
-    { id: 'any-type', label: 'Any type' },
-    { id: 'sleeps-4', label: 'Sleeps 4+' },
-    { id: 'sleeps-6', label: 'Sleeps 6+' },
-    { id: 'pet-friendly', label: 'Pet-friendly' },
-    { id: 'pool', label: 'Pool' },
-    { id: 'near-links', label: 'Near links' },
-    { id: 'under-200', label: 'Under €200' },
+    // Golf-specific (shown first — most unique to TeeBnB)
+    { id: 'golf-bag-storage',  label: '⛳ Bag storage',       group: 'golf' },
+    { id: 'club-storage',      label: '🏌️ Club storage',      group: 'golf' },
+    { id: 'course-view',       label: '🌿 Course view',       group: 'golf' },
+    { id: 'partnered-course',  label: '🤝 Partner course',    group: 'golf' },
+    { id: 'group-friendly',    label: '👥 Group-friendly',    group: 'golf' },
+    { id: 'tournament-deals',  label: '🏆 Tournament deals',  group: 'golf' },
+    { id: 'shuttle',           label: '🚌 Shuttle service',   group: 'golf' },
+    // Capacity
+    { id: 'sleeps-4',  label: 'Sleeps 4+',  group: 'capacity' },
+    { id: 'sleeps-6',  label: 'Sleeps 6+',  group: 'capacity' },
+    { id: 'sleeps-8',  label: 'Sleeps 8+',  group: 'capacity' },
+    // Price
+    { id: 'under-150', label: 'Under €150', group: 'price' },
+    { id: 'under-200', label: 'Under €200', group: 'price' },
+    { id: 'under-300', label: 'Under €300', group: 'price' },
+    // Amenities
+    { id: 'wifi',         label: '📶 WiFi',             group: 'amenities' },
+    { id: 'breakfast',    label: '🍳 Breakfast',         group: 'amenities' },
+    { id: 'parking',      label: '🚗 Parking',           group: 'amenities' },
+    { id: 'instant-book', label: '⚡ Instant book',      group: 'amenities' },
   ];
 
   const getCoverImage = (listing: Listing): string =>
@@ -346,24 +400,53 @@ const SearchResults = () => {
       </div>
 
       {/* Filter pills */}
-      <div style={{ flexShrink: 0, borderBottom: '1px solid #EDEBE1', background: '#F6F5EF', padding: '12px 24px', overflowX: 'auto' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', gap: '8px' }}>
-          {filterOptions.map(filter => (
+      <div style={{ flexShrink: 0, borderBottom: '1px solid #EDEBE1', background: '#F6F5EF', overflowX: 'auto' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '10px 16px', display: 'flex', gap: '6px', alignItems: 'center' }}>
+          {/* Clear all */}
+          {activeFilters.size > 0 && (
             <button
-              key={filter.id}
-              onClick={() => toggleFilter(filter.id)}
+              onClick={() => setActiveFilters(new Set())}
               style={{
-                padding: '6px 12px', borderRadius: '20px',
-                border: `1px solid ${activeFilters.has(filter.id) ? '#15794C' : '#EDEBE1'}`,
-                background: activeFilters.has(filter.id) ? '#15794C' : 'white',
-                color: activeFilters.has(filter.id) ? 'white' : '#0B1F17',
-                cursor: 'pointer', fontSize: '13px', fontFamily: 'Hanken Grotesk', fontWeight: 500, whiteSpace: 'nowrap'
+                padding: '6px 12px', borderRadius: '20px', flexShrink: 0,
+                border: '1px solid #0B1F17', background: '#0B1F17', color: 'white',
+                cursor: 'pointer', fontSize: '12px', fontFamily: 'Hanken Grotesk', fontWeight: 600, whiteSpace: 'nowrap',
               }}
             >
-              {filter.label}
+              ✕ Clear ({activeFilters.size})
             </button>
-          ))}
+          )}
+          {filterOptions.map((filter, idx) => {
+            const prevGroup = idx > 0 ? filterOptions[idx - 1].group : filter.group;
+            const showDivider = idx > 0 && filter.group !== prevGroup;
+            return (
+              <React.Fragment key={filter.id}>
+                {showDivider && (
+                  <div style={{ width: '1px', height: '24px', background: '#DEDBD0', flexShrink: 0, margin: '0 2px' }} />
+                )}
+                <button
+                  onClick={() => toggleFilter(filter.id)}
+                  style={{
+                    padding: '6px 12px', borderRadius: '20px', flexShrink: 0,
+                    border: `1px solid ${activeFilters.has(filter.id) ? '#15794C' : '#DEDBD0'}`,
+                    background: activeFilters.has(filter.id) ? '#15794C' : 'white',
+                    color: activeFilters.has(filter.id) ? 'white' : '#0B1F17',
+                    cursor: 'pointer', fontSize: '13px', fontFamily: 'Hanken Grotesk', fontWeight: activeFilters.has(filter.id) ? 600 : 400,
+                    whiteSpace: 'nowrap', transition: 'all 0.15s',
+                  }}
+                >
+                  {filter.label}
+                </button>
+              </React.Fragment>
+            );
+          })}
         </div>
+        {activeFilters.size > 0 && (
+          <div style={{ padding: '0 16px 8px', maxWidth: '1400px', margin: '0 auto' }}>
+            <span style={{ fontSize: '12px', color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>
+              {filteredListings.length} {filteredListings.length === 1 ? 'stay' : 'stays'} match your filters
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Mobile map toggle */}
