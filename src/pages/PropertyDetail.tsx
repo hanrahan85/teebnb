@@ -170,17 +170,20 @@ const PropertyDetail = () => {
     });
   };
 
-  // Build amenities from listing data (form stores them as a nested object)
+  // Build amenities — handles both array format ["WiFi","Pool",...] and
+  // legacy object format {wifi: true, pool: true, ...}
   const AMENITY_LABELS: Record<string, string> = {
     wifi: 'WiFi', fullKitchen: 'Full kitchen', clubStorage: 'Club storage',
     freeParking: 'Free parking', golfCart: 'Golf cart', puttingGreen: 'Putting green',
     washerDryer: 'Washer/Dryer', smartTV: 'Smart TV', pool: 'Pool',
     hotTub: 'Hot tub', airConditioning: 'Air conditioning',
   };
-  const rawAmenities: Record<string, boolean> = listing.amenities || {};
-  const amenities: string[] = Object.entries(rawAmenities)
-    .filter(([, v]) => v)
-    .map(([k]) => AMENITY_LABELS[k] || k);
+  const rawAmenities = listing.amenities || {};
+  const amenities: string[] = Array.isArray(rawAmenities)
+    ? (rawAmenities as string[])
+    : Object.entries(rawAmenities as Record<string, boolean>)
+        .filter(([, v]) => v)
+        .map(([k]) => AMENITY_LABELS[k] || k);
   // Fall back to default set if listing has no amenity data
   const displayAmenities = amenities.length > 0
     ? amenities
