@@ -61,6 +61,8 @@ const PropertyDetail = () => {
 
   const [listing, setListing] = useState<Listing | null>(state?.listing || null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const [checkIn, setCheckIn] = useState<Date | undefined>(
     state?.checkIn ? new Date(state.checkIn) : undefined
   );
@@ -321,7 +323,8 @@ const PropertyDetail = () => {
           <img
             src={images[0] || 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop'}
             alt="Main"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'zoom-in' }}
           />
           <button
             onClick={() => setCurrentImageIndex(Math.max(0, currentImageIndex - 1))}
@@ -373,7 +376,8 @@ const PropertyDetail = () => {
             key={idx}
             src={img}
             alt={`Photo ${idx + 2}`}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onClick={() => { setLightboxIndex(idx + 1); setLightboxOpen(true); }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'zoom-in' }}
           />
         ))}
       </div>
@@ -750,6 +754,76 @@ const PropertyDetail = () => {
           ← Back to all stays
         </button>
       </div>
+
+      {/* ── Lightbox ── */}
+      {lightboxOpen && (
+        <div
+          onClick={() => setLightboxOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            background: 'rgba(0,0,0,0.92)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setLightboxOpen(false)}
+            style={{
+              position: 'absolute', top: '20px', right: '24px',
+              background: 'rgba(255,255,255,0.15)', border: 'none',
+              color: '#fff', fontSize: '28px', width: '44px', height: '44px',
+              borderRadius: '50%', cursor: 'pointer', display: 'flex',
+              alignItems: 'center', justifyContent: 'center', lineHeight: 1
+            }}
+          >×</button>
+
+          {/* Prev */}
+          {lightboxIndex > 0 && (
+            <button
+              onClick={e => { e.stopPropagation(); setLightboxIndex(i => i - 1); }}
+              style={{
+                position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff',
+                fontSize: '32px', width: '52px', height: '52px', borderRadius: '50%',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}
+            >‹</button>
+          )}
+
+          {/* Image */}
+          <img
+            src={images[lightboxIndex]}
+            alt={`Photo ${lightboxIndex + 1}`}
+            onClick={e => e.stopPropagation()}
+            style={{
+              maxWidth: '90vw', maxHeight: '88vh',
+              objectFit: 'contain', borderRadius: '8px',
+              boxShadow: '0 8px 40px rgba(0,0,0,0.6)'
+            }}
+          />
+
+          {/* Next */}
+          {lightboxIndex < images.length - 1 && (
+            <button
+              onClick={e => { e.stopPropagation(); setLightboxIndex(i => i + 1); }}
+              style={{
+                position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff',
+                fontSize: '32px', width: '52px', height: '52px', borderRadius: '50%',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}
+            >›</button>
+          )}
+
+          {/* Counter */}
+          <div style={{
+            position: 'absolute', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+            color: 'rgba(255,255,255,0.7)', fontSize: '14px', fontFamily: 'Hanken Grotesk'
+          }}>
+            {lightboxIndex + 1} / {images.length}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
