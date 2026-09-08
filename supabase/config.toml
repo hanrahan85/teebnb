@@ -11,3 +11,8 @@ verify_jwt = false
 # Deletion identifies the user from their own JWT, so verification stays ON.
 [functions.delete-account]
 verify_jwt = true
+
+# Guests manage bookings via an emailed token, with no account, so this must
+# be callable anonymously. Authorisation is the unguessable token itself.
+[functions.manage-booking]
+verify_jwt = false

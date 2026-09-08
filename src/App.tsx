@@ -20,6 +20,7 @@ const Destinations = lazy(() => import("./pages/Destinations"));
 const Trips = lazy(() => import("./pages/Trips"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Settings = lazy(() => import("./pages/Settings"));
+const ManageBooking = lazy(() => import("./pages/ManageBooking"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 const About = lazy(() => import("./pages/About"));
 const FAQ = lazy(() => import("./pages/FAQ"));
@@ -86,6 +87,14 @@ const App: React.FC = () => {
                 element={
                   <Suspense fallback={<LoadingFallback />}>
                     <Settings />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/manage-booking"
+                element={
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ManageBooking />
                   </Suspense>
                 }
               />

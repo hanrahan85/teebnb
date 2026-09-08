@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { format } from 'date-fns';
 import { X, Lock } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Step = 'details' | 'confirmation';
 
@@ -71,6 +72,9 @@ const BookingFlow = () => {
   const [step, setStep] = useState<Step>('details');
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [accountPassword, setAccountPassword] = useState('');
+  const [creatingAccount, setCreatingAccount] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
   const [bookingRef, setBookingRef] = useState<string | null>(null);
 
   const [details, setDetails] = useState({
@@ -122,6 +126,32 @@ const BookingFlow = () => {
     details.lastName.trim() &&
     details.email.trim() &&
     details.phone.trim();
+
+  const createAccount = async () => {
+    if (accountPassword.length < 6) return;
+    setCreatingAccount(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: details.email,
+        password: accountPassword,
+        options: {
+          data: { full_name: `${details.firstName} ${details.lastName}`, phone: details.phone },
+        },
+      });
+      if (error) throw error;
+      setAccountCreated(true);
+      setAccountPassword('');
+    } catch (e) {
+      const msg = (e as Error).message || '';
+      if (msg.toLowerCase().includes('already registered')) {
+        toast.error('You already have an account with that email — just sign in.');
+      } else {
+        toast.error(`Couldn't create your account: ${msg}`);
+      }
+    } finally {
+      setCreatingAccount(false);
+    }
+  };
 
   const handleConfirm = async () => {
     setSubmitting(true);
@@ -620,7 +650,80 @@ const BookingFlow = () => {
               color: '#0B1F17',
             }}>
               You'll receive a confirmation email with check-in instructions once the host accepts your request.
+              It includes a link to view or cancel this booking — no account needed.
             </div>
+
+            {/* Optional account creation. Deliberately offered AFTER booking so it
+                never gets in the way of checkout. */}
+            {!user && !accountCreated && (
+              <div style={{
+                padding: '20px',
+                background: '#FFFFFF',
+                border: '1px solid #EDEBE1',
+                borderRadius: '12px',
+                marginBottom: '32px',
+                textAlign: 'left',
+              }}>
+                <h3 style={{
+                  fontFamily: "'Archivo', sans-serif", fontWeight: 700,
+                  fontSize: '16px', color: '#0B1F17', margin: '0 0 4px',
+                }}>
+                  Want to keep track of your trips?
+                </h3>
+                <p style={{
+                  fontSize: '13px', color: '#5C6B62', margin: '0 0 14px',
+                  fontFamily: "'Hanken Grotesk', sans-serif", lineHeight: 1.5,
+                }}>
+                  Set a password for <strong>{details.email}</strong> and this booking will be
+                  waiting for you next time. Entirely optional.
+                </p>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <input
+                    type="password"
+                    value={accountPassword}
+                    onChange={(e) => setAccountPassword(e.target.value)}
+                    placeholder="Choose a password"
+                    style={{
+                      flex: '1 1 200px', padding: '11px 12px', border: '1px solid #EDEBE1',
+                      borderRadius: '8px', fontSize: '14px', outline: 'none',
+                      fontFamily: "'Hanken Grotesk', sans-serif", boxSizing: 'border-box',
+                    }}
+                  />
+                  <button
+                    onClick={createAccount}
+                    disabled={creatingAccount || accountPassword.length < 6}
+                    style={{
+                      padding: '11px 20px',
+                      background: accountPassword.length >= 6 && !creatingAccount ? '#C7F04A' : '#E5E7EB',
+                      color: accountPassword.length >= 6 && !creatingAccount ? '#0B1F17' : '#9CA3AF',
+                      border: 'none', borderRadius: '8px',
+                      fontFamily: "'Archivo', sans-serif", fontWeight: 700, fontSize: '14px',
+                      cursor: accountPassword.length >= 6 && !creatingAccount ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {creatingAccount ? 'Creating…' : 'Create account'}
+                  </button>
+                </div>
+                {accountPassword.length > 0 && accountPassword.length < 6 && (
+                  <p style={{ fontSize: '12px', color: '#92400E', margin: '8px 0 0', fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                    At least 6 characters.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {accountCreated && (
+              <div style={{
+                padding: '16px', background: '#F0FDF4', border: '1px solid #BBF7D0',
+                borderRadius: '12px', marginBottom: '32px', textAlign: 'left',
+                fontSize: '14px', color: '#166534', fontFamily: "'Hanken Grotesk', sans-serif",
+                lineHeight: 1.5,
+              }}>
+                ✓ Account created. Check <strong>{details.email}</strong> to verify your address,
+                then you can sign in any time to see your trips.
+              </div>
+            )}
 
             <div style={{ display: 'flex', gap: '16px', flexDirection: 'column' }}>
               <button

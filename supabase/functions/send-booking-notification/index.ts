@@ -95,6 +95,9 @@ serve(async (req: Request): Promise<Response> => {
     const hostEmail = listing?.host_email ?? null;
     const hostName = listing?.host_name ?? "there";
     const ref = String(booking.id).slice(0, 8).toUpperCase();
+    const manageUrl = booking.manage_token
+      ? `https://teebnb.com/manage-booking?token=${booking.manage_token}`
+      : null;
 
     const results: Record<string, unknown> = {};
 
@@ -137,6 +140,15 @@ serve(async (req: Request): Promise<Response> => {
           Your reference is <strong>${ref}</strong>. Quote this in any correspondence.
         </p>
       </div>
+      ${manageUrl ? `
+      <div style="text-align:center;margin:26px 0;">
+        <a href="${manageUrl}" style="display:inline-block;background:#C7F04A;color:#0B1F17;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;">
+          View or cancel this booking
+        </a>
+        <p style="color:#9AA5A0;font-size:12px;margin:10px 0 0;">
+          No account needed — this link is unique to you. Keep it safe.
+        </p>
+      </div>` : ''}
       <p style="color:#5C6B62;font-size:14px;line-height:1.6;margin:0;">
         Any questions, just reply to this email and we'll help.
       </p>
