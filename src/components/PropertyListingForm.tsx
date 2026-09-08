@@ -104,6 +104,9 @@ const PropertyListingForm = () => {
   const [completedSections, setCompletedSections] = useState<number[]>([]);
   const [sectionsWithErrors, setSectionsWithErrors] = useState<number[]>([]);
   const [editLoading, setEditLoading] = useState(isEditMode);
+  const [outstanding, setOutstanding] = useState<
+    { section: number; title: string; fields: string[] }[]
+  >([]);
   const totalSections = 8;
 
   const sectionTitles = [
@@ -263,13 +266,64 @@ const PropertyListingForm = () => {
   const validateSection = async (section: number): Promise<boolean> => {
     const fields = getSectionFields(section);
     if (fields.length === 0) return true; // No required fields
-    
+
     try {
       const isValid = await form.trigger(fields as any);
       return isValid;
     } catch {
       return false;
     }
+  };
+
+  /** Friendly labels so the outstanding-items list reads in plain English. */
+  const FIELD_LABELS: Record<string, string> = {
+    propertyTitle: 'Property title',
+    propertyType: 'Property type',
+    maxGuests: 'Maximum guests',
+    bedrooms: 'Bedrooms',
+    beds: 'Beds',
+    bathrooms: 'Bathrooms',
+    propertyPrivacy: 'Privacy (entire place / room)',
+    fullAddress: 'Full address',
+    photos: 'Photos (at least 3)',
+    coverImage: 'Cover image',
+    nightlyPrice: 'Nightly price',
+    minimumStay: 'Minimum stay',
+    cancellationPolicy: 'Cancellation policy',
+    hostName: 'Host name',
+  };
+
+  /**
+   * Validate the whole form at once and return what's still outstanding,
+   * grouped by section. Used when the host reaches the end, so they can move
+   * through the form freely and deal with gaps in one pass.
+   */
+  const collectOutstanding = async (): Promise<
+    { section: number; title: string; fields: string[] }[]
+  > => {
+    await form.trigger();
+    const errors = form.formState.errors;
+    const outstanding: { section: number; title: string; fields: string[] }[] = [];
+
+    for (let i = 1; i <= totalSections; i++) {
+      const missing = getSectionFields(i)
+        .filter((f) => getNestedError(errors, f))
+        .map((f) => FIELD_LABELS[f] || f);
+
+      if (missing.length > 0) {
+        outstanding.push({ section: i, title: sectionTitles[i - 1], fields: missing });
+      }
+    }
+
+    setSectionsWithErrors(outstanding.map((o) => o.section));
+    return outstanding;
+  };
+
+  const goToSection = (section: number) => {
+    setCurrentSection(section);
+    // Drop the stale list — it's re-checked whenever they ask to review again.
+    setOutstanding([]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const onSubmit = async (data: PropertyListingFormData) => {
@@ -372,38 +426,32 @@ const PropertyListingForm = () => {
   };
 
   const nextSection = async () => {
-    // Validate current section before moving forward
+    // Sections no longer block progress. Hosts can skip around and fill things
+    // in whatever order suits them; anything still missing is gathered up and
+    // shown in one list at the end rather than nagging section by section.
     const isValid = await validateSection(currentSection);
-    
-    if (!isValid) {
-      const errors = form.formState.errors;
-      const firstError = Object.values(errors)[0];
-      const errorMessage = firstError?.message || 'Please complete all required fields in this section';
-      toast.error(errorMessage);
-      
-      // Scroll to first error field
-      setTimeout(() => {
-        const errorElement = document.querySelector('[aria-invalid="true"]');
-        if (errorElement) {
-          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 100);
-      return;
+
+    if (isValid) {
+      setCompletedSections(prev => prev.includes(currentSection) ? prev : [...prev, currentSection]);
+    } else {
+      // Leave it marked incomplete, but let them move on.
+      setCompletedSections(prev => prev.filter(s => s !== currentSection));
     }
-    
-    // Mark current section as completed
-    setCompletedSections(prev => prev.includes(currentSection) ? prev : [...prev, currentSection]);
-    await updateSectionStatus();
 
     if (currentSection < totalSections) {
       setCurrentSection(currentSection + 1);
-      toast.success(`✅ Section ${currentSection} completed!`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      // All sections done — go to review
-      setStage('review');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
+
+    // End of the form — now check everything in one pass.
+    const missing = await collectOutstanding();
+    setOutstanding(missing);
+
+    if (missing.length === 0) {
+      setStage('review');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const prevSection = () => {
@@ -740,6 +788,7 @@ const PropertyListingForm = () => {
           completedSections={completedSections}
           sectionsWithErrors={sectionsWithErrors}
           sectionTitles={sectionTitles}
+          onSectionClick={goToSection}
         />
 
         {/* Current Section */}
@@ -770,6 +819,26 @@ const PropertyListingForm = () => {
           </div>
 
           <div className="flex gap-2">
+            {/* Available from any section — check the whole form whenever they like */}
+            {currentSection !== totalSections && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={async () => {
+                  const missing = await collectOutstanding();
+                  setOutstanding(missing);
+                  if (missing.length === 0) {
+                    setStage('review');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+                className="flex items-center gap-2"
+              >
+                <Eye className="h-4 w-4" />
+                Review &amp; publish
+              </Button>
+            )}
+
             <Button
               type="button"
               onClick={nextSection}
@@ -790,19 +859,42 @@ const PropertyListingForm = () => {
           </div>
         </div>
 
-        {/* Form Status Summary */}
-        {sectionsWithErrors.length > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <h3 className="font-medium text-red-900 mb-2">
-              Please fix the following issues before publishing:
+        {/* Outstanding items — shown once at the end, not section by section.
+            Each entry jumps straight to the section that needs attention. */}
+        {outstanding.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+            <h3 className="font-semibold text-amber-900 mb-1">
+              Almost there — {outstanding.reduce((n, o) => n + o.fields.length, 0)} thing
+              {outstanding.reduce((n, o) => n + o.fields.length, 0) === 1 ? '' : 's'} still needed
             </h3>
-            <ul className="text-sm text-red-700 space-y-1">
-              {sectionsWithErrors.map(section => (
-                <li key={section}>
-                  • Section {section} ({sectionTitles[section - 1]}) has missing required fields
-                </li>
+            <p className="text-sm text-amber-800 mb-4">
+              Everything else is saved. Click any item below to jump straight to it.
+            </p>
+
+            <div className="space-y-3">
+              {outstanding.map(({ section, title, fields }) => (
+                <button
+                  key={section}
+                  type="button"
+                  onClick={() => goToSection(section)}
+                  className="w-full text-left bg-white border border-amber-200 rounded-lg p-3 hover:border-amber-400 hover:shadow-sm transition-all group"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-medium text-amber-900 text-sm">
+                      {section}. {title}
+                    </span>
+                    <span className="text-xs text-amber-700 group-hover:text-amber-900 whitespace-nowrap">
+                      Go to section <ArrowRight className="h-3 w-3 inline" />
+                    </span>
+                  </div>
+                  <ul className="mt-1.5 text-sm text-gray-600 space-y-0.5">
+                    {fields.map((f) => (
+                      <li key={f}>• {f}</li>
+                    ))}
+                  </ul>
+                </button>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </form>

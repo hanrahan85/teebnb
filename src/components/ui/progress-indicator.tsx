@@ -8,6 +8,8 @@ interface ProgressIndicatorProps {
   completedSections: number[];
   sectionsWithErrors: number[];
   sectionTitles: string[];
+  /** Jump straight to a section. When provided, the step pills become clickable. */
+  onSectionClick?: (section: number) => void;
 }
 
 export const ProgressIndicator = ({ 
@@ -15,7 +17,8 @@ export const ProgressIndicator = ({
   totalSections, 
   completedSections, 
   sectionsWithErrors,
-  sectionTitles 
+  sectionTitles,
+  onSectionClick,
 }: ProgressIndicatorProps) => {
   const percentage = Math.round((completedSections.length / totalSections) * 100);
 
@@ -42,10 +45,14 @@ export const ProgressIndicator = ({
           const isCurrent = sectionNumber === currentSection;
 
           return (
-            <div 
+            <button
               key={sectionNumber}
+              type="button"
+              onClick={() => onSectionClick?.(sectionNumber)}
+              title={onSectionClick ? `Go to ${sectionTitles[index]}` : undefined}
               className={cn(
-                "flex flex-col items-center p-2 rounded-lg transition-all duration-200",
+                "flex flex-col items-center p-2 rounded-lg transition-all duration-200 w-full",
+                onSectionClick && "cursor-pointer hover:bg-emerald-50 hover:ring-1 hover:ring-emerald-200",
                 isCurrent && "bg-emerald-100 border border-emerald-300",
                 hasError && "bg-red-50 border border-red-200",
                 isCompleted && !hasError && "bg-emerald-50"
@@ -69,7 +76,7 @@ export const ProgressIndicator = ({
               )}>
                 {sectionTitles[index]}
               </span>
-            </div>
+            </button>
           );
         })}
       </div>
