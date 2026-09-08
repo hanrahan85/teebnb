@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 const Destinations = lazy(() => import("./pages/Destinations"));
 const Trips = lazy(() => import("./pages/Trips"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Settings = lazy(() => import("./pages/Settings"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 const About = lazy(() => import("./pages/About"));
 const FAQ = lazy(() => import("./pages/FAQ"));
@@ -77,6 +78,14 @@ const App: React.FC = () => {
                 element={
                   <Suspense fallback={<LoadingFallback />}>
                     <Profile />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <Suspense fallback={<LoadingFallback />}>
+                    <Settings />
                   </Suspense>
                 }
               />

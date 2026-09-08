@@ -128,24 +128,42 @@ const Profile = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => navigate('/dashboard')}
-          style={{
-            width: '100%',
-            padding: '12px 20px',
-            background: 'transparent',
-            color: '#15794C',
-            border: '1px solid #EDEBE1',
-            borderRadius: '8px',
-            fontFamily: "'Archivo', sans-serif",
-            fontWeight: 600,
-            fontSize: '14px',
-            cursor: 'pointer',
-            marginBottom: '40px',
-          }}
-        >
-          Go to Host Dashboard
-        </button>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '40px' }}>
+          <button
+            onClick={() => navigate('/dashboard')}
+            style={{
+              flex: 1,
+              padding: '12px 20px',
+              background: 'transparent',
+              color: '#15794C',
+              border: '1px solid #EDEBE1',
+              borderRadius: '8px',
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
+          >
+            Host Dashboard
+          </button>
+          <button
+            onClick={() => navigate('/settings')}
+            style={{
+              flex: 1,
+              padding: '12px 20px',
+              background: 'transparent',
+              color: '#0B1F17',
+              border: '1px solid #EDEBE1',
+              borderRadius: '8px',
+              fontFamily: "'Archivo', sans-serif",
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
+          >
+            ⚙ Account settings
+          </button>
+        </div>
 
         {/* Quick Links */}
         <h3 style={{

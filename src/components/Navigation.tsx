@@ -87,6 +87,7 @@ const Navigation = () => {
               <button style={NAV_BTN} onClick={() => handleNavigate('/destinations')}>Destinations</button>
               {user && <button style={NAV_BTN} onClick={() => handleNavigate('/trips')}>Trips</button>}
               {user && <button style={NAV_BTN} onClick={() => handleNavigate('/profile')}>Profile</button>}
+              {user && <button style={NAV_BTN} onClick={() => handleNavigate('/settings')}>Settings</button>}
 
               {user ? (
                 <>
@@ -138,6 +139,7 @@ const Navigation = () => {
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/trips')}>Trips</button>}
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/dashboard')}>Dashboard</button>}
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/profile')}>Profile</button>}
+            {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/settings')}>Settings</button>}
 
             <div style={{ borderTop: '1px solid #EDEBE1', marginTop: '8px', paddingTop: '12px' }}>
               {user ? (

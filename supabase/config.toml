@@ -7,3 +7,7 @@ verify_jwt = false
 # Guests book without signing in, so this must be callable anonymously.
 [functions.send-booking-notification]
 verify_jwt = false
+
+# Deletion identifies the user from their own JWT, so verification stays ON.
+[functions.delete-account]
+verify_jwt = true
