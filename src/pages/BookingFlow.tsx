@@ -127,9 +127,20 @@ const BookingFlow = () => {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const { data, error } = await supabase
+      // Generate the id client-side rather than reading it back after insert.
+      //
+      // Guests book anonymously, and the `anon` role deliberately has no SELECT
+      // policy on bookings (nobody should be able to read other people's
+      // bookings). Postgres requires SELECT permission to satisfy a RETURNING
+      // clause, so `.insert().select()` fails with a misleading
+      // "new row violates row-level security policy" error. Supplying the id
+      // ourselves means we never need the row read back.
+      const newBookingId = crypto.randomUUID();
+
+      const { error } = await supabase
         .from('bookings')
         .insert({
+          id: newBookingId,
           listing_id: listing.id,
           guest_user_id: user?.id || null,
           guest_name: `${details.firstName} ${details.lastName}`,
@@ -146,13 +157,10 @@ const BookingFlow = () => {
           service_fee: serviceFee,
           total,
           status: 'pending',
-        })
-        .select('id')
-        .single();
+        });
 
       if (error) throw error;
 
-      const newBookingId = data.id as string;
       setBookingRef(newBookingId.slice(0, 8).toUpperCase());
       setStep('confirmation');
 
