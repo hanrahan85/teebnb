@@ -9,6 +9,46 @@ import { X, Lock } from 'lucide-react';
 
 type Step = 'details' | 'confirmation';
 
+/**
+ * Turns raw errors into something a guest can actually act on.
+ * Never surface stack traces or library error text to the user.
+ */
+const friendlyBookingError = (err: unknown): string => {
+  const raw = (err as Error)?.message?.toLowerCase() ?? '';
+
+  // Network / connectivity — by far the most common in the wild
+  if (
+    raw.includes('failed to fetch') ||
+    raw.includes('networkerror') ||
+    raw.includes('network request failed') ||
+    raw.includes('load failed')
+  ) {
+    return "We couldn't reach our servers just now — this is usually a connection problem. Please check your internet and try again. You haven't been charged and your dates aren't lost.";
+  }
+
+  // Duplicate booking
+  if (raw.includes('duplicate') || raw.includes('23505')) {
+    return 'It looks like this booking has already been submitted. Check your email for a confirmation before trying again.';
+  }
+
+  // Permissions / RLS
+  if (raw.includes('permission') || raw.includes('policy') || raw.includes('row-level')) {
+    return "We couldn't complete this booking due to a permissions issue on our end. Please email darragh@teebnb.com and we'll sort it out straight away.";
+  }
+
+  // Validation
+  if (raw.includes('violates') || raw.includes('constraint') || raw.includes('invalid input')) {
+    return 'Some of the booking details look incorrect. Please double-check your dates and contact details, then try again.';
+  }
+
+  // Timeout
+  if (raw.includes('timeout') || raw.includes('timed out')) {
+    return 'That took longer than expected and timed out. Please try again in a moment.';
+  }
+
+  return "Something went wrong on our end and your booking didn't go through. Please try again, or email darragh@teebnb.com and we'll book you in manually.";
+};
+
 const BookingFlow = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -111,10 +151,19 @@ const BookingFlow = () => {
         .single();
 
       if (error) throw error;
-      setBookingRef((data.id as string).slice(0, 8).toUpperCase());
+
+      const newBookingId = data.id as string;
+      setBookingRef(newBookingId.slice(0, 8).toUpperCase());
       setStep('confirmation');
+
+      // Fire off notification emails. Deliberately not awaited/blocking —
+      // the booking is already saved, so an email failure must not break the
+      // guest's confirmation screen.
+      supabase.functions
+        .invoke('send-booking-notification', { body: { bookingId: newBookingId } })
+        .catch((e) => console.error('Booking notification failed to send:', e));
     } catch (err: unknown) {
-      setSubmitError((err as Error).message || 'Something went wrong. Please try again.');
+      setSubmitError(friendlyBookingError(err));
     } finally {
       setSubmitting(false);
     }
@@ -338,12 +387,28 @@ const BookingFlow = () => {
               </div>
 
               {submitError && (
-                <div style={{ padding: '12px', background: '#FEE2E2', color: '#991B1B', borderRadius: '6px', fontSize: '14px' }}>
-                  {submitError}
+                <div
+                  role="alert"
+                  style={{
+                    padding: '14px 16px',
+                    background: '#FEF2F2',
+                    border: '1px solid #FECACA',
+                    color: '#991B1B',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontFamily: "'Hanken Grotesk', sans-serif",
+                    lineHeight: '1.5',
+                    display: 'flex',
+                    gap: '10px',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <span style={{ fontSize: '16px', lineHeight: 1.3, flexShrink: 0 }} aria-hidden="true">⚠️</span>
+                  <span>{submitError}</span>
                 </div>
               )}
 
-              {/* Confirm & Pay Button */}
+              {/* Request to book button */}
               <button
                 onClick={handleConfirm}
                 disabled={!isDetailsValid || submitting}
@@ -360,7 +425,7 @@ const BookingFlow = () => {
                   width: '100%',
                 }}
               >
-                {submitting ? 'Confirming...' : `Confirm & Pay · €${total.toFixed(2)}`}
+                {submitting ? 'Sending request...' : `Request to book · €${total.toFixed(2)}`}
               </button>
             </div>
 
@@ -439,7 +504,7 @@ const BookingFlow = () => {
                   color: '#166534',
                 }}>
                   <Lock size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
-                  <span>Secure payment via TeeBnB</span>
+                  <span>No payment taken now — you'll arrange payment directly with the host once they accept.</span>
                 </div>
               </div>
             </div>

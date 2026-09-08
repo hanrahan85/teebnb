@@ -3,3 +3,7 @@ project_id = "lwuncvddikvqtcmsabpw"
 
 [functions.send-custom-auth-email]
 verify_jwt = false
+
+# Guests book without signing in, so this must be callable anonymously.
+[functions.send-booking-notification]
+verify_jwt = false
