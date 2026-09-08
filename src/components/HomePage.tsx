@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import SearchBar from '@/components/SearchBar';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { supabase } from '@/integrations/supabase/client';
 import { Heart } from 'lucide-react';
 
 interface Listing {
-  id: number;
+  id: number | string;
   name: string;
   location: string;
   price: number;
@@ -15,13 +16,25 @@ interface Listing {
   tag: string;
   specs: string;
   image: string;
+  isReal?: boolean;
 }
+
+const FALLBACK_IMAGE =
+  'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop';
+
+/** Trim a full address down to something card-sized, e.g. "Malahide, Co. Dublin". */
+const shortLocation = (address: string): string => {
+  if (!address) return '';
+  const parts = address.split(',').map((p) => p.trim()).filter(Boolean);
+  if (parts.length <= 2) return parts.join(', ');
+  return parts.slice(-3, -1).join(', ');
+};
 
 const HomePage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const listings: Listing[] = [
+  const SAMPLE_LISTINGS: Listing[] = [
     { id: 1, name: 'Fairway House', location: 'Monterey, CA', price: 640, rating: 4.9, reviews: 142, tag: 'Sample', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop' },
     { id: 2, name: 'Old Course Loft', location: 'St Andrews, Scotland', price: 310, rating: 4.95, reviews: 289, tag: 'Sample', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=600&h=400&fit=crop' },
     { id: 3, name: 'Cedar Ridge Cabin', location: 'Queenstown, NZ', price: 280, rating: 4.85, reviews: 156, tag: 'Sample', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop' },
@@ -32,9 +45,69 @@ const HomePage = () => {
     { id: 8, name: 'Loch Aria Cottage', location: 'County Kerry, Ireland', price: 300, rating: 4.91, reviews: 198, tag: 'Sample', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1476357471311-43c0db9fb2b4?w=600&h=400&fit=crop' },
   ];
 
-  const [savedListings, setSavedListings] = React.useState<number[]>([]);
+  const [savedListings, setSavedListings] = React.useState<(number | string)[]>([]);
+  const [listings, setListings] = React.useState<Listing[]>([]);
+  const [loadingListings, setLoadingListings] = React.useState(true);
 
-  const toggleSave = (id: number): void => {
+  // Show real listings from the database. Samples are only a fallback for when
+  // there are none yet — as soon as a real host lists, the front page is theirs.
+  React.useEffect(() => {
+    let cancelled = false;
+
+    const fetchListings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('id, property_title, full_address, nightly_price, bedrooms, bathrooms, max_guests, cover_image, photos, nearby_golf_courses')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(8);
+
+        if (error) throw error;
+        if (cancelled) return;
+
+        const rows = (data as unknown as Record<string, unknown>[]) || [];
+        const mapped: Listing[] = rows.map((r) => {
+          const photos = (r.photos as string[]) || [];
+          const beds = (r.bedrooms as number) ?? null;
+          const baths = (r.bathrooms as number) ?? null;
+          const specs = [
+            beds ? `${beds} bed` : null,
+            baths ? `${baths} bath` : null,
+          ].filter(Boolean).join(' • ')
+            || (r.max_guests ? `Sleeps ${r.max_guests}` : '');
+
+          const courses = r.nearby_golf_courses;
+          const firstCourse = Array.isArray(courses) ? courses[0] : undefined;
+
+          return {
+            id: r.id as string,
+            name: (r.property_title as string) || 'Untitled listing',
+            location: shortLocation((r.full_address as string) || ''),
+            price: (r.nightly_price as number) ?? 0,
+            rating: 0,
+            reviews: 0,
+            tag: firstCourse ? `⛳ ${firstCourse}` : 'New listing',
+            specs,
+            image: (r.cover_image as string) || photos[0] || FALLBACK_IMAGE,
+            isReal: true,
+          };
+        });
+
+        setListings(mapped.length > 0 ? mapped : SAMPLE_LISTINGS);
+      } catch {
+        if (!cancelled) setListings(SAMPLE_LISTINGS);
+      } finally {
+        if (!cancelled) setLoadingListings(false);
+      }
+    };
+
+    fetchListings();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const toggleSave = (id: number | string): void => {
     setSavedListings((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
@@ -291,6 +364,18 @@ const HomePage = () => {
               gap: '24px',
             }}
           >
+            {loadingListings && (
+              <p style={{
+                gridColumn: '1 / -1',
+                textAlign: 'center',
+                color: '#5C6B62',
+                fontFamily: "'Hanken Grotesk', sans-serif",
+                padding: '32px 0',
+                margin: 0,
+              }}>
+                Loading stays…
+              </p>
+            )}
             {listings.map((listing) => (
               <div
                 key={listing.id}
@@ -302,7 +387,11 @@ const HomePage = () => {
                   cursor: 'pointer',
                   transition: 'transform 0.2s, box-shadow 0.2s',
                 }}
-                onClick={(): void => navigate('/search-results')}
+                onClick={(): void =>
+                  listing.isReal
+                    ? navigate(`/property/${listing.id}`)
+                    : navigate('/search-results')
+                }
                 onMouseEnter={(e): void => {
                   (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
                   (e.currentTarget as HTMLElement).style.boxShadow =
@@ -409,15 +498,15 @@ const HomePage = () => {
                     <span
                       style={{
                         fontSize: '12px',
-                        color: '#3A4A41',
-                        background: '#EDEBE1',
+                        color: listing.isReal ? '#166534' : '#3A4A41',
+                        background: listing.isReal ? '#F0FDF4' : '#EDEBE1',
                         padding: '3px 8px',
                         borderRadius: '4px',
                         fontFamily: "'Hanken Grotesk', sans-serif",
                         fontWeight: 600,
                       }}
                     >
-                      Sample listing
+                      {listing.isReal ? listing.tag : 'Sample listing'}
                     </span>
                   </div>
 
