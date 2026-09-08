@@ -277,15 +277,15 @@ const PropertyDetail = () => {
             );
           })()}
           <span style={{
-            background: '#C7F04A',
-            color: '#0B1F17',
+            background: '#EDEBE1',
+            color: '#3A4A41',
             padding: '4px 8px',
             borderRadius: '4px',
             fontSize: '12px',
             fontFamily: 'Archivo',
             fontWeight: 600
           }}>
-            Golfer favorite
+            New listing
           </span>
           <button
             style={{
@@ -516,29 +516,25 @@ const PropertyDetail = () => {
             )}
           </div>
 
-          {/* Reviews */}
+          {/* Reviews — only ever rendered from real guest reviews.
+              Nothing is shown until a genuine stay has been reviewed. */}
           <div>
             <h3 style={{ color: '#0B1F17', fontSize: '18px', fontWeight: 700, fontFamily: 'Archivo', marginBottom: '16px' }}>
               Reviews
             </h3>
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '18px' }}>★★★★★</span>
-              <span style={{ color: '#5C6B62', fontFamily: 'Hanken Grotesk' }}>4.9 (127 reviews)</span>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '12px' }}>
-              {[
-                { name: 'Sarah M.', text: 'Fantastic property! Perfect golf getaway.' },
-                { name: 'John D.', text: 'Amazing views and excellent hospitality.' },
-              ].map((review, idx) => (
-                <div key={idx} style={{ padding: '12px', background: 'white', borderRadius: '8px', border: '1px solid #EDEBE1' }}>
-                  <p style={{ fontWeight: 600, color: '#0B1F17', fontFamily: 'Archivo', margin: '0 0 4px 0', fontSize: '14px' }}>
-                    {review.name}
-                  </p>
-                  <p style={{ color: '#5C6B62', fontSize: '13px', fontFamily: 'Hanken Grotesk', margin: 0 }}>
-                    {review.text}
-                  </p>
-                </div>
-              ))}
+            <div style={{
+              padding: '20px',
+              background: 'white',
+              borderRadius: '8px',
+              border: '1px dashed #DDD9C9',
+              textAlign: 'center',
+            }}>
+              <p style={{ color: '#5C6B62', fontSize: '14px', fontFamily: 'Hanken Grotesk', margin: 0 }}>
+                No reviews yet — this is a new listing on TeeBnB.
+              </p>
+              <p style={{ color: '#9AA5A0', fontSize: '13px', fontFamily: 'Hanken Grotesk', margin: '6px 0 0 0' }}>
+                Reviews appear here once guests have stayed.
+              </p>
             </div>
           </div>
         </div>

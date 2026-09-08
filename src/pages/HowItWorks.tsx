@@ -11,7 +11,7 @@ const steps = [
   {
     number: '02',
     title: 'Book with confidence',
-    desc: 'Every listing shows verified amenities, clear cancellation policies, and honest reviews from fellow golfers. Book instantly or request to book.',
+    desc: 'Every listing shows its amenities, distance to the course and a clear cancellation policy, so you know exactly what you are booking.',
   },
   {
     number: '03',

@@ -22,14 +22,14 @@ const HomePage = () => {
   const isMobile = useIsMobile();
 
   const listings: Listing[] = [
-    { id: 1, name: 'Fairway House', location: 'Monterey, CA', price: 640, rating: 4.9, reviews: 142, tag: 'Featured', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop' },
-    { id: 2, name: 'Old Course Loft', location: 'St Andrews, Scotland', price: 310, rating: 4.95, reviews: 289, tag: 'Best Rated', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=600&h=400&fit=crop' },
-    { id: 3, name: 'Cedar Ridge Cabin', location: 'Queenstown, NZ', price: 280, rating: 4.85, reviews: 156, tag: 'Great Value', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop' },
-    { id: 4, name: 'Casa del Green', location: 'Los Cabos, Mexico', price: 520, rating: 4.88, reviews: 203, tag: 'Luxury', specs: '5 bed • 3 bath', image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&h=400&fit=crop' },
-    { id: 5, name: 'Sakura Villa', location: 'Hokkaido, Japan', price: 340, rating: 4.92, reviews: 178, tag: 'Exclusive', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=600&h=400&fit=crop' },
-    { id: 6, name: 'Cliffside Casita', location: 'Faro, Portugal', price: 210, rating: 4.80, reviews: 134, tag: 'Budget', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1592919505780-303950717480?w=600&h=400&fit=crop' },
-    { id: 7, name: 'Saguaro Retreat', location: 'Phoenix, AZ', price: 260, rating: 4.87, reviews: 167, tag: 'Desert', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600&h=400&fit=crop' },
-    { id: 8, name: 'Loch Aria Cottage', location: 'County Kerry, Ireland', price: 300, rating: 4.91, reviews: 198, tag: 'Lakeside', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1476357471311-43c0db9fb2b4?w=600&h=400&fit=crop' },
+    { id: 1, name: 'Fairway House', location: 'Monterey, CA', price: 640, rating: 4.9, reviews: 142, tag: 'Sample', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop' },
+    { id: 2, name: 'Old Course Loft', location: 'St Andrews, Scotland', price: 310, rating: 4.95, reviews: 289, tag: 'Sample', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=600&h=400&fit=crop' },
+    { id: 3, name: 'Cedar Ridge Cabin', location: 'Queenstown, NZ', price: 280, rating: 4.85, reviews: 156, tag: 'Sample', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop' },
+    { id: 4, name: 'Casa del Green', location: 'Los Cabos, Mexico', price: 520, rating: 4.88, reviews: 203, tag: 'Sample', specs: '5 bed • 3 bath', image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&h=400&fit=crop' },
+    { id: 5, name: 'Sakura Villa', location: 'Hokkaido, Japan', price: 340, rating: 4.92, reviews: 178, tag: 'Sample', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=600&h=400&fit=crop' },
+    { id: 6, name: 'Cliffside Casita', location: 'Faro, Portugal', price: 210, rating: 4.80, reviews: 134, tag: 'Sample', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1592919505780-303950717480?w=600&h=400&fit=crop' },
+    { id: 7, name: 'Saguaro Retreat', location: 'Phoenix, AZ', price: 260, rating: 4.87, reviews: 167, tag: 'Sample', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600&h=400&fit=crop' },
+    { id: 8, name: 'Loch Aria Cottage', location: 'County Kerry, Ireland', price: 300, rating: 4.91, reviews: 198, tag: 'Sample', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1476357471311-43c0db9fb2b4?w=600&h=400&fit=crop' },
   ];
 
   const [savedListings, setSavedListings] = React.useState<number[]>([]);
@@ -196,94 +196,37 @@ const HomePage = () => {
             gap: '40px',
           }}
         >
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                fontSize: '36px',
-                fontWeight: 700,
-                color: '#C7F04A',
-                fontFamily: "'Archivo', sans-serif",
-              }}
-            >
-              8,400+
+          {/* Propositions, not metrics. Every line here must stay true —
+              no counts or ratings until they can be read from real data. */}
+          {[
+            { headline: '€0', caption: 'To list your place' },
+            { headline: 'Golf only', caption: 'Built for one kind of trip' },
+            { headline: 'Direct', caption: 'Book with the owner' },
+            { headline: 'Ireland', caption: 'Launching here first' },
+          ].map(({ headline, caption }) => (
+            <div key={caption} style={{ textAlign: 'center' }}>
+              <div
+                style={{
+                  fontSize: '36px',
+                  fontWeight: 700,
+                  color: '#C7F04A',
+                  fontFamily: "'Archivo', sans-serif",
+                }}
+              >
+                {headline}
+              </div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: '#C7F04A',
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  marginTop: '4px',
+                }}
+              >
+                {caption}
+              </div>
             </div>
-            <div
-              style={{
-                fontSize: '14px',
-                color: '#C7F04A',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-                marginTop: '4px',
-              }}
-            >
-              Homes near courses
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                fontSize: '36px',
-                fontWeight: 700,
-                color: '#C7F04A',
-                fontFamily: "'Archivo', sans-serif",
-              }}
-            >
-              60
-            </div>
-            <div
-              style={{
-                fontSize: '14px',
-                color: '#C7F04A',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-                marginTop: '4px',
-              }}
-            >
-              Countries
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                fontSize: '36px',
-                fontWeight: 700,
-                color: '#C7F04A',
-                fontFamily: "'Archivo', sans-serif",
-              }}
-            >
-              4.9★
-            </div>
-            <div
-              style={{
-                fontSize: '14px',
-                color: '#C7F04A',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-                marginTop: '4px',
-              }}
-            >
-              Avg. guest rating
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                fontSize: '36px',
-                fontWeight: 700,
-                color: '#C7F04A',
-                fontFamily: "'Archivo', sans-serif",
-              }}
-            >
-              €0
-            </div>
-            <div
-              style={{
-                fontSize: '14px',
-                color: '#C7F04A',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-                marginTop: '4px',
-              }}
-            >
-              Host listing fees
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -463,25 +406,18 @@ const HomePage = () => {
                       marginBottom: '8px',
                     }}
                   >
-                    <span style={{ color: '#C7F04A', fontSize: '14px' }}>★</span>
                     <span
                       style={{
-                        fontSize: '13px',
-                        color: '#0B1F17',
+                        fontSize: '12px',
+                        color: '#3A4A41',
+                        background: '#EDEBE1',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
                         fontFamily: "'Hanken Grotesk', sans-serif",
                         fontWeight: 600,
                       }}
                     >
-                      {listing.rating}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '13px',
-                        color: '#5C6B62',
-                        fontFamily: "'Hanken Grotesk', sans-serif",
-                      }}
-                    >
-                      ({listing.reviews} reviews)
+                      Sample listing
                     </span>
                   </div>
 
@@ -579,7 +515,7 @@ const HomePage = () => {
           >
             {[
               { number: '01', title: 'Find your spot', description: 'Browse homes near world-class golf courses' },
-              { number: '02', title: 'Book direct with owners', description: 'Secure your stay with verified hosts' },
+              { number: '02', title: 'Book direct with owners', description: 'Deal with the owner, not a call centre' },
               { number: '03', title: 'Unpack & play', description: 'Enjoy your golf vacation from day one' },
             ].map((step, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
@@ -675,7 +611,7 @@ const HomePage = () => {
                 marginBottom: '16px',
               }}
             >
-              Guest favorite
+              Sample listing
             </span>
 
             <h2
@@ -802,7 +738,7 @@ const HomePage = () => {
             }}
           >
             Earn extra income by sharing your home with golfers from around the
-            world. Join thousands of successful hosts.
+            world. Listing is free while we get started.
           </p>
 
           <button
@@ -887,7 +823,7 @@ const HomePage = () => {
                   lineHeight: 1.6,
                 }}
               >
-                The world's leading platform for golf accommodation. Stay where you
+                A booking platform built just for golf trips. Stay where you
                 play.
               </p>
             </div>
