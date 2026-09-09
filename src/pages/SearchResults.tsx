@@ -556,6 +556,12 @@ const SearchResults = () => {
                         {listing.property_title}
                       </h3>
                       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                        {/* Demo properties must never read as real inventory */}
+                        {(listing as { is_sample?: boolean }).is_sample && (
+                          <span style={{ background: '#F5C518', color: '#0B1F17', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontFamily: 'Archivo', fontWeight: 700, letterSpacing: '.3px', textTransform: 'uppercase' }}>
+                            Sample
+                          </span>
+                        )}
                         <span style={{ background: '#15794C', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontFamily: 'Hanken Grotesk' }}>
                           Sleeps {listing.max_guests}
                         </span>

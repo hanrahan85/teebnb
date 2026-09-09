@@ -277,15 +277,17 @@ const PropertyDetail = () => {
             );
           })()}
           <span style={{
-            background: '#EDEBE1',
-            color: '#3A4A41',
+            background: listing.is_sample ? '#F5C518' : '#EDEBE1',
+            color: '#0B1F17',
             padding: '4px 8px',
             borderRadius: '4px',
             fontSize: '12px',
             fontFamily: 'Archivo',
-            fontWeight: 600
+            fontWeight: listing.is_sample ? 700 : 600,
+            letterSpacing: listing.is_sample ? '.3px' : undefined,
+            textTransform: listing.is_sample ? 'uppercase' : undefined,
           }}>
-            New listing
+            {listing.is_sample ? 'Sample listing' : 'New listing'}
           </span>
           <button
             style={{

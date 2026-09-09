@@ -58,7 +58,7 @@ const HomePage = () => {
       try {
         const { data, error } = await supabase
           .from('property_listings')
-          .select('id, property_title, full_address, nightly_price, bedrooms, bathrooms, max_guests, cover_image, photos, nearby_golf_courses')
+          .select('id, property_title, full_address, nightly_price, bedrooms, bathrooms, max_guests, cover_image, photos, nearby_golf_courses, is_sample')
           .eq('status', 'active')
           .order('created_at', { ascending: false })
           .limit(8);
@@ -90,7 +90,9 @@ const HomePage = () => {
             tag: firstCourse ? `⛳ ${firstCourse}` : 'New listing',
             specs,
             image: (r.cover_image as string) || photos[0] || FALLBACK_IMAGE,
-            isReal: true,
+            // Seeded demo properties are flagged in the database so they can be
+            // labelled honestly rather than passing as real inventory.
+            isReal: !r.is_sample,
           };
         });
 
@@ -425,7 +427,7 @@ const HomePage = () => {
                     }}
                   />
 
-                  {/* Tag Badge */}
+                  {/* Course badge */}
                   <span
                     style={{
                       position: 'absolute',
@@ -442,6 +444,28 @@ const HomePage = () => {
                   >
                     {listing.tag}
                   </span>
+
+                  {/* Sample badge — demo properties must never read as real inventory */}
+                  {!listing.isReal && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '52px',
+                        background: '#F5C518',
+                        color: '#0B1F17',
+                        padding: '4px 10px',
+                        borderRadius: '4px',
+                        fontSize: '11px',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontWeight: 700,
+                        letterSpacing: '.3px',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Sample
+                    </span>
+                  )}
 
                   {/* Save Button */}
                   <button
