@@ -381,12 +381,14 @@ const PropertyListingForm = () => {
       languages_spoken: data.languagesSpoken || [],
       host_phone: data.hostPhone,
       host_email: user.email,
-      status: 'active',
     };
 
     try {
       if (isEditMode && editListingId) {
         // UPDATE existing listing
+        // Deliberately does not set `status`. Editing must never change the
+        // review state — otherwise a host could get approved, then edit the
+        // listing into something else and self-publish it.
         const { error } = await supabase
           .from('property_listings')
           .update(payload)
@@ -398,9 +400,11 @@ const PropertyListingForm = () => {
         setStage('success');
       } else {
         // INSERT new listing
+        // New listings go to review rather than straight live. Public queries
+        // filter on status = 'active', so this is what keeps them hidden.
         const { data: insertData, error } = await supabase
           .from('property_listings')
-          .insert({ ...payload, user_id: user.id })
+          .insert({ ...payload, user_id: user.id, status: 'pending_review' })
           .select();
 
         if (error) throw error;
@@ -595,13 +599,13 @@ const PropertyListingForm = () => {
 
         <div>
           <h2 className="text-3xl font-bold text-emerald-900 mb-3">
-            {isEditMode ? 'Changes saved! ✅' : 'Your listing is live! 🎉'}
+            {isEditMode ? 'Changes saved! ✅' : 'Submitted for review 🎉'}
           </h2>
           <p className="text-emerald-700 text-lg">
             <span className="font-semibold">{data.propertyTitle}</span>{' '}
             {isEditMode
               ? 'has been updated successfully.'
-              : 'is now published on TeeBnB and visible to golfers worldwide.'}
+              : 'has been submitted. We review every new listing before it goes live — usually within a day. We\'ll email you the moment it\'s published.'}
           </p>
         </div>
 

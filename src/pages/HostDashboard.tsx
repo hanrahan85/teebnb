@@ -461,17 +461,30 @@ const HostDashboard = () => {
                       }}>
                         {listing.property_title}
                       </h3>
-                      <span style={{
-                        fontSize: '12px',
-                        padding: '4px 8px',
-                        background: '#F0FDF4',
-                        color: '#166534',
-                        borderRadius: '4px',
-                        marginLeft: '8px',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        {listing.status || 'draft'}
-                      </span>
+                      {(() => {
+                        const s = listing.status || 'draft';
+                        const look: Record<string, { bg: string; fg: string; label: string }> = {
+                          active:         { bg: '#F0FDF4', fg: '#166534', label: 'Live' },
+                          pending_review: { bg: '#FEF3C7', fg: '#92400E', label: 'In review' },
+                          rejected:       { bg: '#FEE2E2', fg: '#991B1B', label: 'Not approved' },
+                          draft:          { bg: '#F3F4F6', fg: '#6B7280', label: 'Draft' },
+                        };
+                        const v = look[s] || look.draft;
+                        return (
+                          <span style={{
+                            fontSize: '12px',
+                            padding: '4px 8px',
+                            background: v.bg,
+                            color: v.fg,
+                            borderRadius: '4px',
+                            marginLeft: '8px',
+                            whiteSpace: 'nowrap',
+                            fontWeight: 600,
+                          }}>
+                            {v.label}
+                          </span>
+                        );
+                      })()}
                     </div>
                     <p style={{
                       fontSize: '12px',
