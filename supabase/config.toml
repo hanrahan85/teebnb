@@ -16,3 +16,8 @@ verify_jwt = true
 # be callable anonymously. Authorisation is the unguessable token itself.
 [functions.manage-booking]
 verify_jwt = false
+
+# Fires during sign-up, before the user has a session, so it must be callable
+# anonymously. It verifies the address against auth.users before sending.
+[functions.send-signup-notification]
+verify_jwt = false

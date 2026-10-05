@@ -74,6 +74,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     console.log('Signup successful. User will receive verification email.');
+
+    // Tell the owner straight away. Deliberately not awaited — a notification
+    // failure must never make a successful sign-up look broken to the user.
+    supabase.functions
+      .invoke('send-signup-notification', { body: { email, source: 'signup' } })
+      .catch((e) => console.error('Signup notification failed to send:', e));
+
     return { error: null };
   };
 

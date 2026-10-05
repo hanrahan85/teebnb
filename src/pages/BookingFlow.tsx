@@ -141,6 +141,10 @@ const BookingFlow = () => {
       if (error) throw error;
       setAccountCreated(true);
       setAccountPassword('');
+
+      supabase.functions
+        .invoke('send-signup-notification', { body: { email: details.email, source: 'post-booking' } })
+        .catch((e) => console.error('Signup notification failed to send:', e));
     } catch (e) {
       const msg = (e as Error).message || '';
       if (msg.toLowerCase().includes('already registered')) {
