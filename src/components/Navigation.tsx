@@ -35,7 +35,7 @@ const MOBILE_BTN: React.CSSProperties = {
 };
 
 const Navigation = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -91,6 +91,15 @@ const Navigation = () => {
 
               {user ? (
                 <>
+                  {isAdmin && (
+                    <button
+                      style={{ ...NAV_BTN, color: '#8A6D1F', fontWeight: 700 }}
+                      onClick={() => handleNavigate('/admin')}
+                      title="Listing review queue"
+                    >
+                      ⚑ Admin
+                    </button>
+                  )}
                   <button style={NAV_BTN} onClick={() => handleNavigate('/dashboard')}>Dashboard</button>
                   <button style={NAV_BTN} onClick={() => handleNavigate('/list-property')}>List your place</button>
                   <span style={{ color: '#5C6B62', fontSize: '13px', fontFamily: "'Hanken Grotesk', sans-serif", maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -137,6 +146,7 @@ const Navigation = () => {
             <button style={MOBILE_BTN} onClick={() => handleNavigate('/destinations')}>Destinations</button>
             <button style={MOBILE_BTN} onClick={() => handleNavigate('/list-property')}>List your place</button>
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/trips')}>Trips</button>}
+            {isAdmin && <button style={{ ...MOBILE_BTN, color: '#8A6D1F', fontWeight: 700 }} onClick={() => handleNavigate('/admin')}>⚑ Admin</button>}
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/dashboard')}>Dashboard</button>}
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/profile')}>Profile</button>}
             {user && <button style={MOBILE_BTN} onClick={() => handleNavigate('/settings')}>Settings</button>}

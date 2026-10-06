@@ -21,3 +21,8 @@ verify_jwt = false
 # anonymously. It verifies the address against auth.users before sending.
 [functions.send-signup-notification]
 verify_jwt = false
+
+# Fires right after the host's own write. Reads every detail back from the
+# database with the service role, so nothing from the caller is trusted.
+[functions.send-listing-notification]
+verify_jwt = false

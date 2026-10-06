@@ -10,6 +10,8 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
+  /** True when the signed-in user's email is in public.admins. */
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,6 +28,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check admin membership against the database whenever the user changes.
+  // Deliberately not derived from anything in the client — the same table
+  // backs the RLS policies, so the UI and the database agree by construction.
+  useEffect(() => {
+    let cancelled = false;
+    const check = async () => {
+      if (!user?.email) { setIsAdmin(false); return; }
+      const { data } = await supabase
+        .from('admins')
+        .select('email')
+        .eq('email', user.email)
+        .maybeSingle();
+      if (!cancelled) setIsAdmin(Boolean(data));
+    };
+    check();
+    return () => { cancelled = true; };
+  }, [user]);
 
   useEffect(() => {
     // Set up auth state listener
@@ -112,7 +133,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signIn,
     signOut,
-    loading
+    loading,
+    isAdmin
   };
 
   return (

@@ -398,6 +398,11 @@ const PropertyListingForm = () => {
         if (error) throw error;
         setPublishedListingId(editListingId);
         setStage('success');
+
+        // Non-blocking: an email failure must never break the host's flow.
+        supabase.functions
+          .invoke('send-listing-notification', { body: { listingId: editListingId, event: 'updated' } })
+          .catch((e) => console.error('Listing notification failed to send:', e));
       } else {
         // INSERT new listing
         // New listings go to review rather than straight live. Public queries
@@ -412,6 +417,12 @@ const PropertyListingForm = () => {
         setPublishedListingId(newId);
         localStorage.removeItem('teebnb-property-form');
         setStage('success');
+
+        if (newId) {
+          supabase.functions
+            .invoke('send-listing-notification', { body: { listingId: newId, event: 'created' } })
+            .catch((e) => console.error('Listing notification failed to send:', e));
+        }
       }
     } catch (error: any) {
       console.error('Error saving listing:', error);
