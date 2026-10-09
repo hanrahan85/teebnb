@@ -26,3 +26,8 @@ verify_jwt = false
 # database with the service role, so nothing from the caller is trusted.
 [functions.send-listing-notification]
 verify_jwt = false
+
+# The on-site chat assistant. Any visitor can open the chat, so it must be
+# callable anonymously; it reads only active listings and returns public fields.
+[functions.teebnb-assistant]
+verify_jwt = false
