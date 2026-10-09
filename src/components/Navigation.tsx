@@ -8,10 +8,12 @@ const NAV_BTN: React.CSSProperties = {
   background: 'transparent',
   border: 'none',
   cursor: 'pointer',
-  color: '#3A4A41',
+  color: '#0B1F17',
   fontFamily: "'Hanken Grotesk', sans-serif",
   fontWeight: 600,
-  fontSize: '14px',
+  fontSize: '12px',
+  letterSpacing: '.16em',
+  textTransform: 'uppercase',
   padding: 0,
   outline: 'none',
   whiteSpace: 'nowrap',
@@ -29,7 +31,7 @@ const MOBILE_BTN: React.CSSProperties = {
   background: 'transparent',
   border: 'none',
   cursor: 'pointer',
-  borderRadius: '8px',
+  borderRadius: '2px',
   minHeight: '48px',
   outline: 'none',
 };
@@ -55,14 +57,14 @@ const Navigation = () => {
       position: 'sticky',
       top: 0,
       zIndex: 50,
-      background: 'rgba(246, 245, 239, 0.92)',
+      background: 'rgba(251, 250, 246, 0.94)',
       backdropFilter: 'blur(14px)',
       WebkitBackdropFilter: 'blur(14px)',
-      borderBottom: '1px solid #EDEBE1',
+      borderBottom: '1px solid rgba(11,31,23,.08)',
     }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px' }}>
         {/* Main bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '76px' }}>
 
           {/* Logo */}
           <a onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
@@ -75,14 +77,12 @@ const Navigation = () => {
             }}>
               <span style={{ fontFamily: "Georgia, serif", fontWeight: 700, fontSize: '16px', color: '#C8A24B', lineHeight: 1 }}>T</span>
             </span>
-            <span style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 800, fontSize: '20px', letterSpacing: '-.02em', color: '#15794C' }}>
-              TeeBnB
-            </span>
+            <span className="lux-wordmark">TeeBnB</span>
           </a>
 
           {/* Desktop links */}
           {!isMobile && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <button style={NAV_BTN} onClick={() => handleNavigate('/search-results')}>Explore stays</button>
               <button style={NAV_BTN} onClick={() => handleNavigate('/destinations')}>Destinations</button>
               {user && <button style={NAV_BTN} onClick={() => handleNavigate('/trips')}>Trips</button>}
@@ -112,13 +112,14 @@ const Navigation = () => {
                   <button style={{ ...NAV_BTN, color: '#15794C' }} onClick={() => handleNavigate('/list-property')}>Become a host</button>
                   <button
                     onClick={() => handleNavigate('/auth?mode=signin')}
-                    style={{ background: 'transparent', border: '1px solid #CCCCCC', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 600, fontSize: '14px', padding: '8px 18px', borderRadius: '20px', outline: 'none', whiteSpace: 'nowrap' }}
+                    style={NAV_BTN}
                   >
                     Sign in
                   </button>
                   <button
                     onClick={() => handleNavigate('/auth')}
-                    style={{ background: '#C7F04A', border: 'none', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 700, fontSize: '14px', padding: '8px 18px', borderRadius: '20px', outline: 'none', whiteSpace: 'nowrap' }}
+                    className="lux-btn lux-btn-dark"
+                    style={{ padding: '11px 20px' }}
                   >
                     Sign up
                   </button>
@@ -141,7 +142,7 @@ const Navigation = () => {
 
         {/* Mobile dropdown */}
         {isMobile && isMobileMenuOpen && (
-          <div style={{ borderTop: '1px solid #EDEBE1', background: 'rgba(246,245,239,1)', paddingBottom: '12px' }}>
+          <div style={{ borderTop: '1px solid #EDEBE1', background: '#FBFAF6', paddingBottom: '12px' }}>
             <button style={MOBILE_BTN} onClick={() => handleNavigate('/search-results')}>Explore stays</button>
             <button style={MOBILE_BTN} onClick={() => handleNavigate('/destinations')}>Destinations</button>
             <button style={MOBILE_BTN} onClick={() => handleNavigate('/list-property')}>List your place</button>
@@ -162,13 +163,15 @@ const Navigation = () => {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', margin: '8px 12px' }}>
                   <button
-                    style={{ background: 'transparent', border: '1px solid #CCCCCC', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 600, fontSize: '15px', padding: '12px 24px', borderRadius: '8px', width: '100%' }}
+                    className="lux-btn lux-btn-outline"
+                    style={{ width: '100%' }}
                     onClick={() => handleNavigate('/auth?mode=signin')}
                   >
                     Sign in
                   </button>
                   <button
-                    style={{ background: '#C7F04A', border: 'none', cursor: 'pointer', color: '#0B1F17', fontFamily: "'Archivo', sans-serif", fontWeight: 700, fontSize: '15px', padding: '12px 24px', borderRadius: '8px', width: '100%' }}
+                    className="lux-btn lux-btn-dark"
+                    style={{ width: '100%' }}
                     onClick={() => handleNavigate('/auth')}
                   >
                     Sign up
