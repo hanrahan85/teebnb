@@ -43,7 +43,7 @@ const HomePage = () => {
     { id: 5, name: 'Sakura Villa', location: 'Hokkaido, Japan', price: 340, rating: 4.92, reviews: 178, tag: 'Sample', specs: '4 bed · 2 bath', image: 'https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=600&h=400&fit=crop' },
     { id: 6, name: 'Cliffside Casita', location: 'Faro, Portugal', price: 210, rating: 4.80, reviews: 134, tag: 'Sample', specs: '2 bed · 1 bath', image: 'https://images.unsplash.com/photo-1592919505780-303950717480?w=600&h=400&fit=crop' },
     { id: 7, name: 'Saguaro Retreat', location: 'Phoenix, AZ', price: 260, rating: 4.87, reviews: 167, tag: 'Sample', specs: '3 bed · 2 bath', image: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600&h=400&fit=crop' },
-    { id: 8, name: 'Loch Aria Cottage', location: 'County Kerry, Ireland', price: 300, rating: 4.91, reviews: 198, tag: 'Sample', specs: '3 bed · 2 bath', image: 'https://images.unsplash.com/photo-1476357471311-43c0db9fb2b4?w=600&h=400&fit=crop' },
+    { id: 8, name: 'Loch Aria Cottage', location: 'County Kerry, Ireland', price: 300, rating: 4.91, reviews: 198, tag: 'Sample', specs: '3 bed · 2 bath', image: 'https://images.unsplash.com/photo-1604161062468-dd283d98cdb2?w=600&h=400&fit=crop' },
   ];
 
   const [savedListings, setSavedListings] = React.useState<(number | string)[]>([]);
@@ -365,19 +365,22 @@ const HomePage = () => {
                 title: 'Kerry',
                 line: 'Waterville, Ballybunion, Killarney',
                 search: 'Kerry',
-                image: 'https://images.unsplash.com/photo-1476357471311-43c0db9fb2b4?w=900&q=70&auto=format&fit=crop',
+                image: 'https://images.unsplash.com/photo-1783277988168-820f1286614a?w=900&q=70&auto=format&fit=crop',
+                alt: 'Castle ruin on the cliff above Ballybunion beach, Co. Kerry',
               },
               {
                 title: 'Limerick & Clare',
                 line: 'Adare Manor, Lahinch, Doonbeg',
                 search: 'Limerick',
-                image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=900&q=70&auto=format&fit=crop',
+                image: 'https://images.unsplash.com/photo-1693113448599-087a2e8fc210?w=900&q=70&auto=format&fit=crop',
+                alt: 'Lahinch Golf Club beside the sea, Co. Clare',
               },
               {
                 title: 'Dublin & the east',
                 line: 'Portmarnock, The K Club, Druids Glen',
                 search: 'Dublin',
-                image: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=900&q=70&auto=format&fit=crop',
+                image: 'https://images.unsplash.com/photo-1779715836385-f7edea8e6c93?w=900&q=70&auto=format&fit=crop',
+                alt: 'Portmarnock beach and links from the air, Co. Dublin',
               },
             ].map((c) => (
               <button
@@ -385,7 +388,7 @@ const HomePage = () => {
                 className="lux-tile"
                 onClick={(): void => navigate('/search-results', { state: { location: c.search } })}
               >
-                <img src={c.image} alt="" />
+                <img src={c.image} alt={c.alt} />
                 <span className="lux-tile-text">
                   <span className="lux-display" style={{ display: 'block', color: '#fff', fontSize: '34px' }}>
                     {c.title}
@@ -397,6 +400,11 @@ const HomePage = () => {
               </button>
             ))}
           </div>
+          <p style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '12px', color: '#8A968E', margin: '16px 0 0', textAlign: 'right' }}>
+            Photos on{' '}
+            <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>Unsplash</a>
+            {': '}Ballybunion and Portmarnock by Dahlia E. Akhaine, Lahinch by Andrew Dovan.
+          </p>
         </div>
       </section>
 
