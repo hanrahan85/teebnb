@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -176,7 +177,7 @@ const PropertyListingForm = () => {
       setEditLoading(true);
       const { data, error } = await supabase
         .from('property_listings')
-        .select('*')
+        .select(PUBLIC_LISTING_COLUMNS)
         .eq('id', editListingId)
         .single();
       if (error || !data) {
@@ -184,7 +185,10 @@ const PropertyListingForm = () => {
         setEditLoading(false);
         return;
       }
-      const d = data as Record<string, unknown>;
+      const d = data as unknown as Record<string, unknown>;
+      // The phone number isn't in the public columns; the owner reads it via RPC.
+      const { data: contact } = await supabase.rpc('listing_contacts' as never, { p_ids: [editListingId] } as never);
+      const hostPhone = (contact as { host_phone: string | null }[] | null)?.[0]?.host_phone;
       form.reset({
         propertyTitle: (d.property_title as string) || '',
         propertyType: (d.property_type as PropertyListingFormData['propertyType']) || 'House',
@@ -223,7 +227,7 @@ const PropertyListingForm = () => {
         hostName: (d.host_name as string) || '',
         hostBio: (d.host_bio as string | undefined) ?? undefined,
         languagesSpoken: (d.languages_spoken as string[]) || [],
-        hostPhone: (d.host_phone as string | undefined) ?? undefined,
+        hostPhone: hostPhone ?? undefined,
       });
       setEditLoading(false);
       toast.success('Listing loaded — make your changes below');
@@ -410,7 +414,7 @@ const PropertyListingForm = () => {
         const { data: insertData, error } = await supabase
           .from('property_listings')
           .insert({ ...payload, user_id: user.id, status: 'pending_review' })
-          .select();
+          .select('id');
 
         if (error) throw error;
         const newId = insertData?.[0]?.id ?? null;

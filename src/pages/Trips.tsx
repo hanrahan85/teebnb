@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import { ChevronLeft } from 'lucide-react';
@@ -42,7 +43,7 @@ const Trips = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('bookings')
-      .select('*, listing:property_listings(*)')
+      .select(`*, listing:property_listings(${PUBLIC_LISTING_COLUMNS})`)
       .eq('guest_user_id', user!.id)
       .order('created_at', { ascending: false });
 
