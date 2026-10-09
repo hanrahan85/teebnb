@@ -16,6 +16,7 @@ interface Listing {
   tag: string;
   specs: string;
   image: string;
+  guests?: number;
   isReal?: boolean;
 }
 
@@ -35,14 +36,14 @@ const HomePage = () => {
   const isMobile = useIsMobile();
 
   const SAMPLE_LISTINGS: Listing[] = [
-    { id: 1, name: 'Fairway House', location: 'Monterey, CA', price: 640, rating: 4.9, reviews: 142, tag: 'Sample', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop' },
-    { id: 2, name: 'Old Course Loft', location: 'St Andrews, Scotland', price: 310, rating: 4.95, reviews: 289, tag: 'Sample', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=600&h=400&fit=crop' },
-    { id: 3, name: 'Cedar Ridge Cabin', location: 'Queenstown, NZ', price: 280, rating: 4.85, reviews: 156, tag: 'Sample', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop' },
-    { id: 4, name: 'Casa del Green', location: 'Los Cabos, Mexico', price: 520, rating: 4.88, reviews: 203, tag: 'Sample', specs: '5 bed • 3 bath', image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&h=400&fit=crop' },
-    { id: 5, name: 'Sakura Villa', location: 'Hokkaido, Japan', price: 340, rating: 4.92, reviews: 178, tag: 'Sample', specs: '4 bed • 2 bath', image: 'https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=600&h=400&fit=crop' },
-    { id: 6, name: 'Cliffside Casita', location: 'Faro, Portugal', price: 210, rating: 4.80, reviews: 134, tag: 'Sample', specs: '2 bed • 1 bath', image: 'https://images.unsplash.com/photo-1592919505780-303950717480?w=600&h=400&fit=crop' },
-    { id: 7, name: 'Saguaro Retreat', location: 'Phoenix, AZ', price: 260, rating: 4.87, reviews: 167, tag: 'Sample', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600&h=400&fit=crop' },
-    { id: 8, name: 'Loch Aria Cottage', location: 'County Kerry, Ireland', price: 300, rating: 4.91, reviews: 198, tag: 'Sample', specs: '3 bed • 2 bath', image: 'https://images.unsplash.com/photo-1476357471311-43c0db9fb2b4?w=600&h=400&fit=crop' },
+    { id: 1, name: 'Fairway House', location: 'Monterey, CA', price: 640, rating: 4.9, reviews: 142, tag: 'Sample', specs: '4 bed · 2 bath', image: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&h=400&fit=crop' },
+    { id: 2, name: 'Old Course Loft', location: 'St Andrews, Scotland', price: 310, rating: 4.95, reviews: 289, tag: 'Sample', specs: '2 bed · 1 bath', image: 'https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=600&h=400&fit=crop' },
+    { id: 3, name: 'Cedar Ridge Cabin', location: 'Queenstown, NZ', price: 280, rating: 4.85, reviews: 156, tag: 'Sample', specs: '3 bed · 2 bath', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop' },
+    { id: 4, name: 'Casa del Green', location: 'Los Cabos, Mexico', price: 520, rating: 4.88, reviews: 203, tag: 'Sample', specs: '5 bed · 3 bath', image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&h=400&fit=crop' },
+    { id: 5, name: 'Sakura Villa', location: 'Hokkaido, Japan', price: 340, rating: 4.92, reviews: 178, tag: 'Sample', specs: '4 bed · 2 bath', image: 'https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=600&h=400&fit=crop' },
+    { id: 6, name: 'Cliffside Casita', location: 'Faro, Portugal', price: 210, rating: 4.80, reviews: 134, tag: 'Sample', specs: '2 bed · 1 bath', image: 'https://images.unsplash.com/photo-1592919505780-303950717480?w=600&h=400&fit=crop' },
+    { id: 7, name: 'Saguaro Retreat', location: 'Phoenix, AZ', price: 260, rating: 4.87, reviews: 167, tag: 'Sample', specs: '3 bed · 2 bath', image: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600&h=400&fit=crop' },
+    { id: 8, name: 'Loch Aria Cottage', location: 'County Kerry, Ireland', price: 300, rating: 4.91, reviews: 198, tag: 'Sample', specs: '3 bed · 2 bath', image: 'https://images.unsplash.com/photo-1604161062468-dd283d98cdb2?w=600&h=400&fit=crop' },
   ];
 
   const [savedListings, setSavedListings] = React.useState<(number | string)[]>([]);
@@ -74,7 +75,7 @@ const HomePage = () => {
           const specs = [
             beds ? `${beds} bed` : null,
             baths ? `${baths} bath` : null,
-          ].filter(Boolean).join(' • ')
+          ].filter(Boolean).join(' · ')
             || (r.max_guests ? `Sleeps ${r.max_guests}` : '');
 
           const courses = r.nearby_golf_courses;
@@ -90,6 +91,7 @@ const HomePage = () => {
             tag: firstCourse ? `⛳ ${firstCourse}` : 'New listing',
             specs,
             image: (r.cover_image as string) || photos[0] || FALLBACK_IMAGE,
+            guests: (r.max_guests as number) ?? undefined,
             // Seeded demo properties are flagged in the database so they can be
             // labelled honestly rather than passing as real inventory.
             isReal: !r.is_sample,
@@ -109,6 +111,9 @@ const HomePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // The spotlight goes to a real listing, never a sample. With none live it is hidden.
+  const featured = listings.find((l) => l.isReal);
+
   const toggleSave = (id: number | string): void => {
     setSavedListings((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -116,359 +121,185 @@ const HomePage = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F6F5EF' }}>
+    <div style={{ minHeight: '100vh', background: '#FBFAF6' }}>
       <Navigation />
 
-      {/* Hero Section */}
+      {/* Hero */}
       <section
         style={{
           position: 'relative',
-          minHeight: '100vh',
+          minHeight: isMobile ? '88vh' : '92vh',
           backgroundImage: `url('https://commons.wikimedia.org/wiki/Special:FilePath/Aerial%20view%20of%2014th,%2015th%20and%2016th%20holes%20at%20Portmarnock%20Golf%20Club,%20Ireland.jpg?width=1600')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
-        {/* Dark gradient overlay */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.3), rgba(0,0,0,0.6))',
+            background: 'linear-gradient(to bottom, rgba(11,31,23,0.45), rgba(11,31,23,0.25) 45%, rgba(11,31,23,0.6))',
           }}
         />
-
-        <div
-          style={{
-            position: 'relative',
-            maxWidth: '1280px',
-            margin: '0 auto',
-            padding: '0 1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '100vh',
-            paddingTop: isMobile ? '80px' : '96px',
-            paddingBottom: isMobile ? '40px' : '64px',
-            padding: isMobile ? '80px 16px 40px' : '96px 32px 64px',
-          }}
-        >
-          <div
+        <div className="lux-container" style={{ position: 'relative', width: '100%', textAlign: 'center', padding: isMobile ? '96px 16px 56px' : '120px 24px 80px' }}>
+          <p className="lux-eyebrow" style={{ color: 'rgba(255,255,255,.9)', margin: 0 }}>
+            Golf stays &middot; Ireland first
+          </p>
+          <h1
+            className="lux-display"
+            style={{ color: '#fff', fontSize: 'clamp(48px, 7.5vw, 104px)', margin: '22px 0 0' }}
+          >
+            Stay steps from the tee.
+          </h1>
+          <p
             style={{
-              textAlign: 'center',
-              maxWidth: '1280px',
-              width: '100%',
+              fontFamily: "'Hanken Grotesk', sans-serif",
+              fontSize: isMobile ? '16px' : '18px',
+              lineHeight: 1.7,
+              color: 'rgba(255,255,255,.88)',
+              maxWidth: '560px',
+              margin: '22px auto 40px',
             }}
           >
-            {/* Badge */}
-            <div style={{ marginBottom: '20px' }}>
-              <span
-                style={{
-                  display: 'inline-block',
-                  borderRadius: '20px',
-                  border: '2px solid #C7F04A',
-                  color: '#C7F04A',
-                  padding: '8px 16px',
-                  fontSize: '12px',
-                  fontFamily: "'Hanken Grotesk', sans-serif",
-                  fontWeight: 600,
-                  backgroundColor: 'rgba(0,0,0,0.2)',
-                }}
-              >
-                Homes on the world's best fairways
-              </span>
-            </div>
-
-            {/* Main Headline */}
-            <h1
-              style={{
-                fontFamily: "'Archivo', sans-serif",
-                fontWeight: 900,
-                fontSize: 'clamp(42px, 8vw, 92px)',
-                color: 'white',
-                lineHeight: 0.96,
-                marginBottom: '20px',
-                letterSpacing: '-.02em',
-              }}
-            >
-              Stay steps from the tee.
-            </h1>
-
-            {/* Subheading */}
-            <p
-              style={{
-                fontSize: '18px',
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-                lineHeight: 1.6,
-                marginBottom: '32px',
-                maxWidth: '600px',
-                margin: '0 auto 32px',
-              }}
-            >
-              Book privately-owned homes, villas, and condos right beside the
-              courses you came to play...
-            </p>
-
-            {/* Search Bar */}
-            <div style={{ width: '100%', marginBottom: '40px' }}>
-              <SearchBar />
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '24px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            color: 'rgba(255, 255, 255, 0.5)',
-          }}
-        >
-          <div
-            style={{
-              width: '24px',
-              height: '40px',
-              border: '2px solid rgba(255, 255, 255, 0.3)',
-              borderRadius: '12px',
-              display: 'flex',
-              justifyContent: 'center',
-              paddingTop: '8px',
-              animation: 'bounce 2s infinite',
-            }}
-          >
-            <div
-              style={{
-                width: '4px',
-                height: '12px',
-                background: 'rgba(255, 255, 255, 0.5)',
-                borderRadius: '2px',
-              }}
-            />
+            Privately owned homes beside the courses you came to play, booked
+            direct with the owner.
+          </p>
+          <div style={{ width: '100%' }}>
+            <SearchBar />
           </div>
         </div>
       </section>
 
-      {/* Stats Bar */}
-      <section
-        style={{
-          background: '#0B1F17',
-          padding: '40px 16px',
-        }}
-      >
+      {/* Introduction */}
+      <section className="lux-section">
+        <div className="lux-container" style={{ maxWidth: '820px', textAlign: 'center' }}>
+          <p className="lux-eyebrow" style={{ margin: 0 }}>Welcome to TeeBnB</p>
+          <h2 className="lux-h2">Houses for golf trips, found by the course rather than the town.</h2>
+          <hr className="lux-rule" />
+          <p className="lux-lede" style={{ margin: 0 }}>
+            Search by where you are playing, find a whole house for the group,
+            and arrange your stay with the owner directly. No call centre in the
+            middle. We are starting in Ireland.
+          </p>
+        </div>
+
+        {/* Propositions, not metrics. Every line here must stay true —
+            no counts or ratings until they can be read from real data. */}
         <div
+          className="lux-container"
           style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            gap: '40px',
+            marginTop: '64px',
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
+            borderTop: '1px solid rgba(11,31,23,.12)',
+            borderBottom: '1px solid rgba(11,31,23,.12)',
           }}
         >
-          {/* Propositions, not metrics. Every line here must stay true —
-              no counts or ratings until they can be read from real data. */}
           {[
             { headline: '€0', caption: 'To list your place' },
             { headline: 'Golf only', caption: 'Built for one kind of trip' },
             { headline: 'Direct', caption: 'Book with the owner' },
             { headline: 'Ireland', caption: 'Launching here first' },
           ].map(({ headline, caption }) => (
-            <div key={caption} style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: '36px',
-                  fontWeight: 700,
-                  color: '#C7F04A',
-                  fontFamily: "'Archivo', sans-serif",
-                }}
-              >
+            <div key={caption} style={{ textAlign: 'center', padding: '32px 12px' }}>
+              <div className="lux-display" style={{ fontSize: '34px', color: '#15794C' }}>
                 {headline}
               </div>
-              <div
-                style={{
-                  fontSize: '14px',
-                  color: '#C7F04A',
-                  fontFamily: "'Hanken Grotesk', sans-serif",
-                  marginTop: '4px',
-                }}
-              >
-                {caption}
-              </div>
+              <div className="lux-card-meta" style={{ marginTop: '8px' }}>{caption}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Featured Listings Section */}
-      <section
-        style={{
-          background: '#F6F5EF',
-          padding: '80px 16px',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
-          }}
-        >
-          {/* Section Header */}
-          <div style={{ marginBottom: '48px' }}>
-            <h2
-              style={{
-                fontFamily: "'Archivo', sans-serif",
-                fontWeight: 800,
-                fontSize: '36px',
-                color: '#0B1F17',
-                marginBottom: '20px',
-                letterSpacing: '-.02em',
-              }}
-            >
-              Homes hosted by golfers
-            </h2>
-
-            {/* Region Filter Pills */}
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              {['All', 'North America', 'Europe', 'Asia-Pacific'].map((region) => (
-                <button
-                  key={region}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '20px',
-                    border: '1px solid #15794C',
-                    background: 'transparent',
-                    color: '#15794C',
-                    fontFamily: "'Hanken Grotesk', sans-serif",
-                    fontWeight: 600,
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    outline: 'none',
-                  }}
-                  onClick={(): void => {}}
-                >
-                  {region}
+      {/* Featured stay — a real listing only */}
+      {featured && (
+        <section style={{ background: '#F1EFE7' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1.25fr 1fr',
+              alignItems: 'stretch',
+            }}
+          >
+            <div style={{ minHeight: isMobile ? '320px' : '620px', background: '#E4E1D6' }}>
+              <img
+                src={featured.image}
+                alt={featured.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            </div>
+            <div style={{ padding: isMobile ? '48px 16px 64px' : '80px 72px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <p className="lux-eyebrow" style={{ margin: 0 }}>Featured stay</p>
+              <h2 className="lux-h2">{featured.name}</h2>
+              <p className="lux-card-meta" style={{ marginTop: '14px' }}>{featured.location}</p>
+              <hr className="lux-rule" style={{ marginLeft: 0 }} />
+              <dl style={{ margin: 0, display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '10px 28px', fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '15px', color: '#3A4A41' }}>
+                {featured.guests ? (<><dt className="lux-card-meta">Sleeps</dt><dd style={{ margin: 0 }}>{featured.guests}</dd></>) : null}
+                {featured.specs && !featured.specs.startsWith('Sleeps') ? (<><dt className="lux-card-meta">Rooms</dt><dd style={{ margin: 0 }}>{featured.specs}</dd></>) : null}
+                {featured.tag.startsWith('⛳') ? (<><dt className="lux-card-meta">Nearby</dt><dd style={{ margin: 0 }}>{featured.tag.replace('⛳ ', '')}</dd></>) : null}
+                {featured.price ? (<><dt className="lux-card-meta">From</dt><dd style={{ margin: 0 }}>€{featured.price.toLocaleString('en-IE')} a night</dd></>) : null}
+              </dl>
+              <div style={{ marginTop: '40px' }}>
+                <button className="lux-btn lux-btn-dark" onClick={(): void => navigate(`/property/${featured.id}`)}>
+                  View the house
                 </button>
-              ))}
+              </div>
             </div>
           </div>
+        </section>
+      )}
 
-          {/* Listings Grid */}
+      {/* Listings */}
+      <section className="lux-section">
+        <div className="lux-container">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              gap: '24px',
+              flexWrap: 'wrap',
+              marginBottom: '48px',
+            }}
+          >
+            <div>
+              <p className="lux-eyebrow" style={{ margin: 0 }}>The houses</p>
+              <h2 className="lux-h2">Homes near the course</h2>
+            </div>
+            <button className="lux-link" onClick={(): void => navigate('/search-results')}>
+              View all stays
+            </button>
+          </div>
+
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: '24px',
+              gap: isMobile ? '40px' : '56px 32px',
             }}
           >
             {loadingListings && (
-              <p style={{
-                gridColumn: '1 / -1',
-                textAlign: 'center',
-                color: '#5C6B62',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-                padding: '32px 0',
-                margin: 0,
-              }}>
+              <p className="lux-lede" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '32px 0', margin: 0 }}>
                 Loading stays…
               </p>
             )}
-            {listings.map((listing) => (
+            {listings.slice(0, 6).map((listing) => (
               <div
                 key={listing.id}
-                style={{
-                  background: 'white',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                }}
+                className="lux-card"
                 onClick={(): void =>
                   listing.isReal
                     ? navigate(`/property/${listing.id}`)
                     : navigate('/search-results')
                 }
-                onMouseEnter={(e): void => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
-                  (e.currentTarget as HTMLElement).style.boxShadow =
-                    '0 12px 20px rgba(0,0,0,0.15)';
-                }}
-                onMouseLeave={(e): void => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-                  (e.currentTarget as HTMLElement).style.boxShadow =
-                    '0 1px 3px rgba(0,0,0,0.1)';
-                }}
               >
-                {/* Image Container */}
-                <div
-                  style={{
-                    position: 'relative',
-                    paddingBottom: '75%',
-                    overflow: 'hidden',
-                    background: '#EDEBE1',
-                  }}
-                >
-                  <img
-                    src={listing.image}
-                    alt={listing.name}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-
-                  {/* Course badge */}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: '12px',
-                      left: '12px',
-                      background: '#0B1F17',
-                      color: 'white',
-                      padding: '4px 12px',
-                      borderRadius: '4px',
-                      fontSize: '11px',
-                      fontFamily: "'Hanken Grotesk', sans-serif",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {listing.tag}
-                  </span>
-
-                  {/* Sample badge — demo properties must never read as real inventory */}
-                  {!listing.isReal && (
-                    <span
-                      style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '52px',
-                        background: '#F5C518',
-                        color: '#0B1F17',
-                        padding: '4px 10px',
-                        borderRadius: '4px',
-                        fontSize: '11px',
-                        fontFamily: "'Archivo', sans-serif",
-                        fontWeight: 700,
-                        letterSpacing: '.3px',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      Sample
-                    </span>
-                  )}
-
-                  {/* Save Button */}
+                <div className="lux-card-img">
+                  <img src={listing.image} alt={listing.name} />
+                  {!listing.isReal && <span className="lux-sample">Sample listing</span>}
                   <button
+                    aria-label={savedListings.includes(listing.id) ? 'Remove from saved' : 'Save'}
                     onClick={(e): void => {
                       e.stopPropagation();
                       toggleSave(listing.id);
@@ -477,194 +308,37 @@ const HomePage = () => {
                       position: 'absolute',
                       top: '12px',
                       right: '12px',
-                      background: 'rgba(255, 255, 255, 0.9)',
+                      background: 'rgba(251,250,246,.92)',
                       border: 'none',
-                      width: '36px',
-                      height: '36px',
+                      width: '38px',
+                      height: '38px',
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: 'pointer',
-                      outline: 'none',
                     }}
                   >
                     <Heart
-                      size={20}
-                      fill={savedListings.includes(listing.id) ? '#C7F04A' : 'none'}
-                      color={savedListings.includes(listing.id) ? '#C7F04A' : '#0B1F17'}
+                      size={18}
+                      strokeWidth={1.5}
+                      fill={savedListings.includes(listing.id) ? '#15794C' : 'none'}
+                      color={savedListings.includes(listing.id) ? '#15794C' : '#0B1F17'}
                     />
                   </button>
                 </div>
-
-                {/* Content */}
-                <div style={{ padding: '16px' }}>
-                  <h3
-                    style={{
-                      fontFamily: "'Archivo', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '16px',
-                      color: '#0B1F17',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {listing.name}
-                  </h3>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: '12px',
-                        color: listing.isReal ? '#166534' : '#3A4A41',
-                        background: listing.isReal ? '#F0FDF4' : '#EDEBE1',
-                        padding: '3px 8px',
-                        borderRadius: '4px',
-                        fontFamily: "'Hanken Grotesk', sans-serif",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {listing.isReal ? listing.tag : 'Sample listing'}
-                    </span>
-                  </div>
-
-                  <p
-                    style={{
-                      fontSize: '13px',
-                      color: '#5C6B62',
-                      fontFamily: "'Hanken Grotesk', sans-serif",
-                      marginBottom: '8px',
-                    }}
-                  >
-                    {listing.location}
+                <h3 className="lux-card-title">{listing.name}</h3>
+                <p className="lux-card-meta" style={{ margin: 0 }}>
+                  {[listing.location, listing.specs].filter(Boolean).join(' · ')}
+                </p>
+                {listing.isReal && listing.tag.startsWith('⛳') && (
+                  <p style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '14px', color: '#15794C', margin: '8px 0 0' }}>
+                    Near {listing.tag.replace('⛳ ', '')}
                   </p>
-
-                  <p
-                    style={{
-                      fontSize: '12px',
-                      color: '#8A968E',
-                      fontFamily: "'Hanken Grotesk', sans-serif",
-                      marginBottom: '12px',
-                    }}
-                  >
-                    {listing.specs}
-                  </p>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'baseline',
-                      gap: '4px',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "'Archivo', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '18px',
-                        color: '#0B1F17',
-                      }}
-                    >
-                      €{listing.price}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '13px',
-                        color: '#5C6B62',
-                        fontFamily: "'Hanken Grotesk', sans-serif",
-                      }}
-                    >
-                      /night
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section
-        style={{
-          background: '#EDEBE1',
-          padding: '80px 16px',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
-          }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <h2
-              style={{
-                fontFamily: "'Archivo', sans-serif",
-                fontWeight: 800,
-                fontSize: '36px',
-                color: '#0B1F17',
-                marginBottom: '16px',
-                letterSpacing: '-.02em',
-              }}
-            >
-              Your home base for the whole trip.
-            </h2>
-          </div>
-
-          {/* Steps */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '32px',
-            }}
-          >
-            {[
-              { number: '01', title: 'Find your spot', description: 'Browse homes near world-class golf courses' },
-              { number: '02', title: 'Book direct with owners', description: 'Deal with the owner, not a call centre' },
-              { number: '03', title: 'Unpack & play', description: 'Enjoy your golf vacation from day one' },
-            ].map((step, i) => (
-              <div key={i} style={{ textAlign: 'center' }}>
-                <div
-                  style={{
-                    fontFamily: "'Archivo', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '56px',
-                    color: '#C7F04A',
-                    textShadow: '2px 2px 0 #0B1F17',
-                    marginBottom: '16px',
-                    lineHeight: 1,
-                  }}
-                >
-                  {step.number}
-                </div>
-                <h3
-                  style={{
-                    fontFamily: "'Archivo', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '20px',
-                    color: '#0B1F17',
-                    marginBottom: '12px',
-                  }}
-                >
-                  {step.title}
-                </h3>
-                <p
-                  style={{
-                    fontSize: '14px',
-                    color: '#5C6B62',
-                    fontFamily: "'Hanken Grotesk', sans-serif",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {step.description}
+                )}
+                <p style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '15px', color: '#0B1F17', margin: '10px 0 0' }}>
+                  From <strong style={{ fontWeight: 600 }}>€{listing.price.toLocaleString('en-IE')}</strong>
+                  <span style={{ color: '#5C6B62' }}> a night</span>
                 </p>
               </div>
             ))}
@@ -672,441 +346,181 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Spotlight Property */}
-      <section
-        style={{
-          background: '#F6F5EF',
-          padding: '80px 16px',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '48px',
-            alignItems: 'center',
-          }}
-        >
-          {/* Image */}
+      {/* Where to play */}
+      <section className="lux-section" style={{ paddingTop: 0 }}>
+        <div className="lux-container">
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <p className="lux-eyebrow" style={{ margin: 0 }}>Where to play</p>
+            <h2 className="lux-h2">Start with the course</h2>
+          </div>
           <div
             style={{
-              borderRadius: '12px',
-              overflow: 'hidden',
-              aspectRatio: '1',
-              background: '#EDEBE1',
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+              gap: '24px',
             }}
           >
-            <img
-              src="https://images.unsplash.com/photo-1672825952732-ecef34882416?w=1100&q=70&auto=format&fit=crop"
-              alt="The Fairway House"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-            />
-          </div>
-
-          {/* Content */}
-          <div>
-            <span
-              style={{
-                display: 'inline-block',
-                background: '#15794C',
-                color: 'white',
-                padding: '4px 12px',
-                borderRadius: '4px',
-                fontSize: '11px',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-                fontWeight: 600,
-                marginBottom: '16px',
-              }}
-            >
-              Sample listing
-            </span>
-
-            <h2
-              style={{
-                fontFamily: "'Archivo', sans-serif",
-                fontWeight: 800,
-                fontSize: '36px',
-                color: '#0B1F17',
-                marginBottom: '16px',
-                letterSpacing: '-.02em',
-              }}
-            >
-              The Fairway House
-            </h2>
-
-            <p
-              style={{
-                fontSize: '15px',
-                color: '#5C6B62',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-                lineHeight: 1.7,
-                marginBottom: '24px',
-              }}
-            >
-              A stunning oceanfront property with direct access to Pebble Beach Golf
-              Links. Featuring 4 spacious bedrooms, a gourmet kitchen, and a private
-              terrace overlooking the Pacific coast. Perfect for golf groups seeking
-              luxury and convenience.
-            </p>
-
-            {/* Feature Badges */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '32px' }}>
-              {['Private pool', 'Golf cart access', 'Chef services', 'Wine cellar'].map(
-                (feature) => (
-                  <span
-                    key={feature}
-                    style={{
-                      background: '#EDEBE1',
-                      color: '#0B1F17',
-                      padding: '6px 12px',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      fontFamily: "'Hanken Grotesk', sans-serif",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {feature}
-                  </span>
-                )
-              )}
-            </div>
-
-            {/* CTA */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {[
+              {
+                title: 'Kerry',
+                line: 'Waterville, Ballybunion, Killarney',
+                search: 'Kerry',
+                image: 'https://images.unsplash.com/photo-1783277988168-820f1286614a?w=900&q=70&auto=format&fit=crop',
+                alt: 'Castle ruin on the cliff above Ballybunion beach, Co. Kerry',
+              },
+              {
+                title: 'Limerick & Clare',
+                line: 'Adare Manor, Lahinch, Doonbeg',
+                search: 'Limerick',
+                image: 'https://images.unsplash.com/photo-1693113448599-087a2e8fc210?w=900&q=70&auto=format&fit=crop',
+                alt: 'Lahinch Golf Club beside the sea, Co. Clare',
+              },
+              {
+                title: 'Dublin & the east',
+                line: 'Portmarnock, The K Club, Druids Glen',
+                search: 'Dublin',
+                image: 'https://images.unsplash.com/photo-1779715836385-f7edea8e6c93?w=900&q=70&auto=format&fit=crop',
+                alt: 'Portmarnock beach and links from the air, Co. Dublin',
+              },
+            ].map((c) => (
               <button
-                onClick={(): void => navigate('/search-results')}
-                style={{
-                  background: '#0B1F17',
-                  color: 'white',
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontFamily: "'Archivo', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  outline: 'none',
-                }}
+                key={c.title}
+                className="lux-tile"
+                onClick={(): void => navigate('/search-results', { state: { location: c.search } })}
               >
-                View home
+                <img src={c.image} alt={c.alt} />
+                <span className="lux-tile-text">
+                  <span className="lux-display" style={{ display: 'block', color: '#fff', fontSize: '34px' }}>
+                    {c.title}
+                  </span>
+                  <span className="lux-card-meta" style={{ display: 'block', color: 'rgba(255,255,255,.85)', marginTop: '8px' }}>
+                    {c.line}
+                  </span>
+                </span>
               </button>
-              <span
-                style={{
-                  fontFamily: "'Archivo', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '20px',
-                  color: '#0B1F17',
-                }}
-              >
-                €640/night
-              </span>
-            </div>
+            ))}
+          </div>
+          <p style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '12px', color: '#8A968E', margin: '16px 0 0', textAlign: 'right' }}>
+            Photos on{' '}
+            <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>Unsplash</a>
+            {': '}Ballybunion and Portmarnock by Dahlia E. Akhaine, Lahinch by Andrew Dovan.
+          </p>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="lux-section" style={{ background: '#F1EFE7' }}>
+        <div className="lux-container">
+          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+            <p className="lux-eyebrow" style={{ margin: 0 }}>How it works</p>
+            <h2 className="lux-h2">Your home base for the whole trip</h2>
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+              gap: isMobile ? '40px' : '56px',
+            }}
+          >
+            {[
+              { number: 'I', title: 'Find your spot', description: 'Browse homes near the courses you want to play.' },
+              { number: 'II', title: 'Book direct with owners', description: 'Deal with the owner, not a call centre.' },
+              { number: 'III', title: 'Unpack and play', description: 'Settle in and be on the first tee in minutes.' },
+            ].map((step) => (
+              <div key={step.number} style={{ textAlign: 'center' }}>
+                <div className="lux-display" style={{ fontSize: '40px', color: '#15794C', fontStyle: 'italic' }}>
+                  {step.number}
+                </div>
+                <h3 className="lux-card-title" style={{ marginTop: '12px' }}>{step.title}</h3>
+                <p className="lux-lede" style={{ fontSize: '15px', margin: 0 }}>{step.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Host CTA Banner */}
-      <section
-        style={{
-          background: '#C7F04A',
-          padding: '60px 16px',
-          borderRadius: '16px',
-          margin: '0 16px 80px',
-          maxWidth: 'calc(100% - 32px)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '600px',
-            margin: '0 auto',
-            textAlign: 'center',
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: "'Archivo', sans-serif",
-              fontWeight: 800,
-              fontSize: '32px',
-              color: '#0B1F17',
-              marginBottom: '12px',
-              letterSpacing: '-.02em',
-            }}
-          >
-            Live near a course? List it on TeeBnB.
-          </h2>
-
-          <p
-            style={{
-              fontSize: '15px',
-              color: '#0B1F17',
-              fontFamily: "'Hanken Grotesk', sans-serif",
-              lineHeight: 1.6,
-              marginBottom: '24px',
-            }}
-          >
-            Earn extra income by sharing your home with golfers from around the
-            world. Listing is free while we get started.
+      {/* Host CTA */}
+      <section className="lux-section">
+        <div className="lux-container" style={{ maxWidth: '760px', textAlign: 'center' }}>
+          <p className="lux-eyebrow" style={{ margin: 0 }}>For owners</p>
+          <h2 className="lux-h2">Own a house near a course?</h2>
+          <hr className="lux-rule" />
+          <p className="lux-lede" style={{ margin: '0 0 36px' }}>
+            List it on TeeBnB and reach golfers planning their trip around the
+            course. Listing is free while we get started, and you deal with
+            guests directly.
           </p>
-
-          <button
-            onClick={(): void => navigate('/list-property')}
-            style={{
-              background: '#0B1F17',
-              color: '#C7F04A',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              border: 'none',
-              fontFamily: "'Archivo', sans-serif",
-              fontWeight: 600,
-              fontSize: '14px',
-              cursor: 'pointer',
-              outline: 'none',
-            }}
-          >
-            List your place →
+          <button className="lux-btn lux-btn-outline" onClick={(): void => navigate('/list-property')}>
+            List your home
           </button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer
-        style={{
-          background: '#0B1F17',
-          color: 'white',
-          padding: '64px 16px 32px',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
-          }}
-        >
+      <footer style={{ background: '#0B1F17', color: '#F6F5EF', padding: isMobile ? '56px 0 28px' : '80px 0 32px' }}>
+        <div className="lux-container">
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '32px',
-              marginBottom: '32px',
+              gridTemplateColumns: isMobile ? '1fr 1fr' : '1.6fr 1fr 1fr 1fr',
+              gap: '40px',
+              marginBottom: '56px',
             }}
           >
-            {/* Brand Column */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                <span
-                  style={{
-                    display: 'grid',
-                    placeItems: 'center',
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    background: '#EDEBE1',
-                    fontFamily: "Georgia, 'Times New Roman', serif",
-                    fontWeight: 700,
-                    fontSize: '15px',
-                    color: '#C8A24B',
-                    lineHeight: 1,
-                  }}
-                >
-                  T
-                </span>
-                <span
-                  style={{
-                    fontFamily: "'Archivo', sans-serif",
-                    fontWeight: 800,
-                    fontSize: '18px',
-                    color: '#C7F04A',
-                    letterSpacing: '-.02em',
-                  }}
-                >
-                  TeeBnB
-                </span>
-              </div>
-              <p
-                style={{
-                  fontSize: '13px',
-                  color: '#5C6B62',
-                  fontFamily: "'Hanken Grotesk', sans-serif",
-                  lineHeight: 1.6,
-                }}
-              >
-                A booking platform built just for golf trips. Stay where you
-                play.
+            <div style={{ gridColumn: isMobile ? '1 / -1' : undefined }}>
+              <span className="lux-wordmark" style={{ color: '#F6F5EF' }}>TeeBnB</span>
+              <p style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '14px', lineHeight: 1.7, color: 'rgba(246,245,239,.68)', margin: '16px 0 0', maxWidth: '300px' }}>
+                A booking platform built just for golf trips. Stay where you play.
               </p>
             </div>
-
-            {/* Explore Column */}
-            <div>
-              <h4
-                style={{
-                  fontFamily: "'Archivo', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  color: '#C7F04A',
-                  marginBottom: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Explore
-              </h4>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {[
+            {[
+              {
+                heading: 'Explore',
+                links: [
                   { label: 'Browse homes', href: '/search-results' },
                   { label: 'Destinations', href: '/destinations' },
                   { label: 'Become a host', href: '/list-property' },
-                ].map(({ label, href }) => (
-                  <li key={label} style={{ marginBottom: '8px' }}>
-                    <a
-                      href={href}
-                      style={{
-                        color: '#5C6B62',
-                        textDecoration: 'none',
-                        fontSize: '13px',
-                        fontFamily: "'Hanken Grotesk', sans-serif",
-                      }}
-                      onMouseEnter={(e): void => {
-                        (e.currentTarget as HTMLElement).style.color = '#C7F04A';
-                      }}
-                      onMouseLeave={(e): void => {
-                        (e.currentTarget as HTMLElement).style.color = '#5C6B62';
-                      }}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Hosting Column */}
-            <div>
-              <h4
-                style={{
-                  fontFamily: "'Archivo', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  color: '#C7F04A',
-                  marginBottom: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Hosting
-              </h4>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {[
+                ],
+              },
+              {
+                heading: 'Hosting',
+                links: [
                   { label: 'How it works', href: '/how-it-works' },
                   { label: 'FAQ', href: '/faq' },
                   { label: 'Support', href: '/support' },
-                ].map(({ label, href }) => (
-                  <li key={label} style={{ marginBottom: '8px' }}>
-                    <a
-                      href={href}
-                      style={{
-                        color: '#5C6B62',
-                        textDecoration: 'none',
-                        fontSize: '13px',
-                        fontFamily: "'Hanken Grotesk', sans-serif",
-                      }}
-                      onMouseEnter={(e): void => {
-                        (e.currentTarget as HTMLElement).style.color = '#C7F04A';
-                      }}
-                      onMouseLeave={(e): void => {
-                        (e.currentTarget as HTMLElement).style.color = '#5C6B62';
-                      }}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Company Column */}
-            <div>
-              <h4
-                style={{
-                  fontFamily: "'Archivo', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  color: '#C7F04A',
-                  marginBottom: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Company
-              </h4>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {[
+                ],
+              },
+              {
+                heading: 'Company',
+                links: [
                   { label: 'About us', href: '/about' },
                   { label: 'Blog', href: '/blog' },
                   { label: 'Privacy', href: '/privacy' },
                   { label: 'Terms', href: '/terms' },
-                ].map(({ label, href }) => (
-                  <li key={label} style={{ marginBottom: '8px' }}>
-                    <a
-                      href={href}
-                      style={{
-                        color: '#5C6B62',
-                        textDecoration: 'none',
-                        fontSize: '13px',
-                        fontFamily: "'Hanken Grotesk', sans-serif",
-                      }}
-                      onMouseEnter={(e): void => {
-                        (e.currentTarget as HTMLElement).style.color = '#C7F04A';
-                      }}
-                      onMouseLeave={(e): void => {
-                        (e.currentTarget as HTMLElement).style.color = '#5C6B62';
-                      }}
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                ],
+              },
+            ].map((col) => (
+              <div key={col.heading}>
+                <h4 className="lux-eyebrow" style={{ color: '#C7F04A', margin: '0 0 18px', fontSize: '11px' }}>
+                  {col.heading}
+                </h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {col.links.map(({ label, href }) => (
+                    <li key={label} style={{ marginBottom: '10px' }}>
+                      <a href={href} className="lux-footer-link">{label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-
-          {/* Footer Bottom */}
-          <div
-            style={{
-              borderTop: '1px solid rgba(199, 240, 74, 0.1)',
-              paddingTop: '24px',
-              textAlign: 'center',
-            }}
-          >
-            <p
-              style={{
-                fontSize: '12px',
-                color: '#5C6B62',
-                fontFamily: "'Hanken Grotesk', sans-serif",
-              }}
-            >
-              © 2024 TeeBnB. All rights reserved.
+          <div style={{ borderTop: '1px solid rgba(246,245,239,.14)', paddingTop: '24px' }}>
+            <p style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '12px', color: 'rgba(246,245,239,.5)', margin: 0 }}>
+              © {new Date().getFullYear()} TeeBnB. All rights reserved.
             </p>
           </div>
         </div>
       </footer>
-
-      <style>{`
-        @keyframes bounce {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-            transform: translateY(4px);
-          }
-        }
-      `}</style>
     </div>
   );
 };
