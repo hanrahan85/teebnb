@@ -5,15 +5,15 @@ import Navigation from '@/components/Navigation';
 const faqs = [
   {
     q: 'How does TeeBnB work?',
-    a: 'Browse properties near golf courses, pick your dates, and book directly through the platform. Hosts confirm your booking and you get all the details you need for your stay.',
+    a: 'Search by the course you want to play, pick a house and your dates, and send a booking request. The host then confirms or declines it.',
   },
   {
     q: 'Do I need an account to book?',
-    a: 'Yes — you\'ll need to create a free account before booking. This lets you manage your trips, message hosts, and keep track of your bookings in one place.',
+    a: 'No. You can request a booking with just your name and email. We send you a link to view or cancel your booking, so you never need to sign in.',
   },
   {
     q: 'How do I know a property is golf-friendly?',
-    a: 'Every listing on TeeBnB is verified for golf suitability. Look out for amenities like golf bag storage, club cleaning facilities, proximity to courses, and partner course discounts.',
+    a: 'We review every listing before it goes live, and each one names the courses nearby. Check the listing for details like golf bag storage and distance to the course.',
   },
   {
     q: 'What is the cancellation policy?',
@@ -24,12 +24,12 @@ const faqs = [
     a: 'Absolutely. If your property is within a reasonable distance of a golf course, you can list it for free. Head to "List your place" to get started.',
   },
   {
-    q: 'How do hosts get paid?',
-    a: 'Hosts receive payment via bank transfer after a guest checks in. TeeBnB deducts a small service fee to cover the platform.',
+    q: 'How does payment work?',
+    a: 'TeeBnB doesn\'t take payment. When the host accepts your request, you arrange payment with them directly. Listing a property is free.',
   },
   {
     q: 'What if something goes wrong during my stay?',
-    a: 'Contact our support team at support@teebnb.com and we\'ll help resolve any issues as quickly as possible.',
+    a: 'Contact your host first. If that doesn\'t sort it, email darragh@teebnb.com and we\'ll help.',
   },
 ];
 
