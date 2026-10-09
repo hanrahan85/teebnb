@@ -19,8 +19,10 @@ type ListingCard = {
 type Entry = Turn & { listings?: ListingCard[] };
 
 const GREEN = '#15794C';
-const CREAM = '#F6F5EF';
-const INK = '#1F2A24';
+const DARK = '#0B1F17';
+const CREAM = '#F1EFE7';
+const INK = '#0B1F17';
+const FONT = "'Hanken Grotesk', sans-serif";
 
 const GREETING: Entry = {
   role: 'assistant',
@@ -86,7 +88,7 @@ const ChatWidget: React.FC = () => {
         style={{
           position: 'fixed', right: 20, bottom: 20, zIndex: 1000,
           display: 'flex', alignItems: 'center', gap: 8,
-          background: GREEN, color: '#fff', border: 'none', borderRadius: 999,
+          background: DARK, color: '#fff', border: 'none', borderRadius: 999, fontFamily: FONT,
           padding: '12px 18px', fontSize: 15, fontWeight: 600, cursor: 'pointer',
           boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
         }}
@@ -104,13 +106,13 @@ const ChatWidget: React.FC = () => {
         position: 'fixed', right: 16, bottom: 16, zIndex: 1000,
         width: 'min(380px, calc(100vw - 32px))', height: 'min(560px, calc(100vh - 32px))',
         display: 'flex', flexDirection: 'column', background: '#fff',
-        borderRadius: 16, overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.22)',
-        fontFamily: 'inherit', color: INK,
+        borderRadius: 8, overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.22)',
+        fontFamily: FONT, color: INK,
       }}
     >
-      <div style={{ background: GREEN, color: '#fff', padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: DARK, color: '#fff', padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 16 }}>Caddie</div>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: 22, lineHeight: 1 }}>Caddie</div>
           <div style={{ fontSize: 12, opacity: 0.85 }}>Golf stays, near the first tee</div>
         </div>
         <button onClick={() => setOpen(false)} aria-label="Close chat" style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
@@ -123,7 +125,7 @@ const ChatWidget: React.FC = () => {
           <div key={i} style={{ alignSelf: e.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '88%' }}>
             <div
               style={{
-                background: e.role === 'user' ? GREEN : '#fff',
+                background: e.role === 'user' ? DARK : '#fff',
                 color: e.role === 'user' ? '#fff' : INK,
                 padding: '9px 12px', borderRadius: 12, fontSize: 14, lineHeight: 1.45,
                 whiteSpace: 'pre-wrap', border: e.role === 'user' ? 'none' : '1px solid #E4E1D6',
@@ -190,7 +192,7 @@ const ChatWidget: React.FC = () => {
           type="submit"
           disabled={sending || !draft.trim()}
           aria-label="Send"
-          style={{ background: GREEN, color: '#fff', border: 'none', borderRadius: 10, padding: '0 14px', cursor: 'pointer', opacity: sending || !draft.trim() ? 0.5 : 1 }}
+          style={{ background: DARK, color: '#fff', border: 'none', borderRadius: 4, padding: '0 14px', cursor: 'pointer', opacity: sending || !draft.trim() ? 0.5 : 1 }}
         >
           <Send size={18} />
         </button>
