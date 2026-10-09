@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import InteractiveMap from '@/components/InteractiveMap';
@@ -80,7 +81,7 @@ const PropertyDetail = () => {
         try {
           const { data, error } = await supabase
             .from('property_listings')
-            .select('*')
+            .select(PUBLIC_LISTING_COLUMNS)
             .eq('id', id)
             .single();
 

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Loader2, MapPin, Users, BedDouble, Check, X, ExternalLink } from 'lucide-react';
@@ -62,11 +63,22 @@ const AdminReview = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('property_listings')
-      .select('*')
+      .select(PUBLIC_LISTING_COLUMNS)
       .eq('status', filter)
       .order('created_at', { ascending: false });
     if (error) toast.error(`Could not load listings: ${error.message}`);
-    setListings((data as unknown as PendingListing[]) || []);
+    const rows = (data as unknown as PendingListing[]) || [];
+    // Host contact details are only readable through this admin-checked RPC.
+    if (rows.length > 0) {
+      const { data: contacts } = await supabase.rpc('listing_contacts' as never, { p_ids: rows.map((r) => r.id) } as never);
+      const byId = new Map(((contacts as { id: string; host_email: string | null; host_phone: string | null }[]) || []).map((c) => [c.id, c]));
+      rows.forEach((r) => {
+        const c = byId.get(r.id);
+        r.host_email = c?.host_email ?? null;
+        r.host_phone = c?.host_phone ?? null;
+      });
+    }
+    setListings(rows);
     setLoading(false);
   }, [filter]);
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
 import InteractiveMap, { type MapListing } from '@/components/InteractiveMap';
@@ -163,7 +164,7 @@ const SearchResults = () => {
       try {
         let query = supabase
           .from('property_listings')
-          .select('*')
+          .select(PUBLIC_LISTING_COLUMNS)
           .eq('status', 'active');
 
         if (searchLocation.trim()) {
