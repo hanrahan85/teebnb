@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
+import { geocodeAddress } from '@/lib/geocode';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
 import InteractiveMap, { type MapListing } from '@/components/InteractiveMap';
@@ -82,18 +83,6 @@ const SAMPLE: Listing[] = [
   { id: 's5', property_title: 'Loch Aria Cottage', full_address: 'County Kerry, Ireland', nightly_price: 300, max_guests: 5, nearby_golf_courses: 'Ballybunion Golf Club', description: '', photos: ['https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=700&h=500&fit=crop'], cover_image: null, status: 'active', lat: 52.1545, lng: -9.5669 },
   { id: 's6', property_title: 'Casa del Green', full_address: 'Los Cabos, Mexico', nightly_price: 520, max_guests: 8, nearby_golf_courses: 'Cabo del Sol Golf Club', description: '', photos: ['https://images.unsplash.com/photo-1592919505780-303950717480?w=700&h=500&fit=crop'], cover_image: null, status: 'active', lat: 22.8905, lng: -109.9167 },
 ];
-
-async function geocodeAddress(address: string): Promise<[number, number] | null> {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
-      { headers: { 'Accept-Language': 'en' } }
-    );
-    const data = await res.json();
-    if (data[0]) return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-  } catch {}
-  return null;
-}
 
 const SearchResults = () => {
   const location = useLocation();

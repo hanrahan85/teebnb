@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
+import { geocodeAddress } from '@/lib/geocode';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import InteractiveMap from '@/components/InteractiveMap';
@@ -100,23 +101,20 @@ const PropertyDetail = () => {
     }
   }, [id, listing]);
 
-  // Geocode the listing address so we can show it on the map
+  // Use stored coordinates when the listing has them, otherwise geocode the address.
   useEffect(() => {
     if (!listing?.full_address) return;
+    const stored = listing as { latitude?: number | string | null; longitude?: number | string | null };
+    if (stored.latitude != null && stored.longitude != null) {
+      setMapCoords([Number(stored.latitude), Number(stored.longitude)]);
+      return;
+    }
     let cancelled = false;
-    fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(listing.full_address)}&format=json&limit=1`,
-      { headers: { 'Accept-Language': 'en' } }
-    )
-      .then(r => r.json())
-      .then(data => {
-        if (data[0] && !cancelled) {
-          setMapCoords([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
-        }
-      })
-      .catch(() => {});
+    geocodeAddress(listing.full_address).then((coords) => {
+      if (coords && !cancelled) setMapCoords(coords);
+    });
     return () => { cancelled = true; };
-  }, [listing?.full_address]);
+  }, [listing]);
 
   if (loading) {
     return (
