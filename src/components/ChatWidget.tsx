@@ -67,7 +67,7 @@ const ChatWidget: React.FC = () => {
     } catch {
       setEntries([
         ...next,
-        { role: 'assistant', content: "Sorry, I couldn't get an answer just now. Please try again, or email support@teebnb.com." },
+        { role: 'assistant', content: "Sorry, I couldn't get an answer just now. Please try again, or email darragh@teebnb.com." },
       ]);
     } finally {
       setSending(false);
