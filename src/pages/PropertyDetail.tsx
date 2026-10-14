@@ -39,6 +39,7 @@ interface Listing {
   property_title: string;
   full_address: string;
   nightly_price: number;
+  cleaning_fee?: number | string | null;
   max_guests: number;
   nearby_golf_courses: string | string[] | null;
   description: string | null;
@@ -161,14 +162,15 @@ const PropertyDetail = () => {
 
   const nights = checkIn && checkOut ? Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)) : 0;
   const subtotal = nights > 0 ? nights * listing.nightly_price : 0;
-  const cleaningFee = 120;
-  const serviceFee = Math.round(subtotal * 0.12);
-  const total = subtotal + cleaningFee + serviceFee;
+  // Only the host's own prices: the nightly rate and the cleaning fee they set
+  // (if any). TeeBnB takes no payment and charges no service fee.
+  const cleaningFee = Number(listing.cleaning_fee) || 0;
+  const total = subtotal + cleaningFee;
 
   const handleReserve = () => {
     if (!checkIn || !checkOut || nights <= 0) return;
     navigate('/booking', {
-      state: { listing, checkIn, checkOut, guests, nights, subtotal, cleaningFee, serviceFee, total },
+      state: { listing, checkIn, checkOut, guests, nights, subtotal, cleaningFee, total },
     });
   };
 
@@ -664,14 +666,12 @@ const PropertyDetail = () => {
                   <span style={{ color: '#5C6B62' }}>€{listing.nightly_price} × {nights} night{nights !== 1 ? 's' : ''}</span>
                   <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{subtotal}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ color: '#5C6B62' }}>Cleaning fee</span>
-                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{cleaningFee}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ color: '#5C6B62' }}>Service fee (12%)</span>
-                  <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{serviceFee}</span>
-                </div>
+                {cleaningFee > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ color: '#5C6B62' }}>Cleaning fee</span>
+                    <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{cleaningFee}</span>
+                  </div>
+                )}
                 <div style={{
                   borderTop: '1px solid #EDEBE1',
                   paddingTop: '8px',
