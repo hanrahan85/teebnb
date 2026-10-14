@@ -195,8 +195,7 @@ const RyderCup2027: React.FC = () => {
             Ryder Cup 2027 at Adare Manor. Somewhere to stay for the whole group.
           </h1>
           <p style={{ ...body, color: '#C9D4CE', marginTop: '28px', fontSize: isMobile ? '16px' : '18px' }}>
-            The Ryder Cup comes to Adare Manor, Co. Limerick, for Ryder Cup week, 13 to 19 September 2027 (dates
-            confirmed on rydercup.com). Publicly reported estimates put visitor numbers at 250,000 to 300,000, far
+            The Ryder Cup comes to Adare Manor, Co. Limerick, for Ryder Cup week, 13 to 19 September 2027. Publicly reported estimates put visitor numbers at 250,000 to 300,000, far
             more than the region has beds for. TeeBnB is a golf-first accommodation marketplace: whole houses for
             groups, organised around the course.
           </p>
