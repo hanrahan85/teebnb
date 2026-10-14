@@ -33,6 +33,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Blog = lazy(() => import("./pages/Blog"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const RyderCup2027 = lazy(() => import("./pages/RyderCup2027"));
 
 const queryClient = new QueryClient();
 
@@ -126,6 +127,8 @@ const App: React.FC = () => {
               <Route path="/terms" element={<Suspense fallback={<LoadingFallback />}><Terms /></Suspense>} />
               <Route path="/blog" element={<Suspense fallback={<LoadingFallback />}><Blog /></Suspense>} />
               <Route path="/how-it-works" element={<Suspense fallback={<LoadingFallback />}><HowItWorks /></Suspense>} />
+              <Route path="/ryder-cup-2027" element={<RyderCup2027 />} />
+              <Route path="/adare-2027" element={<RyderCup2027 />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             </Suspense>
