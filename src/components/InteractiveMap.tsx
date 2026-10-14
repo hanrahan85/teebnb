@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { imgUrl } from '@/lib/img';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -101,7 +102,7 @@ const InteractiveMap: React.FC<Props> = ({ listings, highlightedId, onMarkerClic
       const popupContent = `
         <div style="font-family: 'Archivo', sans-serif; min-width: 200px; max-width: 240px;">
           ${listing.cover_image
-            ? `<img src="${listing.cover_image}" style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;" />`
+            ? `<img src="${imgUrl(listing.cover_image, 400)}" loading="lazy" style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;" />`
             : ''}
           <div style="font-weight: 700; font-size: 14px; color: #0B1F17; margin-bottom: 4px; line-height: 1.3;">
             ${listing.property_title}

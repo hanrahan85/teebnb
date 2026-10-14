@@ -5,17 +5,20 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import HomePage from "./components/HomePage";
-import Auth from "./pages/Auth";
-import ListProperty from "./pages/ListProperty";
-import SearchResults from "./pages/SearchResults";
-import AccommodationDetails from "./pages/AccommodationDetails";
-import PropertyDetail from "./pages/PropertyDetail";
-import BookingFlow from "./pages/BookingFlow";
-import HostDashboard from "./pages/HostDashboard";
-import NotFound from "./pages/NotFound";
 
-// Lazy load new pages
+// Every page except the homepage is loaded on demand, so a phone opening
+// teebnb.com only downloads the code for the homepage.
+const NotFound = lazy(() => import("./pages/NotFound"));
+const HostDashboard = lazy(() => import("./pages/HostDashboard"));
+const BookingFlow = lazy(() => import("./pages/BookingFlow"));
+const PropertyDetail = lazy(() => import("./pages/PropertyDetail"));
+const AccommodationDetails = lazy(() => import("./pages/AccommodationDetails"));
+const SearchResults = lazy(() => import("./pages/SearchResults"));
+const ListProperty = lazy(() => import("./pages/ListProperty"));
+const Auth = lazy(() => import("./pages/Auth"));
 const Destinations = lazy(() => import("./pages/Destinations"));
 const Trips = lazy(() => import("./pages/Trips"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -57,6 +60,7 @@ const App: React.FC = () => {
         <TooltipProvider>
           <Toaster />
           <BrowserRouter>
+            <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/auth" element={<Auth />} />
@@ -124,7 +128,10 @@ const App: React.FC = () => {
               <Route path="/how-it-works" element={<Suspense fallback={<LoadingFallback />}><HowItWorks /></Suspense>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </Suspense>
           </BrowserRouter>
+          <Analytics />
+          <SpeedInsights />
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

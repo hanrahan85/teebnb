@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { imgUrl } from '@/lib/img';
+import { getAttribution } from '@/lib/attribution';
+import { track } from '@vercel/analytics';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -170,6 +173,7 @@ const BookingFlow = () => {
       // "new row violates row-level security policy" error. Supplying the id
       // ourselves means we never need the row read back.
       const newBookingId = crypto.randomUUID();
+      const attribution = getAttribution();
 
       const { error } = await supabase
         .from('bookings')
@@ -191,10 +195,14 @@ const BookingFlow = () => {
           service_fee: serviceFee,
           total,
           status: 'pending',
+          utm_source: attribution.utm_source,
+          utm_campaign: attribution.utm_campaign,
+          referrer: attribution.referrer,
         });
 
       if (error) throw error;
 
+      track('Booking request', { source: attribution.utm_source || attribution.referrer || 'direct' });
       setBookingRef(newBookingId.slice(0, 8).toUpperCase());
       setStep('confirmation');
 
@@ -485,7 +493,7 @@ const BookingFlow = () => {
               }}>
                 {listing.cover_image && (
                   <img
-                    src={listing.cover_image}
+                    src={imgUrl(listing.cover_image, 400)}
                     alt={listing.property_title}
                     style={{
                       width: '100%',

@@ -1,11 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
 import { MapPin, Calendar as CalendarIcon, Users, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+
+// The date picker is only needed once someone opens it, so it loads then
+// rather than with the homepage.
+const Calendar = lazy(() => import('@/components/ui/calendar').then((m) => ({ default: m.Calendar })));
 
 const QUICK_DESTINATIONS = [
   'St Andrews',
@@ -258,6 +261,7 @@ const SearchBar = () => {
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
+            <Suspense fallback={<div style={{ width: 280, height: 300 }} />}>
             <Calendar
               mode="single"
               selected={checkIn}
@@ -266,6 +270,7 @@ const SearchBar = () => {
               initialFocus
               className="pointer-events-auto"
             />
+            </Suspense>
           </PopoverContent>
         </Popover>
 
@@ -285,6 +290,7 @@ const SearchBar = () => {
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
+            <Suspense fallback={<div style={{ width: 280, height: 300 }} />}>
             <Calendar
               mode="single"
               selected={checkOut}
@@ -293,6 +299,7 @@ const SearchBar = () => {
               initialFocus
               className="pointer-events-auto"
             />
+            </Suspense>
           </PopoverContent>
         </Popover>
 
