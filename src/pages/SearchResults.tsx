@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { imgUrl } from '@/lib/img';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
@@ -516,7 +517,9 @@ const SearchResults = () => {
                   }}
                 >
                   <img
-                    src={getCoverImage(listing)}
+                    src={imgUrl(getCoverImage(listing), 600)}
+                    loading="lazy"
+                    decoding="async"
                     alt={listing.property_title}
                     style={{ width: isMobile ? '100%' : '200px', height: isMobile ? '180px' : '140px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0 }}
                   />

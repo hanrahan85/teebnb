@@ -5,6 +5,7 @@ import SearchBar from '@/components/SearchBar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { Heart } from 'lucide-react';
+import { imgUrl } from '@/lib/img';
 
 interface Listing {
   id: number | string;
@@ -129,7 +130,7 @@ const HomePage = () => {
         style={{
           position: 'relative',
           minHeight: isMobile ? '88vh' : '92vh',
-          backgroundImage: `url('https://commons.wikimedia.org/wiki/Special:FilePath/Aerial%20view%20of%2014th,%2015th%20and%2016th%20holes%20at%20Portmarnock%20Golf%20Club,%20Ireland.jpg?width=1600')`,
+          backgroundImage: `url('https://commons.wikimedia.org/wiki/Special:FilePath/Aerial%20view%20of%2014th,%2015th%20and%2016th%20holes%20at%20Portmarnock%20Golf%20Club,%20Ireland.jpg?width=${isMobile ? 900 : 1600}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           display: 'flex',
@@ -225,8 +226,10 @@ const HomePage = () => {
           >
             <div style={{ minHeight: isMobile ? '320px' : '620px', background: '#E4E1D6' }}>
               <img
-                src={featured.image}
+                src={imgUrl(featured.image, isMobile ? 800 : 1200)}
                 alt={featured.name}
+                loading="lazy"
+                decoding="async"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             </div>
@@ -296,7 +299,7 @@ const HomePage = () => {
                 }
               >
                 <div className="lux-card-img">
-                  <img src={listing.image} alt={listing.name} />
+                  <img src={imgUrl(listing.image, 600)} alt={listing.name} loading="lazy" decoding="async" />
                   {!listing.isReal && <span className="lux-sample">Sample listing</span>}
                   <button
                     aria-label={savedListings.includes(listing.id) ? 'Remove from saved' : 'Save'}
@@ -388,7 +391,7 @@ const HomePage = () => {
                 className="lux-tile"
                 onClick={(): void => navigate('/search-results', { state: { location: c.search } })}
               >
-                <img src={c.image} alt={c.alt} />
+                <img src={imgUrl(c.image, isMobile ? 700 : 900)} alt={c.alt} loading="lazy" decoding="async" />
                 <span className="lux-tile-text">
                   <span className="lux-display" style={{ display: 'block', color: '#fff', fontSize: '34px' }}>
                     {c.title}

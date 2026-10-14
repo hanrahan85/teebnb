@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { imgUrl } from '@/lib/img';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { PUBLIC_LISTING_COLUMNS } from '@/lib/listingColumns';
@@ -322,7 +323,8 @@ const PropertyDetail = () => {
         {/* Main image - spans 2 rows, 1 column */}
         <div style={{ gridColumn: 1, gridRow: '1 / 3', position: 'relative' }}>
           <img
-            src={images[0] || 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop'}
+            src={imgUrl(images[0] || 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=700&h=500&fit=crop', isMobile ? 800 : 1200)}
+            fetchPriority="high"
             alt="Main"
             onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
             style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'zoom-in' }}
@@ -375,7 +377,8 @@ const PropertyDetail = () => {
         {!isMobile && images.slice(1, 5).map((img, idx) => (
           <img
             key={idx}
-            src={img}
+            src={imgUrl(img, 600)}
+            loading="lazy"
             alt={`Photo ${idx + 2}`}
             onClick={() => { setLightboxIndex(idx + 1); setLightboxOpen(true); }}
             style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'zoom-in' }}
@@ -789,7 +792,7 @@ const PropertyDetail = () => {
 
           {/* Image */}
           <img
-            src={images[lightboxIndex]}
+            src={imgUrl(images[lightboxIndex], 1600)}
             alt={`Photo ${lightboxIndex + 1}`}
             onClick={e => e.stopPropagation()}
             style={{
