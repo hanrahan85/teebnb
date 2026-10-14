@@ -66,7 +66,6 @@ const BookingFlow = () => {
     nights?: number;
     subtotal?: number;
     cleaningFee?: number;
-    serviceFee?: number;
     total?: number;
   } | null;
 
@@ -120,7 +119,6 @@ const BookingFlow = () => {
   const nights = state.nights || 1;
   const subtotal = state.subtotal || 0;
   const cleaningFee = state.cleaningFee || 0;
-  const serviceFee = state.serviceFee || 0;
   const total = state.total || 0;
   const guests = state.guests || 1;
 
@@ -192,7 +190,7 @@ const BookingFlow = () => {
           price_per_night: listing.nightly_price,
           subtotal,
           cleaning_fee: cleaningFee,
-          service_fee: serviceFee,
+          service_fee: 0,
           total,
           status: 'pending',
           utm_source: attribution.utm_source,
@@ -523,10 +521,6 @@ const BookingFlow = () => {
                       <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{cleaningFee.toFixed(2)}</span>
                     </div>
                   )}
-                  <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#5C6B62' }}>Service fee</span>
-                    <span style={{ color: '#0B1F17', fontWeight: 600 }}>€{serviceFee.toFixed(2)}</span>
-                  </div>
                 </div>
 
                 <div style={{ borderTop: '1px solid #EDEBE1', paddingTop: '16px', marginBottom: '16px' }}>
